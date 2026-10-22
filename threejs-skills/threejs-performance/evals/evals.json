@@ -1,0 +1,28 @@
+{
+  "skill_name": "threejs-performance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My three.js city scene has 8,000 building meshes (about 30 different building geometries, all sharing one MeshStandardMaterial with a texture atlas) and runs at 20 fps on a laptop. renderer.info says calls: 8012. How do I make it fast?",
+      "expected_output": "Identifies draw calls as the bottleneck, recommends BatchedMesh (different geometries, one material) with addGeometry/addInstance/setMatrixAt, perObjectFrustumCulled/sortObjects, or alternatively mergeGeometries for fully static; mentions matrixAutoUpdate=false, shadow budget, pixel ratio, and asks to re-measure renderer.info.render.calls; mentions InstancedMesh only as alternative when geometry is shared.",
+      "assertions": [
+        "Identifies draw calls (8012 calls) as the bottleneck with reasoning",
+        "Recommends BatchedMesh as the primary fix (shared material, many different geometries) with working addGeometry/addInstance/setMatrixAt code",
+        "Mentions merging geometries as an alternative for fully static content and InstancedMesh only where geometry is shared",
+        "Covers secondary wins: matrixAutoUpdate=false, frustum culling / perObjectFrustumCulled, shadow budget, pixel ratio",
+        "Tells the user to re-measure with renderer.info.render.calls / fps after the change",
+        "No invented API names (checks against r186: addGeometry, addInstance, setMatrixAt, perObjectFrustumCulled, sortObjects, optimize)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Memory in my three.js SPA keeps growing every time the user switches between product pages (each page builds a new scene with GLB models and textures). After ~20 switches the tab crashes. What am I missing?",
+      "expected_output": "Explains dispose() for geometry, material (and each texture map on it), render targets, PMREM/env textures, controls.dispose(), removing event listeners, traverse helper that disposes everything in the old scene, verifying with renderer.info.memory, reusing renderer instead of recreating, cache (THREE.Cache) consideration, and avoiding retained references/closures."
+    },
+    {
+      "id": 3,
+      "prompt": "Our three.js product configurator renders constantly at 60fps even when nothing moves, draining laptop batteries. Give me a pattern to only render when needed, and also cap the resolution on high-DPI screens.",
+      "expected_output": "Render-on-demand pattern with a requestRenderIfNotRequested function, controls 'change' event, resize triggers, animation-driven renders only while animating; setPixelRatio(Math.min(devicePixelRatio, 2)); note about setAnimationLoop vs rAF and about post-processing needing composer.render; mentions shadowMap.autoUpdate=false for static scenes."
+    }
+  ]
+}

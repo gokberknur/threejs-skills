@@ -1,0 +1,827 @@
+Addons / Animation | AnimationClipCreator | A utility class with factory methods for creating basic animation clips.
+Addons / Animation | CCDIKHelper (extends Object3D) | Helper for visualizing IK bones.
+Addons / Animation | CCDIKSolver | This class solves the Inverse Kinematics Problem with a CCD Algorithm (https://web.archive.org/web/20221206080850/https://sites.google.com/site/auraliusproject/ccd-algorithm).
+Addons / Capabilities | WebGL | A utility module with basic WebGL 2 capability testing.
+Addons / Capabilities | WebGPU | A utility module with basic WebGPU capability testing.
+Addons / Controls | ArcballControls (extends Controls) | Arcball controls allow the camera to be controlled by a virtual trackball with full touch support and advanced navigation functionality. Cursor/finger positions and movements are mapped over a virtual trackball surface r
+Addons / Controls | DragControls (extends Controls) | This class can be used to provide a drag'n'drop interaction.
+Addons / Controls | FirstPersonControls (extends Controls) | This class is an alternative implementation of FlyControls.
+Addons / Controls | FlyControls (extends Controls) | This class enables a navigation similar to fly modes in DCC tools like Blender. You can arbitrarily transform the camera in 3D space without any limitations (e.g. focus on a specific target).
+Addons / Controls | MapControls (extends OrbitControls) | This class is intended for transforming a camera over a map from bird's eye perspective. The class shares its implementation with OrbitControls but uses a specific preset for mouse/touch interaction and disables screen s
+Addons / Controls | OrbitControls (extends Controls) | Orbit controls allow the camera to orbit around a target.
+Addons / Controls | PointerLockControls (extends Controls) | The implementation of this class is based on the Pointer Lock API (https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API). `PointerLockControls` is a perfect choice for first person 3D games.
+Addons / Controls | TrackballControls (extends Controls) | This class is similar to OrbitControls. However, it does not maintain a constant camera `up` vector. That means if the camera orbits over the “north” and “south” poles, it does not flip to stay "right side up".
+Addons / Controls | TransformControls (extends Controls) | This class can be used to transform objects in 3D space by adapting a similar interaction model of DCC tools like Blender. Unlike other controls, it is not intended to transform the scene's camera.
+Addons / Csm | CSM | An implementation of Cascade Shadow Maps (CSM).
+Addons / Csm | CSMFrustum | Represents the frustum of a CSM instance.
+Addons / Csm | CSMHelper (extends Group) | A helper for visualizing the cascades of a CSM instance.
+Addons / Csm | CSMShadowNode (extends ShadowBaseNode) | An implementation of Cascade Shadow Maps (CSM).
+Addons / Csm | module-CSMShader | 
+Addons / Curves | CinquefoilKnot (extends Curve) | A Cinquefoil Knot.
+Addons / Curves | DecoratedTorusKnot4a (extends Curve) | A Decorated Torus Knot 4a.
+Addons / Curves | DecoratedTorusKnot4b (extends Curve) | A Decorated Torus Knot 4b.
+Addons / Curves | DecoratedTorusKnot5a (extends Curve) | A Decorated Torus Knot 5a.
+Addons / Curves | DecoratedTorusKnot5c (extends Curve) | A Decorated Torus Knot 5c.
+Addons / Curves | FigureEightPolynomialKnot (extends Curve) | A Figure Eight Polynomial Knot.
+Addons / Curves | GrannyKnot (extends Curve) | A Granny Knot curve.
+Addons / Curves | HeartCurve (extends Curve) | A heart curve.
+Addons / Curves | HelixCurve (extends Curve) | A helix curve.
+Addons / Curves | KnotCurve (extends Curve) | A knot curve.
+Addons / Curves | NURBSCurve (extends Curve) | This class represents a NURBS curve.
+Addons / Curves | NURBSSurface | This class represents a NURBS surface.
+Addons / Curves | NURBSVolume | This class represents a NURBS volume.
+Addons / Curves | TorusKnot (extends Curve) | A torus knot.
+Addons / Curves | TrefoilKnot (extends Curve) | A Trefoil Knot.
+Addons / Curves | TrefoilPolynomialKnot (extends Curve) | A Trefoil Polynomial Knot.
+Addons / Curves | VivianiCurve (extends Curve) | A Viviani curve.
+Addons / Curves | module-NURBSUtils | 
+Addons / Effects | AnaglyphEffect | A class that creates an anaglyph effect using physically-correct off-axis stereo projection.
+Addons / Effects | AsciiEffect | A class that creates an ASCII effect.
+Addons / Effects | OutlineEffect | An outline effect for toon shaders.
+Addons / Effects | ParallaxBarrierEffect | A class that creates an parallax barrier effect.
+Addons / Effects | StereoEffect | A class that creates an stereo effect.
+Addons / Environments | ColorEnvironment (extends Scene) | This class represents a scene with a uniform color that can be used as input for PMREMGenerator#fromScene. The resulting PMREM represents uniform ambient lighting and can be used for Image Based Lighting by assigning it 
+Addons / Environments | DebugEnvironment (extends Scene) | This class represents a scene with a very basic room setup that can be used as input for PMREMGenerator#fromScene. The resulting PMREM represents the room's lighting and can be used for Image Based Lighting by assigning 
+Addons / Environments | RoomEnvironment (extends Scene) | This class represents a scene with a basic room setup that can be used as input for PMREMGenerator#fromScene. The resulting PMREM represents the room's lighting and can be used for Image Based Lighting by assigning it to
+Addons / Exporters | DRACOExporter | An exporter to compress geometry with the Draco library.
+Addons / Exporters | EXRExporter | An exporter for EXR.
+Addons / Exporters | GLTFExporter | An exporter for `glTF` 2.0.
+Addons / Exporters | KTX2Exporter | An exporter for KTX2.
+Addons / Exporters | OBJExporter | An exporter for OBJ.
+Addons / Exporters | PLYExporter | An exporter for PLY.
+Addons / Exporters | STLExporter | An exporter for STL.
+Addons / Exporters | USDZExporter | An exporter for USDZ.
+Addons / Generators | BenchGenerator | A public street bench: timber slats carried on two cast-iron end frames that curl into armrests, with a reclined slatted backrest. Built once and instanced across a list of placements, dressed with one cheap material tha
+Addons / Generators | CarGenerator | A low-poly car fleet with lofted bodies, circular wheel arches, curved windscreens and recessed alloy wheels. Separate cabin panels define the windows and their frames. Two body types ( sedan and SUV ) are mixed determin
+Addons / Generators | CityGenerator | Lays out a grid of city blocks and fills each lot with a SkyscraperGenerator tower of its own seed, height and footprint, optionally on raised sidewalk slabs (curbs). Returns a `THREE.Group` ready to add to a scene.
+Addons / Generators | FaceFrame | A face's local ( u along edge, v up, n outward ) frame in world space.
+Addons / Generators | ForestGenerator | Carpets a TerrainGenerator with trees in a single instanced draw call. Each tree is a distorted icosphere with a baked crown gradient. Altitude, slope and a density mask control placement; rotation and scale vary between
+Addons / Generators | HydrantGenerator | A classic cast-iron fire hydrant: a stout barrel on a flared footing, capped by a domed bonnet and a hex operating nut, with two side outlet nozzles and a larger front pumper nozzle. Built once and instanced across a lis
+Addons / Generators | PersonGenerator | A low-poly pedestrian crowd with shaped heads, jackets and lofted limbs. Two shared poses stand or walk, with sleeves and trousers swept through their joints. Each placement gets deterministic proportions and a small see
+Addons / Generators | SidewalkGenerator | Generates the raised sidewalk for a city's blocks: per block, a rounded-corner concrete slab rimmed by a distinct granite kerbstone that stands proud of the walking surface and drops to the road. Instanced across a list 
+Addons / Generators | SkyscraperGenerator | Generates intricate, tripartite "Beaux-Arts / Neo-Gothic" terracotta skyscrapers from a small set of parameters.
+Addons / Generators | StreetTreeGenerator | A young street tree set in a curbside pit: a flared bark trunk rising through a cast-iron pit grate, branching into a canopy of vertex-jittered leaf clumps. The clump normals are blended toward a shared crown sphere so t
+Addons / Generators | StreetlightGenerator | A NYC cobra-head streetlight: a tall tapered mast standing at the curb with a curved arm reaching out over the roadway to a drop luminaire. Built once and instanced across a list of placements, dressed with one cheap mat
+Addons / Generators | TerrainGenerator | Bakes a procedural mountain range into a single mesh, returned in a `THREE.Group`. Domain-warped, derivative-damped noise shapes the ridges; thermal erosion relaxes steep slopes. A TSL material shades grass, rock and sno
+Addons / Generators | TrafficlightGenerator | A NYC traffic signal: a round pole at the curb with a horizontal mast arm reaching out over the roadway to a vertical three-section signal head, plus a pedestrian-signal box on the pole. Built once and instanced across a
+Addons / Generators | TrashcanGenerator | The NYC green wire-mesh litter basket: a slightly tapered drum with a heavy top rim, a foot ring and a dark bag of trash inside. Built once and instanced across a list of placements; one cheap material branches on a bake
+Addons / Generators | TreeGenerator | Grows a procedural tree skeleton — trunk, branches and twigs, each swept as a tapered tube — and bakes it into one indexed BufferGeometry (position and normal only), ready to instance into a forest. It produces *branches
+Addons / Geometries | BoxLineGeometry (extends BufferGeometry) | A special type of box geometry intended for LineSegments.
+Addons / Geometries | ConvexGeometry (extends BufferGeometry) | This class can be used to generate a convex hull for a given array of 3D points. The average time complexity for this task is considered to be O(nlog(n)).
+Addons / Geometries | DecalGeometry (extends BufferGeometry) | This class can be used to create a decal mesh that serves different kinds of purposes e.g. adding unique details to models, performing dynamic visual environmental changes or covering seams.
+Addons / Geometries | LoftGeometry (extends BufferGeometry) | This class can be used to generate a geometry by lofting (skinning) a surface through a series of cross sections. Each section is an array of points in 3D space and all sections must have the same number of points.
+Addons / Geometries | ParametricGeometry (extends BufferGeometry) | This class can be used to generate a geometry based on a parametric surface.
+Addons / Geometries | RoundedBoxGeometry (extends BoxGeometry) | A special type of box geometry with rounded corners and edges.
+Addons / Geometries | TeapotGeometry (extends BufferGeometry) | Tessellates the famous Utah teapot database by Martin Newell into triangles.
+Addons / Geometries | TextGeometry (extends ExtrudeGeometry) | A class for generating text as a single geometry. It is constructed by providing a string of text, and a set of parameters consisting of a loaded font and extrude settings.
+Addons / Geometries | module-ParametricFunctions | 
+Addons / Gpgpu | BitonicSort_BitonicSort | 
+Addons / Gpgpu | CountingSort | A reusable GPU counting sort.
+Addons / Helpers | AnimationPathHelper (extends Object3D) | Visualizes the motion path of an animated object based on position keyframes from an AnimationClip.
+Addons / Helpers | LightProbeGridHelperWebGL (extends InstancedMesh) | Visualizes an LightProbeGridWebGL by rendering a sphere at each probe position, shaded with the probe's L2 spherical harmonics.
+Addons / Helpers | LightProbeHelper (extends Mesh) | Renders a sphere to visualize a light probe in the scene.
+Addons / Helpers | OctreeHelper (extends LineSegments) | A helper for visualizing an Octree.
+Addons / Helpers | PositionalAudioHelper (extends Line) | This helper displays the directional cone of a positional audio.
+Addons / Helpers | RapierHelper (extends LineSegments) | This class displays all Rapier Colliders in outline.
+Addons / Helpers | RectAreaLightHelper (extends Line) | Creates a visual aid for rect area lights.
+Addons / Helpers | TextureHelper (extends Mesh) | A helper that can be used to display any type of texture for debugging purposes. Depending on the type of texture (2D, 3D, Array), the helper becomes a plane or box mesh.
+Addons / Helpers | VertexNormalsHelper (extends LineSegments) | Visualizes an object's vertex normals.
+Addons / Helpers | VertexTangentsHelper (extends LineSegments) | Visualizes an object's vertex tangents.
+Addons / Helpers | ViewHelper (extends Object3D) | A special type of helper that visualizes the camera's transformation in a small viewport area as an axes helper. Such a helper is often wanted in 3D modeling tools or scene editors like the three.js editor (https://three
+Addons / Inspector | ColorWheel | ColorWheel.js - DaVinci Resolve style interactive Color Wheel control widget
+Addons / Inspector | LUT3DStyle | LUT3DStyle.js - Unified CSS stylesheet module for 3D LUT Generator extension
+Addons / Inspector | Module | Module.js - Base class for LUT 3D Generator Card Modules
+Addons / Inspector | Tab | Tab class
+Addons / Interaction | InteractionManager | Manages interaction for 3D objects independently of the scene graph.
+Addons / Interactive | HTMLMesh (extends Mesh) | This class can be used to render a DOM element onto a canvas and use it as a texture for a plane mesh.
+Addons / Interactive | InteractiveGroup (extends Group) | This class can be used to group 3D objects in an interactive group. The group itself can listen to Pointer, Mouse or XR controller events to detect selections of descendant 3D objects. If a 3D object is selected, the res
+Addons / Interactive | SelectionBox | This class can be used to select 3D objects in a scene with a selection box. It is recommended to visualize the selected area with the help of SelectionHelper.
+Addons / Interactive | SelectionHelper | A helper for SelectionBox.
+Addons / Lighting | ClusteredLighting (extends Lighting) | A custom lighting implementation based on Forward+ Clustered Shading that overwrites the default lighting system in WebGPURenderer. Suitable for 3D scenes with many point lights and real depth complexity — the view frust
+Addons / Lighting | DynamicLighting (extends Lighting) | A custom lighting implementation that batches supported analytic lights into uniform arrays so light count changes do not recompile materials.
+Addons / Lighting | LightProbeGrid (extends Light) | A 3D grid of L2 Spherical Harmonic irradiance probes that provides position-dependent diffuse global illumination.
+Addons / Lighting | LightProbeGridWebGL | A 3D grid of L2 Spherical Harmonic irradiance probes that provides position-dependent diffuse global illumination.
+Addons / Lighting | VXGINode (extends TempNode) | Post processing node for voxel based global illumination. The scene is voxelized into a VXGIVolume and indirect diffuse light and ambient occlusion are gathered per pixel with approximate voxel cone tracing.
+Addons / Lighting | VXGIVolume | Holds the voxel representation of a scene for VXGINode: an anisotropic opacity mip chain, a direct radiance volume and a radiance volume with cached bounces.
+Addons / Lights | LightProbeGenerator | Utility class for creating instances of LightProbe.
+Addons / Lights | RectAreaLightTexturesLib | Texture library for RectAreaLight. This class holds the LTC BRDF data in data textures for further use in the renderer.
+Addons / Lights | RectAreaLightUniformsLib | This class is only relevant when using RectAreaLight with WebGLRenderer.
+Addons / Lights | SunLight (extends Light) | A sun-like light that gets emitted in a specific direction, with rays that are all parallel, and casts cascaded shadow maps via SunLightShadow, suited for lighting large scenes.
+Addons / Lights | SunLightNode (extends AnalyticLightNode) | Module for representing sun lights as nodes. Register it with the renderer's node library to use SunLight with `WebGPURenderer`:
+Addons / Lights | SunLightShadow (extends LightShadow) | Represents the shadow configuration of SunLight, using two cascaded shadow maps (CSM).
+Addons / Lights | SunShadowNode (extends ShadowNode) | Represents the cascaded shadow map of a SunLight.
+Addons / Lines | Line2 (extends LineSegments2) | A polyline drawn between vertices.
+Addons / Lines | LineGeometry (extends LineSegmentsGeometry) | A chain of vertices, forming a polyline.
+Addons / Lines | LineMaterial (extends ShaderMaterial) | A material for drawing wireframe-style geometries.
+Addons / Lines | LineSegments2 (extends Mesh) | A series of lines drawn between pairs of vertices.
+Addons / Lines | LineSegmentsGeometry (extends InstancedBufferGeometry) | A series of vertex pairs, forming line segments.
+Addons / Lines | Wireframe (extends Mesh) | A class for creating wireframes based on wide lines.
+Addons / Lines | WireframeGeometry2 (extends LineSegmentsGeometry) | A special type of line segments geometry intended for wireframe rendering.
+Addons / Loaders | AMFLoader (extends Loader) | A loader for the AMF format.
+Addons / Loaders | BVHLoader (extends Loader) | A loader for the BVH format.
+Addons / Loaders | ColladaComposer | ColladaComposer converts parsed library data into Three.js objects.
+Addons / Loaders | ColladaLoader (extends Loader) | A loader for the Collada format.
+Addons / Loaders | ColladaParser | ColladaParser handles XML parsing and converts Collada XML to intermediate data structures.
+Addons / Loaders | DDSLoader (extends CompressedTextureLoader) | A loader for the S3TC texture compression format.
+Addons / Loaders | DRACOLoader (extends Loader) | A loader for the Draco format.
+Addons / Loaders | EXRLoader (extends DataTextureLoader) | A loader for the OpenEXR texture format.
+Addons / Loaders | FBXLoader (extends Loader) | A loader for the FBX format.
+Addons / Loaders | Font | Class representing a font.
+Addons / Loaders | FontLoader (extends Loader) | A loader for loading fonts.
+Addons / Loaders | GCodeLoader (extends Loader) | A loader for the GCode format.
+Addons / Loaders | GLTFGaussianSplatLoaderExtension | A glTF loader plugin for `KHR_gaussian_splatting`.
+Addons / Loaders | GLTFLoader (extends Loader) | A loader for the glTF 2.0 format.
+Addons / Loaders | GaussianSplatPLYLoader (extends Loader) | A loader for Gaussian splat PLY files, e.g. as exported by the original GraphDECO/INRIA 3D Gaussian Splatting implementation.
+Addons / Loaders | HDRCubeTextureLoader (extends Loader) | A loader for loading HDR cube textures.
+Addons / Loaders | HDRLoader (extends DataTextureLoader) | A loader for the RGBE HDR texture format.
+Addons / Loaders | IESLoader (extends Loader) | A loader for the IES format.
+Addons / Loaders | KMZLoader (extends Loader) | A loader for the KMZ format.
+Addons / Loaders | KSPLATLoader (extends Loader) | A loader for GaussianSplats3D `.ksplat` files.
+Addons / Loaders | KTX2Loader (extends Loader) | A loader for KTX 2.0 GPU Texture containers.
+Addons / Loaders | KTXLoader (extends CompressedTextureLoader) | A loader for the KTX texture compression format.
+Addons / Loaders | LDrawLoader (extends Loader) | A loader for the LDraw format.
+Addons / Loaders | LUT3dlLoader (extends Loader) | A loader for the 3DL LUT format.
+Addons / Loaders | LUTCubeLoader (extends Loader) | A loader for the Cube LUT format.
+Addons / Loaders | LUTImageLoader (extends Loader) | A loader for loading LUT images.
+Addons / Loaders | LWOLoader (extends Loader) | A loader for the LWO format.
+Addons / Loaders | MD2Loader (extends Loader) | A loader for the MD2 format.
+Addons / Loaders | MDDLoader (extends Loader) | A loader for the MDD format.
+Addons / Loaders | MTLLoader (extends Loader) | A loader for the MTL format.
+Addons / Loaders | MaterialXLoader (extends Loader) | A loader for the MaterialX format.
+Addons / Loaders | NRRDLoader (extends Loader) | A loader for the NRRD format.
+Addons / Loaders | OBJLoader (extends Loader) | A loader for the OBJ format.
+Addons / Loaders | PCDLoader (extends Loader) | A loader for the Point Cloud Data (PCD) format.
+Addons / Loaders | PDBLoader (extends Loader) | A loader for the PDB format.
+Addons / Loaders | PLYLoader (extends Loader) | A loader for PLY the PLY format (known as the Polygon File Format or the Stanford Triangle Format).
+Addons / Loaders | PVRLoader (extends CompressedTextureLoader) | A loader for the PVRTC texture compression format.
+Addons / Loaders | Rhino3dmLoader (extends Loader) | A loader for Rhinoceros 3D files and objects.
+Addons / Loaders | SPLATLoader (extends Loader) | A loader for standard fixed-width Gaussian splat `.splat` files.
+Addons / Loaders | SPZLoader (extends Loader) | A loader for compressed Gaussian splat `.spz` files.
+Addons / Loaders | STLLoader (extends Loader) | A loader for the STL format, as created by Solidworks and other CAD programs.
+Addons / Loaders | SVGLoader (extends Loader) | A loader for the SVG format.
+Addons / Loaders | TDSLoader (extends Loader) | A loader for the 3DS format, based on lib3ds.
+Addons / Loaders | TGALoader (extends DataTextureLoader) | A loader for the TGA texture format.
+Addons / Loaders | TIFFLoader (extends DataTextureLoader) | A loader for the TIFF texture format.
+Addons / Loaders | TTFLoader (extends Loader) | A loader for the TTF format.
+Addons / Loaders | ThreeMFLoader (extends Loader) | A loader for the 3D Manufacturing Format (3MF) (https://3mf.io/specification/) format.
+Addons / Loaders | USDComposer | USDComposer handles scene composition from parsed USD data. This includes reference resolution, variant selection, transform handling, and building the Three.js scene graph.
+Addons / Loaders | USDLoader (extends Loader) | A loader for the USD format (USD, USDA, USDC, USDZ).
+Addons / Loaders | UltraHDRLoader (extends Loader) | A loader for the Ultra HDR Image Format.
+Addons / Loaders | VOXLoader (extends Loader) | A loader for the VOX format.
+Addons / Loaders | VRMLLoader (extends Loader) | A loader for the VRML format.
+Addons / Loaders | VTKLoader (extends Loader) | A loader for the VTK format.
+Addons / Loaders | XYZLoader (extends Loader) | A loader for the XYZ format.
+Addons / Materials | LDrawConditionalLineMaterial (extends ShaderMaterial) | A special line material for meshes loaded via LDrawLoader.
+Addons / Materials | WoodNodeMaterial | Procedural wood material using TSL (Three.js Shading Language).
+Addons / Math | Capsule | A capsule is essentially a cylinder with hemispherical caps at both ends. It can be thought of as a swept sphere, where a sphere is moved along a line segment.
+Addons / Math | ColorConverter | A utility class with helper functions for color conversion.
+Addons / Math | ConvexHull | Can be used to compute the convex hull in 3D space for a given set of points. It is primarily intended for ConvexGeometry.
+Addons / Math | ImprovedNoise | A utility class providing a 3D noise function.
+Addons / Math | Lut | Represents a lookup table for colormaps. It is used to determine the color values from a range of data values.
+Addons / Math | MeshSurfaceSampler | Utility class for sampling weighted random points on the surface of a mesh.
+Addons / Math | OBB | Represents an oriented bounding box (OBB) in 3D space.
+Addons / Math | Octree | An octree is a hierarchical tree data structure used to partition a three-dimensional space by recursively subdividing it into eight octants.
+Addons / Math | SimplexNoise | A utility class providing noise functions.
+Addons / Math | module-ColorSpaces | 
+Addons / Misc | ConvexObjectBreaker | This class can be used to subdivide a convex Geometry object into pieces.
+Addons / Misc | GPUComputationRenderer | GPUComputationRenderer, based on SimulationRenderer by @zz85.
+Addons / Misc | Gyroscope (extends Object3D) | A special type of 3D object that takes a position from the scene graph hierarchy but uses its local rotation as world rotation. It works like real-world gyroscope - you can move it around using hierarchy while its orient
+Addons / Misc | MD2Character | This class represents a management component for animated MD2 character assets.
+Addons / Misc | MD2CharacterComplex | This class represents a management component for animated MD2 character assets. It provides a larger API compared to MD2Character.
+Addons / Misc | MorphAnimMesh (extends Mesh) | A special type of an animated mesh with a simple interface for animation playback. It allows to playback just one animation without any transitions or fading between animation changes.
+Addons / Misc | MorphBlendMesh (extends Mesh) | A special type of an animated mesh with a more advanced interface for animation playback. Unlike MorphAnimMesh. It allows to playback more than one morph animation at the same time but without fading options.
+Addons / Misc | ProgressiveLightMap | Progressive Light Map Accumulator, by zalo (https://github.com/zalo/).
+Addons / Misc | RollerCoasterGeometry (extends BufferGeometry) | A procedural roller coaster geometry.
+Addons / Misc | RollerCoasterLiftersGeometry (extends BufferGeometry) | A procedural roller coaster lifters geometry.
+Addons / Misc | RollerCoasterShadowGeometry (extends BufferGeometry) | A procedural roller coaster shadow geometry.
+Addons / Misc | Sculptor | Sculpts triangle meshes with adaptive topology.
+Addons / Misc | SkyGeometry (extends BufferGeometry) | A procedural sky geometry.
+Addons / Misc | TileCreasedNormalsPlugin | A plugin for `3d-tiles-renderer` that computes creased vertex normals for the geometry of each loaded tile: smooth normals everywhere except where faces meet at an angle greater than the crease angle. Useful for photogra
+Addons / Misc | TreesGeometry (extends BufferGeometry) | A procedural trees geometry.
+Addons / Misc | TubePainter | This module can be used to paint tube-like meshes along a sequence of points. This module is used in a XR painter demo.
+Addons / Misc | Volume | This class had been written to handle the output of the NRRDLoader. It contains a volume of data and information about it. For now it only handles 3 dimensional data.
+Addons / Misc | VolumeSlice | This class has been made to hold a slice of a volume data.
+Addons / Modifiers | EdgeSplitModifier | The modifier can be used to split faces at sharp edges. This allows to compute normals without smoothing the edges which can lead to an improved visual result.
+Addons / Modifiers | Flow | A modifier for making meshes bend around curves.
+Addons / Modifiers | InstancedFlow (extends Flow) | An instanced version of Flow for making meshes bend around curves, where the instances are placed on the curve.
+Addons / Modifiers | SimplifyModifier | This class can be used to modify a geometry by simplifying it. A typical use case for such a modifier is automatic LOD generation.
+Addons / Modifiers | TessellateModifier | This class can be used to modify a geometry by breaking its edges if they are longer than maximum length.
+Addons / Objects | GaussianSplat (extends Mesh) | A minimal renderer for 3D Gaussian splat geometry.
+Addons / Objects | GroundedSkybox (extends Mesh) | A ground-projected skybox.
+Addons / Objects | Lensflare (extends Mesh) | Creates a simulated lens flare that tracks a light.
+Addons / Objects | LensflareElement | Represents a single flare that can be added to a Lensflare container.
+Addons / Objects | LensflareMesh (extends Mesh) | Creates a simulated lens flare that tracks a light.
+Addons / Objects | MarchingCubes | A marching cubes implementation.
+Addons / Objects | Reflector (extends Mesh) | Can be used to create a flat, reflective surface like a mirror.
+Addons / Objects | ReflectorForSSRPass (extends Mesh) | A special version of Reflector for usage with SSRPass.
+Addons / Objects | Refractor (extends Mesh) | Can be used to create a flat, refractive surface like for special windows or water effects.
+Addons / Objects | ShadowMesh (extends Mesh) | A Shadow Mesh that follows a shadow-casting mesh in the scene, but is confined to a single plane. This technique can be used as a very performant alternative to classic shadow mapping. However, it has serious limitations
+Addons / Objects | Sky (extends Mesh) | Represents a skydome for scene backgrounds. Based on A Practical Analytic Model for Daylight (https://www.researchgate.net/publication/220720443_A_Practical_Analytic_Model_for_Daylight) aka The Preetham Model, the de fac
+Addons / Objects | SkyMesh (extends Mesh) | Represents a skydome for scene backgrounds. Based on A Practical Analytic Model for Daylight (https://www.researchgate.net/publication/220720443_A_Practical_Analytic_Model_for_Daylight) aka The Preetham Model, the de fac
+Addons / Objects | Water (extends Mesh) | A basic flat, reflective water effect.
+Addons / Objects | WaterMesh (extends Mesh) | A basic flat, reflective water effect.
+Addons / Physics | AmmoPhysics | Can be used to include Ammo.js as a Physics engine into `three.js` apps. The API can be initialized via:
+Addons / Physics | JoltPhysics | Can be used to include Jolt as a Physics engine into `three.js` apps. The API can be initialized via:
+Addons / Physics | RapierPhysics | Can be used to include Rapier as a Physics engine into `three.js` apps. The API can be initialized via:
+Addons / Postprocessing | AfterimagePass (extends Pass) | Pass for a basic after image effect.
+Addons / Postprocessing | BloomPass (extends Pass) | A pass for a basic Bloom effect.
+Addons / Postprocessing | BokehPass (extends Pass) | Pass for creating depth of field (DOF) effect.
+Addons / Postprocessing | ClearMaskPass (extends Pass) | This pass can be used to clear a mask previously defined with MaskPass.
+Addons / Postprocessing | ClearPass (extends Pass) | This class can be used to force a clear operation for the current read or default framebuffer (when rendering to screen).
+Addons / Postprocessing | CubeTexturePass (extends Pass) | This pass can be used to render a cube texture over the entire screen.
+Addons / Postprocessing | DotScreenPass (extends Pass) | Pass for creating a dot-screen effect.
+Addons / Postprocessing | EffectComposer | Used to implement post-processing effects in three.js. The class manages a chain of post-processing passes to produce the final visual result. Post-processing passes are executed in order of their addition/insertion. The
+Addons / Postprocessing | FXAAPass (extends ShaderPass) | A pass for applying FXAA.
+Addons / Postprocessing | FilmPass (extends Pass) | This pass can be used to create a film grain effect.
+Addons / Postprocessing | FullScreenQuad (extends Mesh) | This module is a helper for passes which need to render a full screen effect which is quite common in context of post processing.
+Addons / Postprocessing | GTAOPass (extends Pass) | A pass for an GTAO effect.
+Addons / Postprocessing | GlitchPass (extends Pass) | Pass for creating a glitch effect.
+Addons / Postprocessing | HalftonePass (extends Pass) | Pass for creating a RGB halftone effect.
+Addons / Postprocessing | LUTPass (extends ShaderPass) | Pass for color grading via lookup tables.
+Addons / Postprocessing | MaskPass (extends Pass) | This pass can be used to define a mask during post processing. Meaning only areas of subsequent post processing are affected which lie in the masking area of this pass. Internally, the masking is implemented with the ste
+Addons / Postprocessing | OutlinePass (extends Pass) | A pass for rendering outlines around selected objects.
+Addons / Postprocessing | OutputPass (extends Pass) | This pass is responsible for including tone mapping and color space conversion into your pass chain. In most cases, this pass should be included at the end of each pass chain. If a pass requires sRGB input (e.g. like FXA
+Addons / Postprocessing | Pass | Abstract base class for all post processing passes.
+Addons / Postprocessing | RenderPass (extends Pass) | This class represents a render pass. It takes a camera and a scene and produces a beauty pass for subsequent post processing effects.
+Addons / Postprocessing | RenderPixelatedPass (extends Pass) | A special type of render pass that produces a pixelated beauty pass.
+Addons / Postprocessing | RenderTransitionPass (extends Pass) | A special type of render pass for implementing transition effects. When active, the pass will transition from scene A to scene B.
+Addons / Postprocessing | SAOPass (extends Pass) | A SAO implementation inspired from @bhouston previous SAO work.
+Addons / Postprocessing | SMAAPass (extends Pass) | A pass for applying SMAA. Unlike FXAAPass, `SMAAPass` operates in `linear-srgb` so this pass must be executed before OutputPass.
+Addons / Postprocessing | SSAARenderPass (extends Pass) | Supersample Anti-Aliasing Render Pass.
+Addons / Postprocessing | SSAOPass (extends Pass) | A pass for a basic SSAO effect.
+Addons / Postprocessing | SSRPass (extends Pass) | A pass for a basic SSR effect.
+Addons / Postprocessing | SavePass (extends Pass) | A pass that saves the contents of the current read buffer in a render target.
+Addons / Postprocessing | ShaderPass (extends Pass) | This pass can be used to create a post processing effect with a raw GLSL shader object. Useful for implementing custom effects.
+Addons / Postprocessing | TAARenderPass (extends SSAARenderPass) | Temporal Anti-Aliasing Render Pass.
+Addons / Postprocessing | TexturePass (extends Pass) | This pass can be used to render a texture over the entire screen.
+Addons / Postprocessing | UnrealBloomPass (extends Pass) | This pass is inspired by the bloom pass of Unreal Engine. It creates a mip map chain of bloom textures and blurs them with different radii. Because of the weighted combination of mips, and because larger blurs are done o
+Addons / Renderers | CSS2DObject (extends Object3D) | The only type of 3D object that is supported by CSS2DRenderer.
+Addons / Renderers | CSS2DRenderer | This renderer is a simplified version of CSS3DRenderer. The only transformations that are supported are translation and 2D rotation.
+Addons / Renderers | CSS3DObject (extends Object3D) | The base 3D object that is supported by CSS3DRenderer.
+Addons / Renderers | CSS3DRenderer | This renderer can be used to apply hierarchical 3D transformations to DOM elements via the CSS3 transform (https://www.w3schools.com/cssref/css3_pr_transform.asp) property. `CSS3DRenderer` is particularly interesting if 
+Addons / Renderers | CSS3DSprite (extends CSS3DObject) | A specialized version of CSS3DObject that represents DOM elements as sprites.
+Addons / Renderers | Projector | This class can project a given scene in 3D space into a 2D representation used for rendering with a 2D API. `Projector` is currently used by SVGRenderer and was previously used by the legacy `CanvasRenderer`.
+Addons / Renderers | SVGObject (extends Object3D) | Can be used to wrap SVG elements into a 3D object.
+Addons / Renderers | SVGRenderer | This renderer an be used to render geometric data using SVG. The produced vector graphics are particular useful in the following use cases:
+Addons / Shaders | module-ACESFilmicToneMappingShader | 
+Addons / Shaders | module-AfterimageShader | 
+Addons / Shaders | module-BasicShader | 
+Addons / Shaders | module-BleachBypassShader | 
+Addons / Shaders | module-BlendShader | 
+Addons / Shaders | module-BokehShader | 
+Addons / Shaders | module-BokehShader2 | 
+Addons / Shaders | module-BrightnessContrastShader | 
+Addons / Shaders | module-ColorCorrectionShader | 
+Addons / Shaders | module-ColorifyShader | 
+Addons / Shaders | module-ConvolutionShader | 
+Addons / Shaders | module-CopyShader | 
+Addons / Shaders | module-DOFMipMapShader | 
+Addons / Shaders | module-DepthLimitedBlurShader | 
+Addons / Shaders | module-DigitalGlitch | 
+Addons / Shaders | module-DotScreenShader | 
+Addons / Shaders | module-ExposureShader | 
+Addons / Shaders | module-FXAAShader | 
+Addons / Shaders | module-FilmShader | 
+Addons / Shaders | module-FocusShader | 
+Addons / Shaders | module-FreiChenShader | 
+Addons / Shaders | module-GTAOShader | 
+Addons / Shaders | module-GammaCorrectionShader | 
+Addons / Shaders | module-HalftoneShader | 
+Addons / Shaders | module-HorizontalBlurShader | 
+Addons / Shaders | module-HorizontalTiltShiftShader | 
+Addons / Shaders | module-HueSaturationShader | 
+Addons / Shaders | module-KaleidoShader | 
+Addons / Shaders | module-LuminosityHighPassShader | 
+Addons / Shaders | module-LuminosityShader | 
+Addons / Shaders | module-MirrorShader | 
+Addons / Shaders | module-NormalMapShader | 
+Addons / Shaders | module-OutputShader | 
+Addons / Shaders | module-PoissonDenoiseShader | 
+Addons / Shaders | module-RGBShiftShader | 
+Addons / Shaders | module-SAOShader | 
+Addons / Shaders | module-SMAAShader | 
+Addons / Shaders | module-SSAOShader | 
+Addons / Shaders | module-SSRShader | 
+Addons / Shaders | module-SepiaShader | 
+Addons / Shaders | module-SobelOperatorShader | 
+Addons / Shaders | module-SubsurfaceScatteringShader | 
+Addons / Shaders | module-TriangleBlurShader | 
+Addons / Shaders | module-UnpackDepthRGBAShader | 
+Addons / Shaders | module-VelocityShader | 
+Addons / Shaders | module-VerticalBlurShader | 
+Addons / Shaders | module-VerticalTiltShiftShader | 
+Addons / Shaders | module-VignetteShader | 
+Addons / Shaders | module-VolumeShader | 
+Addons / Shaders | module-WaterRefractionShader | 
+Addons / TSL | AfterImageNode (extends TempNode) | Post processing node for creating an after image effect.
+Addons / TSL | AmbientLightDataNode (extends Node) | Batched data node for ambient lights in dynamic lighting mode.
+Addons / TSL | AnaglyphPassNode (extends StereoCompositePassNode) | A render pass node that creates an anaglyph effect using physically-correct off-axis stereo projection.
+Addons / TSL | BilateralBlurNode (extends TempNode) | Post processing node for creating a bilateral blur effect.
+Addons / TSL | BloomNode (extends TempNode) | Post processing node for creating a bloom effect.
+Addons / TSL | ChromaticAberrationNode (extends TempNode) | Post processing node for applying chromatic aberration effect. This effect simulates the color fringing that occurs in real camera lenses by separating and offsetting the red, green, and blue channels.
+Addons / TSL | ClusteredLightsNode (extends LightsNode) | A custom version of `LightsNode` implementing Forward+ clustered shading: the view frustum is subdivided into a 3D grid of clusters (X × Y screen tiles times an exponentially-spaced set of Z depth slices), and each clust
+Addons / TSL | DenoiseNode (extends TempNode) | Post processing node for denoising data like raw screen-space ambient occlusion output. Denoise can noticeably improve the quality of ambient occlusion but also add quite some overhead to the post processing setup. It's 
+Addons / TSL | DepthOfFieldNode (extends TempNode) | Post processing node for creating depth of field (DOF) effect.
+Addons / TSL | DirectionalLightDataNode (extends Node) | Batched data node for directional lights in dynamic lighting mode.
+Addons / TSL | DotScreenNode (extends TempNode) | Post processing node for creating dot-screen effect.
+Addons / TSL | DynamicLightsNode (extends LightsNode) | A custom version of `LightsNode` that batches supported analytic lights into uniform arrays and loops.
+Addons / TSL | EnvMapCDFGenerator | Precomputes marginal and conditional CDF textures from an equirectangular HDR environment map for luminance importance sampling.
+Addons / TSL | FSR1Node (extends TempNode) | Post processing node for applying AMD FidelityFX Super Resolution 1 (FSR 1).
+Addons / TSL | FXAANode (extends TempNode) | Post processing node for applying FXAA. This node requires sRGB input so tone mapping and color space conversion must happen before the anti-aliasing.
+Addons / TSL | FilmNode (extends TempNode) | Post processing node for creating a film grain effect.
+Addons / TSL | GTAONode (extends TempNode) | Post processing node for applying Ground Truth Ambient Occlusion (GTAO) to a scene.
+Addons / TSL | GaussianBlurNode (extends TempNode) | Post processing node for creating a gaussian blur effect.
+Addons / TSL | GodraysNode (extends TempNode) | Post-Processing node for apply Screen-space raymarched godrays to a scene.
+Addons / TSL | HemisphereLightDataNode (extends Node) | Batched data node for hemisphere lights in dynamic lighting mode.
+Addons / TSL | ImportanceSampledEnvironment | Manages a preprocessed HDR environment map (CDF textures, uniforms) and exposes TSL helpers for BRDF-direction lookups and MIS importance sampling.
+Addons / TSL | LensflareNode (extends TempNode) | Post processing node for adding a bloom-based lens flare effect. This effect requires that you extract the bloom of the scene via a bloom pass first.
+Addons / TSL | Lut3DNode (extends TempNode) | A post processing node for color grading via lookup tables.
+Addons / TSL | OITPassNode (extends PassNode) | A render pass node that renders the scene with Order-Independent Transparency based on the Weighted Blended OIT technique by McGuire and Bavoil.
+Addons / TSL | OutlineNode (extends TempNode) | Post processing node for rendering outlines around selected objects. The node gives you great flexibility in composing the final outline look depending on your requirements.
+Addons / TSL | ParallaxBarrierPassNode (extends StereoCompositePassNode) | A render pass node that creates a parallax barrier effect.
+Addons / TSL | PixelationNode (extends TempNode) | A inner node definition that implements the actual pixelation TSL code.
+Addons / TSL | PixelationPassNode (extends PassNode) | A special render pass node that renders the scene with a pixelation effect.
+Addons / TSL | PointLightDataNode (extends Node) | Batched data node for point lights in dynamic lighting mode.
+Addons / TSL | RGBShiftNode (extends TempNode) | Post processing node for shifting/splitting RGB color channels. The effect separates color channels and offsets them from each other.
+Addons / TSL | RecurrentDenoiseNode (extends TempNode) | Post processing node for denoising temporally-accumulated screen-space effects such as SSGI (ambient occlusion / indirect diffuse) and SSR (specular reflections).
+Addons / TSL | RetroPassNode (extends PassNode) | A post-processing pass that applies a retro PS1-style effect to the scene.
+Addons / TSL | SMAANode (extends TempNode) | Post processing node for applying SMAA. Unlike FXAA, this node should be applied before converting colors to sRGB. SMAA should produce better results than FXAA but is also more expensive to execute.
+Addons / TSL | SSAAPassNode (extends PassNode) | A special render pass node that renders the scene with SSAA (Supersampling Anti-Aliasing). This manual SSAA approach re-renders the scene ones for each sample with camera jitter and accumulates the results.
+Addons / TSL | SSAONode (extends TempNode) | Post processing node for a fast, screen-space ambient occlusion (SSAO).
+Addons / TSL | SSGINode (extends TempNode) | Post processing node for applying Screen Space Global Illumination (SSGI) to a scene.
+Addons / TSL | SSRNode (extends TempNode) | Post processing node for computing screen space reflections (SSR).
+Addons / TSL | SSSNode (extends TempNode) | Post processing node for applying Screen-Space Shadows (SSS) to a scene.
+Addons / TSL | SharpenNode (extends TempNode) | Post processing node for contrast-adaptive sharpening (RCAS).
+Addons / TSL | SobelOperatorNode (extends TempNode) | Post processing node for detecting edges with a sobel filter. A sobel filter should be applied after tone mapping and output color space conversion.
+Addons / TSL | SpotLightDataNode (extends Node) | Batched data node for simple spot lights in dynamic lighting mode.
+Addons / TSL | StereoCompositePassNode (extends PassNode) | A special (abstract) render pass node that renders the scene as a stereoscopic image. Unlike StereoPassNode, this node merges the image for the left and right eye into a single one. That is required for effects like anag
+Addons / TSL | StereoPassNode (extends PassNode) | A special render pass node that renders the scene as a stereoscopic image.
+Addons / TSL | TAAUNode (extends TempNode) | A special node that performs Temporal Anti-Aliasing Upscaling (TAAU).
+Addons / TSL | TRAANode (extends TempNode) | A special node that applies TRAA (Temporal Reprojection Anti-Aliasing).
+Addons / TSL | TemporalReprojectNode (extends TempNode) | Temporal reprojection pass for denoising screen-space effects (SSGI, SSR, etc.).
+Addons / TSL | TileShadowNode (extends ShadowBaseNode) | A class that extends `ShadowBaseNode` to implement tiled shadow mapping. This allows splitting a shadow map into multiple tiles, each with its own light and camera, to improve shadow quality and performance for large sce
+Addons / TSL | TileShadowNodeHelper (extends Group) | Helper class to manage and display debug visuals for TileShadowNode.
+Addons / TSL | TransitionNode (extends TempNode) | Post processing node for creating a transition effect between scenes.
+Addons / TSL | WebGLNodesHandler | Compatibility loader and builder for TSL Node materials in WebGLRenderer.
+Addons / TSL | module-Bayer | 
+Addons / TSL | module-GroundedSkybox | 
+Addons / TSL | module-Raymarching | 
+Addons / TSL | module-SoftParticles | 
+Addons / TSL | module-VoronoiNoise | 
+Addons / Textures | FlakesTexture | Utility class for generating a flakes texture image. This image might be used as a normal map to produce a car paint like effect.
+Addons / Transpiler | Transpiler | A class that transpiles shader code from one language into another.
+Addons / Utils | LDrawUtils | Utility class for LDraw models.
+Addons / Utils | SceneOptimizer | This class can be used to optimized scenes by converting individual meshes into BatchedMesh. This component is an experimental attempt to implement auto-batching in three.js.
+Addons / Utils | ShadowMapViewer | This is a helper for visualising a given light's shadow map. It works for shadow casting lights: DirectionalLight and SpotLight. It renders out the shadow map and displays it on a HUD.
+Addons / Utils | WorkerPool | A simple pool for managing Web Workers.
+Addons / Utils | module-BufferGeometryUtils | 
+Addons / Utils | module-CameraUtils | 
+Addons / Utils | module-ColorUtils | 
+Addons / Utils | module-GeometryCompressionUtils | 
+Addons / Utils | module-GeometryUtils | 
+Addons / Utils | module-SceneUtils | 
+Addons / Utils | module-SkeletonUtils | 
+Addons / Utils | module-SortUtils | 
+Addons / Utils | module-UVsDebug | 
+Addons / Utils | module-WebGLTextureUtils | 
+Addons / Utils | module-WebGPUTextureUtils | 
+Addons / Webxr | ARButton | A utility class for creating a button that allows to initiate immersive AR sessions based on WebXR. The button can be created with a factory method and then appended to the website's DOM.
+Addons / Webxr | OculusHandModel (extends Object3D) | Represents an Oculus hand model.
+Addons / Webxr | OculusHandPointerModel (extends Object3D) | Represents an Oculus hand pointer model.
+Addons / Webxr | VRButton | A utility class for creating a button that allows to initiate immersive VR sessions based on WebXR. The button can be created with a factory method and then appended ot the website's DOM.
+Addons / Webxr | XRButton | A utility class for creating a button that allows to initiate immersive XR sessions based on WebXR. The button can be created with a factory method and then appended ot the website's DOM.
+Addons / Webxr | XRControllerModel (extends Object3D) | Represents a XR controller model.
+Addons / Webxr | XRControllerModelFactory | Allows to create controller models for WebXR controllers that can be added as a visual representation to your scene. `XRControllerModelFactory` will automatically fetch controller models that match what the user is holdi
+Addons / Webxr | XREstimatedLight (extends Group) | This class can be used to represent the environmental light of a XR session. It relies on the WebXR Lighting Estimation API.
+Addons / Webxr | XRHandMeshModel | Represents one of the hand model types XRHandModelFactory might produce depending on the selected profile. `XRHandMeshModel` represents a hand with a custom asset.
+Addons / Webxr | XRHandModel (extends Object3D) | Represents a XR hand model.
+Addons / Webxr | XRHandModelFactory | Similar to XRControllerModelFactory, this class allows to create hand models for WebXR controllers that can be added as a visual representation to your scene.
+Addons / Webxr | XRHandPrimitiveModel | Represents one of the hand model types XRHandModelFactory might produce depending on the selected profile. `XRHandPrimitiveModel` represents a hand with sphere or box primitives according to the selected `primitive` opti
+Addons / Webxr | XRPlanes (extends Object3D) | A utility class for the WebXR Plane Detection Module. If planes are detected by WebXR, this class will automatically add them as thin box meshes to the scene when below code snippet is used.
+Addons / Webxr | module-Text2D | 
+Core / Animation | AnimationAction | An instance of `AnimationAction` schedules the playback of an animation which is stored in AnimationClip.
+Core / Animation | AnimationClip | A reusable set of keyframe tracks which represent an animation.
+Core / Animation | AnimationMixer | `AnimationMixer` is a player for animations on a particular object in the scene. When multiple objects in the scene are animated independently, one `AnimationMixer` may be used for each object.
+Core / Animation | AnimationObjectGroup | A group of objects that receives a shared animation state.
+Core / Animation | AnimationUtils | A class with various methods to assist with animations.
+Core / Animation | BooleanKeyframeTrack (extends KeyframeTrack) | A track for boolean keyframe values.
+Core / Animation | ColorKeyframeTrack (extends KeyframeTrack) | A track for color keyframe values.
+Core / Animation | KeyframeTrack | Represents a timed sequence of keyframes, which are composed of lists of times and related values, and which are used to animate a specific property of an object.
+Core / Animation | NumberKeyframeTrack (extends KeyframeTrack) | A track for numeric keyframe values.
+Core / Animation | PropertyBinding | This holds a reference to a real property in the scene graph; used internally.
+Core / Animation | PropertyMixer | Buffered scene graph property that allows weighted accumulation; used internally.
+Core / Animation | QuaternionKeyframeTrack (extends KeyframeTrack) | A track for Quaternion keyframe values.
+Core / Animation | StringKeyframeTrack (extends KeyframeTrack) | A track for string keyframe values.
+Core / Animation | VectorKeyframeTrack (extends KeyframeTrack) | A track for vector keyframe values.
+Core / Audio | Audio (extends Object3D) | Represents a non-positional ( global ) audio object.
+Core / Audio | AudioAnalyser | This class can be used to analyse audio data.
+Core / Audio | AudioContext | Manages the global audio context in the engine.
+Core / Audio | AudioListener (extends Object3D) | The class represents a virtual listener of the all positional and non-positional audio effects in the scene. A three.js application usually creates a single listener. It is a mandatory constructor parameter for audios en
+Core / Audio | PositionalAudio (extends Audio) | Represents a positional audio object.
+Core / Cameras | ArrayCamera (extends PerspectiveCamera) | This type of camera can be used in order to efficiently render a scene with a predefined set of cameras. This is an important performance aspect for rendering VR scenes.
+Core / Cameras | Camera (extends Object3D) | Abstract base class for cameras. This class should always be inherited when you build a new camera.
+Core / Cameras | CubeCamera (extends Object3D) | A special type of camera that is positioned in 3D space to render its surroundings into a cube render target. The render target can then be used as an environment map for rendering realtime reflections in your scene.
+Core / Cameras | OrthographicCamera (extends Camera) | Camera that uses orthographic projection (https://en.wikipedia.org/wiki/Orthographic_projection).
+Core / Cameras | PerspectiveCamera (extends Camera) | Camera that uses perspective projection (https://en.wikipedia.org/wiki/Perspective_(graphical)).
+Core / Cameras | StereoCamera | A special type of camera that uses two perspective cameras with stereoscopic projection. Can be used for rendering stereo effects like 3D Anaglyph (https://en.wikipedia.org/wiki/Anaglyph_3D) or Parallax Barrier (https://
+Core / Core | BufferAttribute | This class stores data for an attribute (such as vertex positions, face indices, normals, colors, UVs, and any custom attributes ) associated with a geometry, which allows for more efficient passing of data to the GPU.
+Core / Core | BufferGeometry (extends EventDispatcher) | A representation of mesh, line, or point geometry. Includes vertex positions, face indices, normals, colors, UVs, and custom attributes within buffers, reducing the cost of passing all this data to the GPU.
+Core / Core | Clock | Class for keeping track of time.
+Core / Core | EventDispatcher | This modules allows to dispatch event objects on custom JavaScript objects.
+Core / Core | Float16BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `Float16` buffer attribute with a plain `Array` instance.
+Core / Core | Float32BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `Float32` buffer attribute with a plain `Array` instance.
+Core / Core | GLBufferAttribute | An alternative version of a buffer attribute with more control over the VBO.
+Core / Core | InstancedBufferAttribute (extends BufferAttribute) | An instanced version of a buffer attribute.
+Core / Core | InstancedBufferGeometry | An instanced version of a geometry.
+Core / Core | InstancedInterleavedBuffer (extends InterleavedBuffer) | An instanced version of an interleaved buffer.
+Core / Core | Int16BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `Int16` buffer attribute with a plain `Array` instance.
+Core / Core | Int32BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `Int32` buffer attribute with a plain `Array` instance.
+Core / Core | Int8BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `Int8` buffer attribute with a plain `Array` instance.
+Core / Core | InterleavedBuffer | "Interleaved" means that multiple attributes, possibly of different types, (e.g., position, normal, uv, color) are packed into a single array buffer.
+Core / Core | InterleavedBufferAttribute | An alternative version of a buffer attribute with interleaved data. Interleaved attributes share a common interleaved data storage (InterleavedBuffer) and refer with different offsets into the buffer.
+Core / Core | Layers | A layers object assigns an 3D object to 1 or more of 32 layers numbered `0` to `31` - internally the layers are stored as a bit mask], and by default all 3D objects are a member of layer `0`.
+Core / Core | Object3D (extends EventDispatcher) | This is the base class for most objects in three.js and provides a set of properties and methods for manipulating objects in 3D space.
+Core / Core | Raycaster | This class is designed to assist with raycasting. Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+Core / Core | RenderTarget (extends EventDispatcher) | A render target is a buffer where the video card draws pixels for a scene that is being rendered in the background. It is used in different effects, such as applying postprocessing to a rendered image before displaying i
+Core / Core | RenderTarget3D (extends RenderTarget) | Represents a 3D render target.
+Core / Core | Timer | This class is an alternative to Clock with a different API design and behavior. The goal is to avoid the conceptual flaws that became apparent in `Clock` over time.
+Core / Core | Uint16BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `UInt16` buffer attribute with a plain `Array` instance.
+Core / Core | Uint32BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `UInt32` buffer attribute with a plain `Array` instance.
+Core / Core | Uint8BufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `UInt8` buffer attribute with a plain `Array` instance.
+Core / Core | Uint8ClampedBufferAttribute (extends BufferAttribute) | Convenient class that can be used when creating a `UInt8Clamped` buffer attribute with a plain `Array` instance.
+Core / Core | Uniform | Represents a uniform which is a global shader variable. They are passed to shader programs.
+Core / Core | UniformsGroup (extends EventDispatcher) | A class for managing multiple uniforms in a single group. The renderer will process such a definition as a single UBO.
+Core / Extras | ArcCurve (extends EllipseCurve) | A curve representing an arc.
+Core / Extras | CatmullRomCurve3 (extends Curve) | A curve representing a Catmull-Rom spline.
+Core / Extras | Controls (extends EventDispatcher) | Abstract base class for controls.
+Core / Extras | CubicBezierCurve (extends Curve) | A curve representing a 2D Cubic Bezier curve.
+Core / Extras | CubicBezierCurve3 (extends Curve) | A curve representing a 3D Cubic Bezier curve.
+Core / Extras | Curve | An abstract base class for creating an analytic curve object that contains methods for interpolation.
+Core / Extras | CurvePath (extends Curve) | A base class extending Curve. `CurvePath` is simply an array of connected curves, but retains the API of a curve.
+Core / Extras | DataUtils | A class containing utility functions for data.
+Core / Extras | Earcut | An implementation of the earcut polygon triangulation algorithm. The code is a port of mapbox/earcut (https://github.com/mapbox/earcut).
+Core / Extras | EllipseCurve (extends Curve) | A curve representing an ellipse.
+Core / Extras | ImageUtils | A class containing utility functions for images.
+Core / Extras | LineCurve (extends Curve) | A curve representing a 2D line segment.
+Core / Extras | LineCurve3 (extends Curve) | A curve representing a 3D line segment.
+Core / Extras | PMREMGenerator | This class generates a Prefiltered, Mipmapped Radiance Environment Map (PMREM) from a cubeMap environment texture. This allows different levels of blur to be quickly accessed based on material roughness. It is packed int
+Core / Extras | Path (extends CurvePath) | A 2D path representation. The class provides methods for creating paths and contours of 2D shapes similar to the 2D Canvas API.
+Core / Extras | QuadraticBezierCurve (extends Curve) | A curve representing a 2D Quadratic Bezier curve.
+Core / Extras | QuadraticBezierCurve3 (extends Curve) | A curve representing a 3D Quadratic Bezier curve.
+Core / Extras | Shape (extends Path) | Defines an arbitrary 2d shape plane using paths with optional holes. It can be used with ExtrudeGeometry, ShapeGeometry, to get points, or to get triangulated faces.
+Core / Extras | ShapePath | This class is used to convert a series of paths to an array of shapes. It is specifically used in context of fonts and SVG.
+Core / Extras | ShapeUtils | A class containing utility functions for shapes.
+Core / Extras | SplineCurve (extends Curve) | A curve representing a 2D spline curve.
+Core / Extras | TextureUtils | A class containing utility functions for textures.
+Core / Extras | module-Interpolations | Interpolations contains spline and Bézier functions internally used by concrete curve classes.
+Core / Geometries | BoxGeometry (extends BufferGeometry) | A geometry class for a rectangular cuboid with a given width, height, and depth. On creation, the cuboid is centred on the origin, with each edge parallel to one of the axes.
+Core / Geometries | CapsuleGeometry (extends BufferGeometry) | A geometry class for representing a capsule.
+Core / Geometries | CircleGeometry (extends BufferGeometry) | A simple shape of Euclidean geometry. It is constructed from a number of triangular segments that are oriented around a central point and extend as far out as a given radius. It is built counter-clockwise from a start an
+Core / Geometries | ConeGeometry (extends CylinderGeometry) | A geometry class for representing a cone.
+Core / Geometries | CylinderGeometry (extends BufferGeometry) | A geometry class for representing a cylinder.
+Core / Geometries | DodecahedronGeometry (extends PolyhedronGeometry) | A geometry class for representing a dodecahedron.
+Core / Geometries | EdgesGeometry (extends BufferGeometry) | Can be used as a helper object to view the edges of a geometry.
+Core / Geometries | ExtrudeGeometry (extends BufferGeometry) | Creates extruded geometry from a path shape.
+Core / Geometries | IcosahedronGeometry (extends PolyhedronGeometry) | A geometry class for representing an icosahedron.
+Core / Geometries | LatheGeometry (extends BufferGeometry) | Creates meshes with axial symmetry like vases. The lathe rotates around the Y axis.
+Core / Geometries | OctahedronGeometry (extends PolyhedronGeometry) | A geometry class for representing an octahedron.
+Core / Geometries | PlaneGeometry (extends BufferGeometry) | A geometry class for representing a plane.
+Core / Geometries | PolyhedronGeometry (extends BufferGeometry) | A polyhedron is a solid in three dimensions with flat faces. This class will take an array of vertices, project them onto a sphere, and then divide them up to the desired level of detail.
+Core / Geometries | RingGeometry (extends BufferGeometry) | A class for generating a two-dimensional ring geometry.
+Core / Geometries | ShapeGeometry (extends BufferGeometry) | Creates an one-sided polygonal geometry from one or more path shapes.
+Core / Geometries | SphereGeometry (extends BufferGeometry) | A class for generating a sphere geometry.
+Core / Geometries | TetrahedronGeometry (extends PolyhedronGeometry) | A geometry class for representing an tetrahedron.
+Core / Geometries | TorusGeometry (extends BufferGeometry) | A geometry class for representing an torus.
+Core / Geometries | TorusKnotGeometry (extends BufferGeometry) | Creates a torus knot, the particular shape of which is defined by a pair of coprime integers, p and q. If p and q are not coprime, the result will be a torus link.
+Core / Geometries | TubeGeometry (extends BufferGeometry) | Creates a tube that extrudes along a 3D curve.
+Core / Geometries | WireframeGeometry (extends BufferGeometry) | Can be used as a helper object to visualize a geometry as a wireframe.
+Core / Helpers | ArrowHelper (extends Object3D) | An 3D arrow object for visualizing directions.
+Core / Helpers | AxesHelper (extends LineSegments) | An axis object to visualize the 3 axes in a simple way. The X axis is red. The Y axis is green. The Z axis is blue.
+Core / Helpers | Box3Helper (extends LineSegments) | A helper object to visualize an instance of Box3.
+Core / Helpers | BoxHelper (extends LineSegments) | Helper object to graphically show the world-axis-aligned bounding box around an object. The actual bounding box is handled with Box3, this is just a visual helper for debugging. It can be automatically resized with BoxHe
+Core / Helpers | CameraHelper (extends LineSegments) | This helps with visualizing what a camera contains in its frustum. It visualizes the frustum of a camera using a line segments.
+Core / Helpers | DirectionalLightHelper (extends Object3D) | Helper object to assist with visualizing a DirectionalLight's effect on the scene. This consists of a plane and a line representing the light's position and direction.
+Core / Helpers | GridHelper (extends LineSegments) | The helper is an object to define grids. Grids are two-dimensional arrays of lines.
+Core / Helpers | HemisphereLightHelper (extends Object3D) | Creates a visual aid consisting of a spherical mesh for a given HemisphereLight.
+Core / Helpers | PlaneHelper (extends Line) | A helper object to visualize an instance of Plane.
+Core / Helpers | PointLightHelper (extends Mesh) | This displays a helper object consisting of a spherical mesh for visualizing an instance of PointLight.
+Core / Helpers | PolarGridHelper (extends LineSegments) | This helper is an object to define polar grids. Grids are two-dimensional arrays of lines.
+Core / Helpers | SkeletonHelper (extends LineSegments) | A helper object to assist with visualizing a Skeleton.
+Core / Helpers | SpotLightHelper (extends Object3D) | This displays a cone shaped helper object for a SpotLight.
+Core / Lights | AmbientLight (extends Light) | This light globally illuminates all objects in the scene equally.
+Core / Lights | DirectionalLight (extends Light) | A light that gets emitted in a specific direction. This light will behave as though it is infinitely far away and the rays produced from it are all parallel. The common use case for this is to simulate daylight; the sun 
+Core / Lights | DirectionalLightShadow (extends LightShadow) | Represents the shadow configuration of directional lights.
+Core / Lights | HemisphereLight (extends Light) | A light source positioned directly above the scene, with color fading from the sky color to the ground color.
+Core / Lights | IESSpotLight (extends SpotLight) | A IES version of SpotLight. Can only be used with WebGPURenderer.
+Core / Lights | Light (extends Object3D) | Abstract base class for lights - all other light types inherit the properties and methods described here.
+Core / Lights | LightProbe (extends Light) | Light probes are an alternative way of adding light to a 3D scene. Unlike classical light sources (e.g. directional, point or spot lights), light probes do not emit light. Instead they store information about light passi
+Core / Lights | LightShadow | Abstract base class for light shadow classes. These classes represent the shadow configuration for different light types.
+Core / Lights | PointLight (extends Light) | A light that gets emitted from a single point in all directions. A common use case for this is to replicate the light emitted from a bare lightbulb.
+Core / Lights | PointLightShadow (extends LightShadow) | Represents the shadow configuration of point lights.
+Core / Lights | ProjectorLight (extends SpotLight) | A projector light version of SpotLight. Can only be used with WebGPURenderer.
+Core / Lights | RectAreaLight (extends Light) | This class emits light uniformly across the face a rectangular plane. This light type can be used to simulate light sources such as bright windows or strip lighting.
+Core / Lights | SpotLight (extends Light) | This light gets emitted from a single point in one direction, along a cone that increases in size the further from the light it gets.
+Core / Lights | SpotLightShadow (extends LightShadow) | Represents the shadow configuration of directional lights.
+Core / Loaders | AnimationLoader (extends Loader) | Class for loading animation clips in the JSON format. The files are internally loaded via FileLoader.
+Core / Loaders | AudioLoader (extends Loader) | Class for loading audio buffers. Audios are internally loaded via FileLoader.
+Core / Loaders | BufferGeometryLoader (extends Loader) | Class for loading geometries. The files are internally loaded via FileLoader.
+Core / Loaders | Cache | A simple caching system, used internally by FileLoader. To enable caching across all loaders that use FileLoader, add `THREE.Cache.enabled = true.` once in your app.
+Core / Loaders | CompressedTextureLoader (extends Loader) | Abstract base class for loading compressed texture formats S3TC, ASTC or ETC. Textures are internally loaded via FileLoader.
+Core / Loaders | CubeTextureLoader (extends Loader) | Class for loading cube textures. Images are internally loaded via ImageLoader.
+Core / Loaders | DataTextureLoader (extends Loader) | Abstract base class for loading binary texture formats RGBE, EXR or TGA. Textures are internally loaded via FileLoader.
+Core / Loaders | FileLoader (extends Loader) | A low level class for loading resources with the Fetch API, used internally by most loaders. It can also be used directly to load any file type that does not have a loader.
+Core / Loaders | ImageBitmapLoader (extends Loader) | A loader for loading images as an ImageBitmap (https://developer.mozilla.org/en-US/docs/Web/API/ImageBitmap). An `ImageBitmap` provides an asynchronous and resource efficient pathway to prepare textures for rendering.
+Core / Loaders | ImageLoader (extends Loader) | A loader for loading images. The class loads images with the HTML `Image` API.
+Core / Loaders | Loader | Abstract base class for loaders.
+Core / Loaders | LoaderUtils | A class with loader utility functions.
+Core / Loaders | LoadingManager | Handles and keeps track of loaded and pending data. A default global instance of this class is created and used by loaders if not supplied manually.
+Core / Loaders | MaterialLoader (extends Loader) | Class for loading materials. The files are internally loaded via FileLoader.
+Core / Loaders | NodeLoader (extends Loader) | A loader for loading node objects in the three.js JSON Object/Scene format.
+Core / Loaders | NodeMaterialLoader (extends MaterialLoader) | A special type of material loader for loading node materials.
+Core / Loaders | NodeObjectLoader (extends ObjectLoader) | A special type of object loader for loading 3D objects using node materials.
+Core / Loaders | ObjectLoader (extends Loader) | A loader for loading a JSON resource in the JSON Object/Scene format (https://github.com/mrdoob/three.js/wiki/JSON-Object-Scene-format-4). The files are internally loaded via FileLoader.
+Core / Loaders | TextureLoader (extends Loader) | Class for loading textures. Images are internally loaded via ImageLoader.
+Core / Materials | Line2NodeMaterial (extends NodeMaterial) | This node material can be used to render lines with a size larger than one by representing them as instanced meshes.
+Core / Materials | LineBasicMaterial (extends Material) | A material for rendering line primitives.
+Core / Materials | LineBasicNodeMaterial (extends NodeMaterial) | Node material version of LineBasicMaterial.
+Core / Materials | LineDashedMaterial (extends LineBasicMaterial) | A material for rendering line primitives.
+Core / Materials | LineDashedNodeMaterial (extends NodeMaterial) | Node material version of LineDashedMaterial.
+Core / Materials | Material (extends EventDispatcher) | Abstract base class for materials.
+Core / Materials | MeshBasicMaterial (extends Material) | A material for drawing geometries in a simple shaded (flat or wireframe) way.
+Core / Materials | MeshBasicNodeMaterial (extends NodeMaterial) | Node material version of MeshBasicMaterial.
+Core / Materials | MeshDepthMaterial (extends Material) | A material for drawing geometry by depth. Depth is based off of the camera near and far plane. White is nearest, black is farthest.
+Core / Materials | MeshDistanceMaterial (extends Material) | A material used internally for implementing shadow mapping with point lights.
+Core / Materials | MeshLambertMaterial (extends Material) | A material for non-shiny surfaces, without specular highlights.
+Core / Materials | MeshLambertNodeMaterial (extends NodeMaterial) | Node material version of MeshLambertMaterial.
+Core / Materials | MeshMatcapMaterial (extends Material) | This material is defined by a MatCap (or Lit Sphere) texture, which encodes the material color and shading.
+Core / Materials | MeshMatcapNodeMaterial (extends NodeMaterial) | Node material version of MeshMatcapMaterial.
+Core / Materials | MeshNormalMaterial (extends Material) | A material that maps the normal vectors to RGB colors.
+Core / Materials | MeshNormalNodeMaterial (extends NodeMaterial) | Node material version of MeshNormalMaterial.
+Core / Materials | MeshPhongMaterial (extends Material) | A material for shiny surfaces with specular highlights.
+Core / Materials | MeshPhongNodeMaterial (extends NodeMaterial) | Node material version of MeshPhongMaterial.
+Core / Materials | MeshPhysicalMaterial (extends MeshStandardMaterial) | An extension of the MeshStandardMaterial, providing more advanced physically-based rendering properties:
+Core / Materials | MeshPhysicalNodeMaterial (extends MeshStandardNodeMaterial) | Node material version of MeshPhysicalMaterial.
+Core / Materials | MeshSSSNodeMaterial (extends MeshPhysicalNodeMaterial) | This node material is an experimental extension of MeshPhysicalNodeMaterial that implements a Subsurface scattering (SSS) term.
+Core / Materials | MeshStandardMaterial (extends Material) | A standard physically based material, using Metallic-Roughness workflow.
+Core / Materials | MeshStandardNodeMaterial (extends NodeMaterial) | Node material version of MeshStandardMaterial.
+Core / Materials | MeshToonMaterial (extends Material) | A material implementing toon shading.
+Core / Materials | MeshToonNodeMaterial (extends NodeMaterial) | Node material version of MeshToonMaterial.
+Core / Materials | NodeMaterial (extends Material) | Base class for all node materials.
+Core / Materials | NodeMaterialObserver | This class is used by WebGPURenderer as management component. It's primary purpose is to determine whether render objects require a refresh right before they are going to be rendered or not.
+Core / Materials | PointsMaterial (extends Material) | A material for rendering point primitives.
+Core / Materials | PointsNodeMaterial (extends SpriteNodeMaterial) | Node material version of PointsMaterial.
+Core / Materials | RawShaderMaterial (extends ShaderMaterial) | This class works just like ShaderMaterial, except that definitions of built-in uniforms and attributes are not automatically prepended to the GLSL shader code.
+Core / Materials | SSSLightingModel (extends PhysicalLightingModel) | Represents the lighting model for MeshSSSNodeMaterial.
+Core / Materials | ShaderMaterial (extends Material) | A material rendered with custom shaders. A shader is a small program written in GLSL. that runs on the GPU. You may want to use a custom shader if you need to implement an effect not included with any of the built-in mat
+Core / Materials | ShadowMaterial (extends Material) | This material can receive shadows, but otherwise is completely transparent.
+Core / Materials | ShadowNodeMaterial (extends NodeMaterial) | Node material version of ShadowMaterial.
+Core / Materials | SpriteMaterial (extends Material) | A material for rendering instances of Sprite.
+Core / Materials | SpriteNodeMaterial (extends NodeMaterial) | Node material version of SpriteMaterial.
+Core / Materials | VolumeNodeMaterial (extends NodeMaterial) | Volume node material.
+Core / Math | BezierInterpolant (extends Interpolant) | A Bezier interpolant using cubic Bezier curves with 2D control points.
+Core / Math | Box2 | Represents an axis-aligned bounding box (AABB) in 2D space.
+Core / Math | Box3 | Represents an axis-aligned bounding box (AABB) in 3D space.
+Core / Math | Color | A Color instance is represented by RGB components in the linear *working color space*, which defaults to `LinearSRGBColorSpace`. Inputs conventionally using `SRGBColorSpace` (such as hexadecimals and CSS strings) are con
+Core / Math | CubicInterpolant (extends Interpolant) | Fast and simple cubic spline interpolant.
+Core / Math | Cylindrical | This class can be used to represent points in 3D space as Cylindrical coordinates (https://en.wikipedia.org/wiki/Cylindrical_coordinate_system).
+Core / Math | DiscreteInterpolant (extends Interpolant) | Interpolant that evaluates to the sample value at the position preceding the parameter.
+Core / Math | Euler | A class representing Euler angles.
+Core / Math | Frustum | Frustums are used to determine what is inside the camera's field of view. They help speed up the rendering process - objects which lie outside a camera's frustum can safely be excluded from rendering.
+Core / Math | FrustumArray | FrustumArray is used to determine if an object is visible in at least one camera from an array of cameras. This is particularly useful for multi-view renderers.
+Core / Math | Interpolant | Abstract base class of interpolants over parametric samples.
+Core / Math | Line3 | An analytical line segment in 3D space represented by a start and end point.
+Core / Math | LinearInterpolant (extends Interpolant) | A basic linear interpolant.
+Core / Math | MathUtils | A collection of math utility functions.
+Core / Math | Matrix2 | Represents a 2x2 matrix.
+Core / Math | Matrix3 | Represents a 3x3 matrix.
+Core / Math | Matrix4 | Represents a 4x4 matrix.
+Core / Math | Plane | A two dimensional surface that extends infinitely in 3D space, represented in Hessian normal form (https://mathworld.wolfram.com/HessianNormalForm.html) by a unit length normal vector and a constant.
+Core / Math | Quaternion | Class for representing a Quaternion. Quaternions are used in three.js to represent rotations.
+Core / Math | QuaternionLinearInterpolant (extends Interpolant) | Spherical linear unit quaternion interpolant.
+Core / Math | Ray | A ray that emits from an origin in a certain direction. The class is used by Raycaster to assist with raycasting. Raycasting is used for mouse picking (working out what objects in the 3D space the mouse is over) amongst 
+Core / Math | Sphere | An analytical 3D sphere defined by a center and radius. This class is mainly used as a Bounding Sphere for 3D objects.
+Core / Math | Spherical | This class can be used to represent points in 3D space as Spherical coordinates (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
+Core / Math | SphericalHarmonics3 | Represents a third-order spherical harmonics (SH). Light probes use this class to encode lighting information.
+Core / Math | Triangle | A geometric triangle as defined by three vectors representing its three corners.
+Core / Math | Vector2 | Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent a number of things, such as:
+Core / Math | Vector3 | Class representing a 3D vector. A 3D vector is an ordered triplet of numbers (labeled x, y and z), which can be used to represent a number of things, such as:
+Core / Math | Vector4 | Class representing a 4D vector. A 4D vector is an ordered quadruplet of numbers (labeled x, y, z and w), which can be used to represent a number of things, such as:
+Core / Nodes | AONode (extends LightingNode) | A generic class that can be used by nodes which contribute ambient occlusion to the scene. E.g. an ambient occlusion map node can be used as input for this module. Used in NodeMaterial.
+Core / Nodes | AmbientLightNode (extends AnalyticLightNode) | Module for representing ambient lights as nodes.
+Core / Nodes | AnalyticLightNode (extends LightingNode) | Base class for analytic light nodes.
+Core / Nodes | ArrayElementNode (extends Node) | Base class for representing element access on an array-like node data structures.
+Core / Nodes | ArrayNode (extends TempNode) | ArrayNode represents a collection of nodes, typically created using the array function.
+Core / Nodes | AssignNode (extends TempNode) | These node represents an assign operation. Meaning a node is assigned to another node.
+Core / Nodes | AtomicFunctionNode (extends Node) | `AtomicFunctionNode` represents any function that can operate on atomic variable types within a shader. In an atomic function, any modification to an atomic variable will occur as an indivisible step with a defined order
+Core / Nodes | AttributeNode (extends Node) | Base class for representing shader attributes as nodes.
+Core / Nodes | BarrierNode (extends Node) | Represents a GPU control barrier that synchronizes compute operations within a given scope.
+Core / Nodes | BasicEnvironmentNode (extends LightingNode) | Represents a basic model for Image-based lighting (IBL). The environment is defined via environment maps in the equirectangular or cube map format. `BasicEnvironmentNode` is intended for non-PBR materials like MeshBasicN
+Core / Nodes | BasicLightMapNode (extends LightingNode) | A specific version of IrradianceNode that is only relevant for MeshBasicNodeMaterial. Since the material is unlit, it requires a special scaling factor for the light map.
+Core / Nodes | BasicLightingModel (extends LightingModel) | Represents the lighting model for unlit materials. The only light contribution is baked indirect lighting modulated with ambient occlusion and the material's diffuse color. Environment mapping is supported. Used in MeshB
+Core / Nodes | BitcastNode (extends TempNode) | This node represents an operation that reinterprets the bit representation of a value in one type as a value in another type.
+Core / Nodes | BitcountNode (extends MathNode) | This node represents an operation that counts the bits of a piece of shader data.
+Core / Nodes | BufferAttributeNode (extends InputNode) | In earlier `three.js` versions it was only possible to define attribute data on geometry level. With `BufferAttributeNode`, it is also possible to do this on the node level.
+Core / Nodes | BufferNode (extends UniformNode) | A special type of uniform node which represents array-like data as uniform buffers. The access usually happens via `element()` which returns an instance of ArrayElementNode. For example:
+Core / Nodes | BuiltinNode (extends Node) | The node allows to set values for built-in shader variables. That is required for features like hardware-accelerated vertex clipping.
+Core / Nodes | BumpMapNode (extends TempNode) | This class can be used for applying bump maps to materials.
+Core / Nodes | BypassNode (extends Node) | The class generates the code of a given node but returns another node in the output. This can be used to call a method or node that does not return a value, i.e. type `void` on an input where returning a value is require
+Core / Nodes | ClippingNode (extends Node) | This node is used in NodeMaterial to setup the clipping which can happen hardware-accelerated (if supported) and optionally use alpha-to-coverage for anti-aliasing clipped edges.
+Core / Nodes | CodeNode (extends Node) | This class represents native code sections. It is the base class for modules like FunctionNode which allows to implement functions with native shader languages.
+Core / Nodes | ColorSpaceNode (extends TempNode) | This node represents a color space conversion. Meaning it converts a color value from a source to a target color space.
+Core / Nodes | ComputeBuiltinNode (extends Node) | `ComputeBuiltinNode` represents a compute-scope builtin value that expose information about the currently running dispatch and/or the device it is running on.
+Core / Nodes | ComputeNode (extends Node) | Represents a compute shader node.
+Core / Nodes | ConditionalNode (extends Node) | Represents a logical `if/else` statement. Can be used as an alternative to the `If()`/`Else()` syntax.
+Core / Nodes | ConstNode (extends InputNode) | Class for representing a constant value in the shader.
+Core / Nodes | ContextNode (extends Node) | This node can be used as a context management component for another node. NodeBuilder performs its node building process in a specific context and this node allows the modify the context. A typical use case is to overwri
+Core / Nodes | ConvertNode (extends Node) | This module is part of the TSL core and usually not used in app level code. It represents a convert operation during the shader generation process meaning it converts the data type of a node to a target data type.
+Core / Nodes | CubeMapNode (extends TempNode) | This node can be used to automatically convert environment maps in the equirectangular format into the cube map format.
+Core / Nodes | CubeTextureNode (extends TextureNode) | This type of uniform node represents a cube texture.
+Core / Nodes | DirectionalLightNode (extends AnalyticLightNode) | Module for representing directional lights as nodes.
+Core / Nodes | EnvironmentNode (extends LightingNode) | Represents a physical model for Image-based lighting (IBL). The environment is defined via environment maps in the equirectangular, cube map or cubeUV (PMREM) format. `EnvironmentNode` is intended for PBR materials like 
+Core / Nodes | EventNode (extends Node) | EventNode is a node that executes a callback during specific update phases.
+Core / Nodes | ExpressionNode (extends Node) | This class can be used to implement basic expressions in shader code. Basic examples for that are `return`, `continue` or `discard` statements.
+Core / Nodes | FlipNode (extends TempNode) | This module is part of the TSL core and usually not used in app level code. It represents a flip operation during the shader generation process meaning it flips normalized values with the following formula:
+Core / Nodes | FrontFacingNode (extends Node) | This node can be used to evaluate whether a primitive is front or back facing.
+Core / Nodes | FunctionCallNode (extends TempNode) | This module represents the call of a FunctionNode. Developers are usually not confronted with this module since they use the predefined TSL syntax `wgslFn` and `glslFn` which encapsulate this logic.
+Core / Nodes | FunctionNode (extends CodeNode) | This class represents a native shader function. It can be used to implement certain aspects of a node material with native shader code. There are two predefined TSL functions for easier usage.
+Core / Nodes | FunctionOverloadingNode (extends Node) | This class allows to define multiple overloaded versions of the same function. Depending on the parameters of the function call, the node picks the best-fit overloaded version.
+Core / Nodes | GLSLNodeFunction (extends NodeFunction) | This class represents a GLSL node function.
+Core / Nodes | GLSLNodeParser (extends NodeParser) | A GLSL node parser.
+Core / Nodes | HemisphereLightNode (extends AnalyticLightNode) | Module for representing hemisphere lights as nodes.
+Core / Nodes | IESSpotLightNode (extends SpotLightNode) | An IES version of the default spot light node.
+Core / Nodes | IndexNode (extends Node) | This class represents shader indices of different types. The following predefined node objects cover frequent use cases:
+Core / Nodes | InputNode (extends Node) | Base class for representing data input nodes.
+Core / Nodes | InspectorNode (extends Node) | InspectorNode is a wrapper node that allows inspection of node values during rendering. It can be used to debug or analyze node outputs in the rendering pipeline.
+Core / Nodes | IrradianceNode (extends LightingNode) | A generic class that can be used by nodes which contribute irradiance to the scene. E.g. a light map node can be used as input for this module. Used in NodeMaterial.
+Core / Nodes | IsolateNode (extends Node) | This node can be used as a cache management component for another node. Caching is in general used by default in NodeBuilder but this node allows the usage of a shared parent cache during the build process.
+Core / Nodes | JoinNode (extends TempNode) | This module is part of the TSL core and usually not used in app level code. It represents a join operation during the shader generation process. For example in can compose/join two single floats into a `vec2` type.
+Core / Nodes | LightProbeNode (extends AnalyticLightNode) | Module for representing light probes as nodes.
+Core / Nodes | LightingContextNode (extends ContextNode) | `LightingContextNode` represents an extension of the ContextNode module by adding lighting specific context data. It represents the runtime context of LightsNode.
+Core / Nodes | LightingModel | Abstract class for implementing lighting models. The module defines multiple methods that concrete lighting models can implement. These methods are executed at different points during the light evaluation process.
+Core / Nodes | LightingNode (extends Node) | Base class for lighting nodes.
+Core / Nodes | LightsNode (extends Node) | This node represents the scene's lighting and manages the lighting model's life cycle for the current build 3D object. It is responsible for computing the total outgoing light in a given lighting context.
+Core / Nodes | LoopNode (extends Node) | This module offers a variety of ways to implement loops in TSL. In it's basic form it's:
+Core / Nodes | MRTNode (extends OutputStructNode) | This node can be used setup a MRT context for rendering. A typical MRT setup for post-processing is shown below:
+Core / Nodes | MaterialNode (extends Node) | This class should simplify the node access to material properties. It internal uses reference nodes to make sure changes to material properties are automatically reflected to predefined TSL objects like e.g. `materialCol
+Core / Nodes | MaterialReferenceNode (extends ReferenceNode) | This node is a special type of reference node which is intended for linking material properties with node values.
+Core / Nodes | MathNode (extends TempNode) | This node represents a variety of mathematical methods available in shaders. They are divided into three categories:
+Core / Nodes | MaxMipLevelNode (extends UniformNode) | A special type of uniform node that computes the maximum mipmap level for a given texture node.
+Core / Nodes | MemberNode (extends Node) | Base class for representing member access on an object-like node data structures.
+Core / Nodes | ModelNode (extends Object3DNode) | This type of node is a specialized version of `Object3DNode` with larger set of model related metrics. Unlike `Object3DNode`, `ModelNode` extracts the reference to the 3D object from the current node frame state.
+Core / Nodes | Node (extends EventDispatcher) | Base class for all nodes.
+Core / Nodes | NodeAttribute | NodeBuilder is going to create instances of this class during the build process of nodes. They represent the final shader attributes that are going to be generated by the builder. Arrays of node attributes is maintained 
+Core / Nodes | NodeBuilder | Base class for builders which generate a shader program based on a 3D object and its node material definition.
+Core / Nodes | NodeCache | This utility class is used in NodeBuilder as an internal cache data structure for node data.
+Core / Nodes | NodeCode | NodeBuilder is going to create instances of this class during the build process of nodes. They represent user-defined, native shader code portions that are going to be injected by the builder. A dictionary of node codes 
+Core / Nodes | NodeError | Custom error class for node-related errors, including stack trace information.
+Core / Nodes | NodeFrame | Management class for updating nodes. The module tracks metrics like the elapsed time, delta time, the render and frame ID to correctly call the node update methods Node#updateBefore, Node#update and Node#updateAfter depe
+Core / Nodes | NodeFunction | Base class for node functions. A derived module must be implemented for each supported native shader language. Similar to other `Node*` modules, this class is only relevant during the building process and not used in use
+Core / Nodes | NodeFunctionInput | Describes the input of a NodeFunction.
+Core / Nodes | NodeParser | Base class for node parsers. A derived parser must be implemented for each supported native shader language.
+Core / Nodes | NodeUniform | NodeBuilder is going to create instances of this class during the build process of nodes. They represent the final shader uniforms that are going to be generated by the builder. A dictionary of node uniforms is maintaine
+Core / Nodes | NodeVar | NodeBuilder is going to create instances of this class during the build process of nodes. They represent the final shader variables that are going to be generated by the builder. A dictionary of node variables is maintai
+Core / Nodes | NodeVarying (extends NodeVar) | NodeBuilder is going to create instances of this class during the build process of nodes. They represent the final shader varyings that are going to be generated by the builder. An array of node varyings is maintained in
+Core / Nodes | NormalMapNode (extends TempNode) | This class can be used for applying normals maps to materials.
+Core / Nodes | Object3DNode (extends Node) | This node can be used to access transformation related metrics of 3D objects. Depending on the selected scope, a different metric is represented as a uniform in the shader. The following scopes are supported:
+Core / Nodes | OperatorNode (extends TempNode) | This node represents basic mathematical and logical operations like addition, subtraction or comparisons (e.g. `equal()`).
+Core / Nodes | OutputStructNode (extends Node) | This node can be used to define multiple outputs in a shader programs.
+Core / Nodes | OverrideContextNode (extends ContextNode) | A specialized context node designed to override specific target nodes within a node sub-graph or flow. This allows replacing specific inputs (e.g., normal and position vectors) dynamically during compilation for a specif
+Core / Nodes | PMREMNode (extends TempNode) | This node represents a PMREM which is a special type of preprocessed environment map intended for PBR materials.
+Core / Nodes | PackFloatNode (extends TempNode) | This node represents an operation that packs floating-point values of a vector into an unsigned 32-bit integer
+Core / Nodes | Packed4x8IntegerNode (extends TempNode) | Represents one of the built-in functions of WGSL's `packed_4x8_integer_dot_product` language extension. If the extension is not available, the node falls back to an emulation with plain integer bit operations.
+Core / Nodes | ParameterNode (extends PropertyNode) | Special version of PropertyNode which is used for parameters.
+Core / Nodes | PassMultipleTextureNode (extends PassTextureNode) | An extension of `PassTextureNode` which allows to manage more than one internal texture. Relevant for the `getPreviousTexture()` related API.
+Core / Nodes | PassNode (extends TempNode) | Represents a render pass (sometimes called beauty pass) in context of post processing. This pass produces a render for the given scene and camera and can provide multiple outputs via MRT for further processing.
+Core / Nodes | PassTextureNode (extends TextureNode) | Represents the texture of a pass node.
+Core / Nodes | PhongLightingModel (extends BasicLightingModel) | Represents the lighting model for a phong material. Used in MeshPhongNodeMaterial.
+Core / Nodes | PhysicalLightingModel (extends LightingModel) | Represents the lighting model for a PBR material.
+Core / Nodes | PointLightNode (extends AnalyticLightNode) | Module for representing point lights as nodes.
+Core / Nodes | PointShadowNode (extends ShadowNode) | Represents the shadow implementation for point light nodes.
+Core / Nodes | PointUVNode (extends Node) | A node for representing the uv coordinates of points.
+Core / Nodes | ProjectorLightNode (extends SpotLightNode) | An implementation of a projector light node.
+Core / Nodes | PropertyNode (extends Node) | This class represents a shader property. It can be used to explicitly define a property and assign a value to it.
+Core / Nodes | RTTNode (extends TextureNode) | `RTTNode` takes another node and uses it with a `QuadMesh` to render into a texture (RTT). This module is especially relevant in context of post processing where certain nodes require texture input for their effects. Wit
+Core / Nodes | RangeNode (extends Node) | `RangeNode` generates random instanced attribute data in a defined range. An exemplary use case for this utility node is to generate random per-instance colors:
+Core / Nodes | RectAreaLightNode (extends AnalyticLightNode) | Module for representing rect area lights as nodes.
+Core / Nodes | ReferenceBaseNode (extends Node) | Base class for nodes which establishes a reference to a property of another object. In this way, the value of the node is automatically linked to the value of referenced object. Reference nodes internally represent the l
+Core / Nodes | ReferenceElementNode (extends ArrayElementNode) | This class is only relevant if the referenced property is array-like. In this case, `ReferenceElementNode` allows to refer to a specific element inside the data structure via an index.
+Core / Nodes | ReferenceNode (extends Node) | This type of node establishes a reference to a property of another object. In this way, the value of the node is automatically linked to the value of referenced object. Reference nodes internally represent the linked val
+Core / Nodes | ReflectorNode (extends TextureNode) | This node can be used to implement mirror-like flat reflective surfaces.
+Core / Nodes | RenderOutputNode (extends TempNode) | Normally, tone mapping and color conversion happens automatically just before outputting a pixel to the default (screen) framebuffer. In certain post processing setups this is too late because some effects such as FXAA r
+Core / Nodes | RendererReferenceNode (extends ReferenceBaseNode) | This node is a special type of reference node which is intended for linking renderer properties with node values.
+Core / Nodes | RotateNode (extends TempNode) | Applies a rotation to the given position node.
+Core / Nodes | SampleNode (extends Node) | Class representing a node that samples a value using a provided callback function.
+Core / Nodes | ScreenNode (extends Node) | This node provides a collection of screen related metrics. Depending on ScreenNode#scope, the nodes can represent resolution or viewport data as well as fragment or uv coordinates.
+Core / Nodes | SetNode (extends TempNode) | This module is part of the TSL core and usually not used in app level code. `SetNode` represents a set operation which means it is used to implement any `setXYZW()`, `setRGBA()` and `setSTPQ()` method invocations on node
+Core / Nodes | ShadowBaseNode (extends Node) | Base class for all shadow nodes.
+Core / Nodes | ShadowMaskModel (extends LightingModel) | Represents lighting model for a shadow material. Used in ShadowNodeMaterial.
+Core / Nodes | ShadowNode (extends ShadowBaseNode) | Represents the default shadow implementation for lighting nodes.
+Core / Nodes | SplitNode (extends Node) | This module is part of the TSL core and usually not used in app level code. `SplitNode` represents a property access operation which means it is used to implement any `.xyzw`, `.rgba` and `stpq` usage on node objects. Fo
+Core / Nodes | SpotLightNode (extends AnalyticLightNode) | Module for representing spot lights as nodes.
+Core / Nodes | StackNode (extends Node) | Stack is a helper for Nodes that need to produce stack-based code instead of continuous flow. They are usually needed in cases like `If`, `Else`.
+Core / Nodes | StackTrace | Class representing a stack trace for debugging purposes.
+Core / Nodes | StorageArrayElementNode (extends ArrayElementNode) | This class enables element access on instances of StorageBufferNode. In most cases, it is indirectly used when accessing elements with the StorageBufferNode#element method.
+Core / Nodes | StorageBufferNode (extends BufferNode) | This node is used in context of compute shaders and allows to define a storage buffer for data. A typical workflow is to create instances of this node with the convenience functions `attributeArray()` or `instancedArray(
+Core / Nodes | StorageTexture3DNode (extends StorageTextureNode) | This special version of a texture node can be used to write data into a 3D storage texture with a compute shader.
+Core / Nodes | StorageTextureNode (extends TextureNode) | This special version of a texture node can be used to write data into a storage texture with a compute shader.
+Core / Nodes | StructNode (extends Node) | StructNode allows to create custom structures with multiple members. This can also be used to define structures in attribute and uniform data.
+Core / Nodes | StructTypeNode (extends Node) | Represents a struct type node in the node-based system. This class is used to define and manage the layout and types of struct members. It extends the base Node class and provides methods to get the length of the struct,
+Core / Nodes | SubBuildNode (extends Node) | This node is used to build a sub-build in the node system.
+Core / Nodes | SubgroupFunctionNode (extends TempNode) | This class represents a set of built in WGSL shader functions that sync synchronously execute an operation across a subgroup, or 'warp', of compute or fragment shader invocations within a workgroup. Typically, these func
+Core / Nodes | TempNode (extends Node) | This module uses cache management to create temporary variables if the node is used more than once to prevent duplicate calculations.
+Core / Nodes | Texture3DNode (extends TextureNode) | This type of uniform node represents a 3D texture.
+Core / Nodes | TextureNode (extends UniformNode) | This type of uniform node represents a 2D texture.
+Core / Nodes | TextureSizeNode (extends Node) | A node that represents the dimensions of a texture. The texture size is retrieved in the shader via built-in shader functions like `textureDimensions()` or `textureSize()`.
+Core / Nodes | ToneMappingNode (extends TempNode) | This node represents a tone mapping operation.
+Core / Nodes | ToonLightingModel (extends LightingModel) | Represents the lighting model for a toon material. Used in MeshToonNodeMaterial.
+Core / Nodes | ToonOutlinePassNode (extends PassNode) | Represents a render pass for producing a toon outline effect on compatible objects. Only 3D objects with materials of type `MeshToonMaterial` and `MeshToonNodeMaterial` will receive the outline.
+Core / Nodes | UniformArrayElementNode (extends ArrayElementNode) | Represents the element access on uniform array nodes.
+Core / Nodes | UniformArrayNode (extends BufferNode) | Similar to BufferNode this module represents array-like data as uniform buffers. Unlike BufferNode, it can handle more common data types in the array (e.g `three.js` primitives) and automatically manage buffer padding. I
+Core / Nodes | UniformGroupNode (extends Node) | This node can be used to group single instances of UniformNode and manage them as a uniform buffer.
+Core / Nodes | UniformNode (extends InputNode) | Class for representing a uniform.
+Core / Nodes | UnpackFloatNode (extends TempNode) | This node represents an operation that unpacks values from a 32-bit unsigned integer, reinterpreting the results as a floating-point vector
+Core / Nodes | UserDataNode (extends ReferenceNode) | A special type of reference node that allows to link values in `userData` fields to node objects.
+Core / Nodes | VarNode (extends Node) | Class for representing shader variables as nodes. Variables are created from existing nodes like the following:
+Core / Nodes | VaryingNode (extends Node) | Class for representing shader varyings as nodes. Varyings are create from existing nodes like the following:
+Core / Nodes | VelocityNode (extends TempNode) | A node for representing motion or velocity vectors. Foundation for advanced post processing effects like motion blur or TRAA.
+Core / Nodes | VertexColorNode (extends AttributeNode) | An attribute node for representing vertex colors.
+Core / Nodes | ViewportDepthNode (extends Node) | This node offers a collection of features in context of the depth logic in the fragment shader. Depending on ViewportDepthNode#scope, it can be used to define a depth value for the current fragment or for depth evaluatio
+Core / Nodes | ViewportDepthTextureNode (extends ViewportTextureNode) | Represents the depth of the current viewport as a texture. This module can be used in combination with viewport texture to achieve effects that require depth evaluation.
+Core / Nodes | ViewportSharedTextureNode (extends ViewportTextureNode) | `ViewportTextureNode` creates an internal texture for each node instance. This module shares a texture across all instances of `ViewportSharedTextureNode`. It should be the first choice when using data of the default/scr
+Core / Nodes | ViewportTextureNode (extends TextureNode) | A special type of texture node which represents the data of the current viewport as a texture. The module extracts data from the current bound framebuffer with a copy operation so no extra render pass is required to prod
+Core / Nodes | VolumetricLightingModel (extends LightingModel) | VolumetricLightingModel class extends the LightingModel to implement volumetric lighting effects. This model calculates the scattering and transmittance of light through a volumetric medium. It dynamically adjusts the di
+Core / Nodes | WorkgroupInfoElementNode (extends ArrayElementNode) | Represents an element of a 'workgroup' scoped buffer.
+Core / Nodes | WorkgroupInfoNode (extends Node) | A node allowing the user to create a 'workgroup' scoped buffer within the context of a compute shader. Typically, workgroup scoped buffers are created to hold data that is transferred from a global storage scope into a l
+Core / Objects | BatchedMesh (extends Mesh) | A special version of a mesh with multi draw batch rendering support. Use this class if you have to render a large number of objects with the same material but with different geometries or world transformations. The usage
+Core / Objects | Bone (extends Object3D) | A bone which is part of a Skeleton. The skeleton in turn is used by the SkinnedMesh.
+Core / Objects | ClippingGroup (extends Group) | In earlier three.js versions, clipping was defined globally on the renderer or on material level. This special version of `THREE.Group` allows to encode the clipping state into the scene graph. Meaning if you create an i
+Core / Objects | Group (extends Object3D) | This is almost identical to an Object3D. Its purpose is to make working with groups of objects syntactically clearer.
+Core / Objects | InstancedMesh (extends Mesh) | A special version of a mesh with instanced rendering support. Use this class if you have to render a large number of objects with the same geometry and material(s) but with different world transformations. The usage of '
+Core / Objects | LOD (extends Object3D) | A component for providing a basic Level of Detail (LOD) mechanism.
+Core / Objects | Line (extends Object3D) | A continuous line. The line are rendered by connecting consecutive vertices with straight lines.
+Core / Objects | LineLoop (extends Line) | A continuous line. This is nearly the same as Line the only difference is that the last vertex is connected with the first vertex in order to close the line to form a loop.
+Core / Objects | LineSegments (extends Line) | A series of lines drawn between pairs of vertices.
+Core / Objects | Mesh (extends Object3D) | Class representing triangular polygon mesh based objects.
+Core / Objects | Points (extends Object3D) | A class for displaying points or point clouds.
+Core / Objects | Skeleton | Class for representing the armatures in `three.js`. The skeleton is defined by a hierarchy of bones.
+Core / Objects | SkinnedMesh (extends Mesh) | A mesh that has a Skeleton that can then be used to animate the vertices of the geometry with skinning/skeleton animation.
+Core / Objects | Sprite (extends Object3D) | A sprite is a plane that always faces towards the camera, generally with a partially transparent texture applied.
+Core / Renderers | Backend | Most of the rendering related logic is implemented in the Renderer module and related management components. Sometimes it is required though to execute commands which are specific to the current 3D backend (which is WebG
+Core / Renderers | BlendMode | Represents blending configuration.
+Core / Renderers | BundleGroup (extends Group) | A specialized group which enables applications access to the Render Bundle API of WebGPU. The group with all its descendant nodes are considered as one render bundle and processed as such by the renderer.
+Core / Renderers | CanvasTarget (extends EventDispatcher) | CanvasTarget is a class that represents the final output destination of the renderer.
+Core / Renderers | CubeRenderTarget (extends RenderTarget) | This class represents a cube render target. It is a special version of `WebGLCubeRenderTarget` which is compatible with `WebGPURenderer`.
+Core / Renderers | DirectRenderPipeline (extends RenderPipeline) | An alternative render pipeline that applies output processing directly in material shaders. This avoids the intermediate framebuffer and output pass used by Renderer, but changes blending and is not compatible with mater
+Core / Renderers | GLSLNodeBuilder (extends NodeBuilder) | A node builder targeting GLSL.
+Core / Renderers | IndirectStorageBufferAttribute (extends StorageBufferAttribute) | This special type of buffer attribute is intended for compute shaders. It can be used to encode draw parameters for indirect draw calls.
+Core / Renderers | Info | This renderer module provides a series of statistical information about the GPU memory and the rendering process. Useful for debugging and monitoring.
+Core / Renderers | InspectorBase (extends EventDispatcher) | InspectorBase is the base class for all inspectors.
+Core / Renderers | PostProcessing | 
+Core / Renderers | QuadMesh (extends Mesh) | This module is a helper for passes which need to render a full screen effect which is quite common in context of post processing.
+Core / Renderers | ReadbackBuffer (extends EventDispatcher) | A readback buffer is used to transfer data from the GPU to the CPU. It is primarily used to read back compute shader results.
+Core / Renderers | RenderPipeline | This module is responsible to manage the rendering pipeline setups in apps. You usually create a single instance of this class and use it to define the output of your render pipeline and post processing effect chain.
+Core / Renderers | Renderer | Base class for renderers.
+Core / Renderers | StandardNodeLibrary (extends NodeLibrary) | This version of a node library represents the standard version used in WebGPURenderer. It maps lights, tone mapping techniques and materials to node-based implementations.
+Core / Renderers | Storage3DTexture (extends Texture) | This special type of texture is intended for compute shaders. It can be used to compute the data of a texture with a compute shader.
+Core / Renderers | StorageArrayTexture (extends Texture) | This special type of texture is intended for compute shaders. It can be used to compute the data of a texture with a compute shader.
+Core / Renderers | StorageBufferAttribute (extends BufferAttribute) | This special type of buffer attribute is intended for compute shaders. In earlier three.js versions it was only possible to update attribute data on the CPU via JavaScript and then upload the data to the GPU. With the ne
+Core / Renderers | StorageInstancedBufferAttribute (extends InstancedBufferAttribute) | This special type of instanced buffer attribute is intended for compute shaders. In earlier three.js versions it was only possible to update attribute data on the CPU via JavaScript and then upload the data to the GPU. W
+Core / Renderers | StorageTexture (extends Texture) | This special type of texture is intended for compute shaders. It can be used to compute the data of a texture with a compute shader.
+Core / Renderers | TimestampQueryPool | Abstract base class of a timestamp query pool.
+Core / Renderers | WGSLNodeBuilder (extends NodeBuilder) | A node builder targeting WGSL.
+Core / Renderers | WGSLNodeFunction (extends NodeFunction) | This class represents a WSL node function.
+Core / Renderers | WGSLNodeParser (extends NodeParser) | A WGSL node parser.
+Core / Renderers | WebGL3DRenderTarget (extends WebGLRenderTarget) | A 3D render target used in context of WebGLRenderer.
+Core / Renderers | WebGLArrayRenderTarget (extends WebGLRenderTarget) | An array render target used in context of WebGLRenderer.
+Core / Renderers | WebGLCubeRenderTarget (extends WebGLRenderTarget) | A cube render target used in context of WebGLRenderer.
+Core / Renderers | WebGLRenderTarget (extends RenderTarget) | A render target used in context of WebGLRenderer.
+Core / Renderers | WebGLRenderer | This renderer uses WebGL 2 to display scenes.
+Core / Renderers | WebGLTimestampQueryPool (extends TimestampQueryPool) | Manages a pool of WebGL timestamp queries for performance measurement. Handles creation, execution, and resolution of timer queries using WebGL extensions.
+Core / Renderers | WebGPURenderer (extends Renderer) | This renderer is the new alternative of `WebGLRenderer`. `WebGPURenderer` has the ability to target different backends. By default, the renderer tries to use a WebGPU backend if the browser supports WebGPU. If not, `WebG
+Core / Renderers | WebGPUTimestampQueryPool (extends TimestampQueryPool) | Manages a pool of WebGPU timestamp queries for performance measurement. Extends the base TimestampQueryPool to provide WebGPU-specific implementation.
+Core / Renderers | WebXRDepthSensing | A XR module that manages the access to the Depth Sensing API.
+Core / Renderers | WebXRManager (extends EventDispatcher) | This class represents an abstraction of the WebXR Device API and is internally used by WebGLRenderer. `WebXRManager` also provides a public interface that allows users to enable/disable XR and perform XR related tasks li
+Core / Renderers | XRManager (extends EventDispatcher) | The XR manager is built on top of the WebXR Device API to manage XR sessions with renderer backends.
+Core / Renderers | module-UniformsUtils | Provides utility functions for managing uniforms.
+Core / Scenes | Fog | This class can be used to define a linear fog that grows linearly denser with the distance.
+Core / Scenes | FogExp2 | This class can be used to define an exponential squared fog, which gives a clear view near the camera and a faster than exponentially densening fog farther from the camera.
+Core / Scenes | Scene (extends Object3D) | Scenes allow you to set up what is to be rendered and where by three.js. This is where you place 3D objects like meshes, lines or lights.
+Core / Textures | CanvasTexture (extends Texture) | Creates a texture from a canvas element.
+Core / Textures | CompressedArrayTexture (extends CompressedTexture) | Creates a texture 2D array based on data in compressed form.
+Core / Textures | CompressedCubeTexture (extends CompressedTexture) | Creates a cube texture based on data in compressed form.
+Core / Textures | CompressedTexture (extends Texture) | Creates a texture based on data in compressed form.
+Core / Textures | CubeDepthTexture (extends DepthTexture) | This class can be used to automatically save the depth information of a cube rendering into a cube texture with depth format. Used for PointLight shadows.
+Core / Textures | CubeTexture (extends Texture) | Creates a cube texture made up of six images.
+Core / Textures | Data3DTexture (extends Texture) | Creates a three-dimensional texture from raw data, with parameters to divide it into width, height, and depth.
+Core / Textures | DataArrayTexture (extends Texture) | Creates an array of textures directly from raw buffer data.
+Core / Textures | DataTexture (extends Texture) | Creates a texture directly from raw buffer data.
+Core / Textures | DepthTexture (extends Texture) | This class can be used to automatically save the depth information of a rendering into a texture.
+Core / Textures | ExternalTexture (extends Texture) | Represents a texture created externally with the same renderer context.
+Core / Textures | FramebufferTexture (extends Texture) | This class can only be used in combination with `copyFramebufferToTexture()` methods of renderers. It extracts the contents of the current bound framebuffer and provides it as a texture for further usage.
+Core / Textures | HTMLTexture (extends Texture) | Creates a texture from an HTML element.
+Core / Textures | Source | 
+Core / Textures | Texture (extends EventDispatcher) | Base class for all textures.
+Core / Textures | TextureSource | Represents the data source of a texture.
+Core / Textures | VideoFrameTexture (extends VideoTexture) | This class can be used as an alternative way to define video data. Instead of using an instance of `HTMLVideoElement` like with `VideoTexture`, `VideoFrameTexture` expects each frame is defined manually via VideoFrameTex
+Core / Textures | VideoTexture (extends Texture) | A texture for use with a video.
+Global / None | global | 

@@ -1,0 +1,49 @@
+PhongLightingModel - Three.js Docs
+
+LightingModel → BasicLightingModel →
+
+# PhongLightingModel
+
+Represents the lighting model for a phong material. Used in MeshPhongNodeMaterial.
+
+## Constructor
+
+### new PhongLightingModel( specular : boolean )
+
+Constructs a new phong lighting model.
+
+ | **specular**  |
+
+Whether specular is supported or not.
+
+Default is `true`.  |
+
+## Properties
+
+### .specular : boolean
+
+Whether specular is supported or not. Set this to `false` if you are looking for a Lambert-like material meaning a material for non-shiny surfaces, without specular highlights.
+
+Default is `true`.
+
+## Methods
+
+### .direct( lightData : Object )
+
+Implements the direct lighting. The specular portion is optional and can be controlled with the PhongLightingModel#specular flag.
+
+ | **lightData**  |
+
+The light data.   | **Overrides:** BasicLightingModel#direct
+
+### .indirect( builder : NodeBuilder )
+
+Implements the indirect lighting.
+
+ | **builder**  |
+
+The current node builder.   | **Overrides:** BasicLightingModel#indirect
+
+## Source
+
+ src/nodes/functions/PhongLightingModel.js (https://github.com/mrdoob/three.js/blob/master/src/nodes/functions/PhongLightingModel.js)
