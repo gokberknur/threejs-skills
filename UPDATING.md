@@ -13,7 +13,6 @@ layers, and they age differently:
 1. **Regenerate the corpus**
 
    ```sh
-   cd threejs-skills
    python3 tools/update-corpus.py --dry-run     # report only
    python3 tools/update-corpus.py               # latest npm version, writes files
    python3 tools/update-corpus.py 0.187.0       # or pin a version
