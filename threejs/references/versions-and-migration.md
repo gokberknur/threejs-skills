@@ -204,7 +204,8 @@ Format: Old -> Modern (revision of change, per Migration Guide unless noted).
 | `dat.gui` | `lil-gui` (`three/addons/libs/lil-gui.module.min.js`) | r135 |
 | `THREE.Clock` | `THREE.Timer` (in core since r179; `Clock` warns "has been deprecated" since r183). Use `timer.update()` + `timer.getDelta()`; call `timer.connect( document )` for Page Visibility handling | r179, r183, r174 |
 | `renderer.setAnimationLoop( fn )` | KEEP using it (correct). With `WebGPURenderer` it also auto-inits | - |
-| `renderer.renderAsync()`, `computeAsync()`, `clearAsync()`, `initTextureAsync()`, `hasFeatureAsync()` | sync `render()`, `compute()`...; `await renderer.init()` once | deprecated r181 |
+| `renderer.renderAsync()`, `clearAsync()`, `initTextureAsync()`, `hasFeatureAsync()` | sync `render()`, `clear()`...; `await renderer.init()` once | deprecated r181 |
+| `renderer.computeAsync()` | KEEP: not deprecated (r186). Awaits `init()` then calls `compute()`; use it when the renderer may be uninitialised | - |
 | `new PostProcessing( renderer )` (WebGPU) | `new RenderPipeline( renderer )` (r186 `three/webgpu` still exports `PostProcessing` too) | r183 |
 | `Material.vertexColors = 'VertexColors'` / `THREE.VertexColors`, `FaceColors` | `material.vertexColors = true` (boolean) | r114 |
 | `material.skinning`, `morphTargets`, `morphNormals` | removed; automatic | r129, r131 |
@@ -335,7 +336,7 @@ Exact API names from the official Migration Guide. Items in r187 are in section 
 
 ### 180 -> 181
 - Indirect specular for PBR improved (#32054); energy conservation, rough materials (> 0.5) brighter (#32072); PMREM reflections improved (#32102, #32134).
-- `WebGPURenderer`: `renderAsync()`, `computeAsync()`, `clearAsync()`, `initTextureAsync()`, `hasFeatureAsync()` deprecated. Renderer must be initialised first: automatic inside `renderer.setAnimationLoop()` or manual `await renderer.init()` (needed for on-demand rendering and feature detection).
+- `WebGPURenderer`: `renderAsync()`, `clearAsync()`, `initTextureAsync()`, `hasFeatureAsync()` deprecated (`computeAsync()` was not). Renderer must be initialised first: automatic inside `renderer.setAnimationLoop()` or manual `await renderer.init()` (needed for on-demand rendering and feature detection).
 - `WebGPURenderer.waitForGPU()` removed (#32012).
 - `KTX2Loader.detectSupportAsync()` deprecated; use `detectSupport()` after `await renderer.init()`.
 - TSL `PI2` -> `TWO_PI`.
