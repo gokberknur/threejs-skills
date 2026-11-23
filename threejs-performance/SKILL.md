@@ -35,7 +35,7 @@ console.log(renderer.info.memory);   // { geometries, textures }  (WebGL also: p
 
 ## 3. The ten rules of a fast three.js scene
 
-1. **One draw call per material, not per object.** `InstancedMesh` for repeated geometry (grass, trees, particles, UI), `BatchedMesh` when geometries differ but material is shared. Both support raycasting (`instanceId`/`batchId`) and per-instance color.
+1. **One draw call per material, not per object.** `InstancedMesh` for repeated geometry (grass, trees, particles, UI), `BatchedMesh` when geometries differ but material is shared. Both support raycasting (`instanceId`/`batchId`) and per-instance color. With `BatchedMesh`, decide its two per-frame CPU flags explicitly: keep `perObjectFrustumCulled` on when the camera sees only part of the batch, turn `sortObjects` off for opaque batches with little overdraw (details in `references/draw-calls-and-geometry.md`).
 2. **Static things do not update.** `object.matrixAutoUpdate = false` after placing; `scene.matrixWorldAutoUpdate = false` + manual `updateMatrixWorld()` for fully static scenes; `renderer.shadowMap.autoUpdate = false` and set `needsUpdate = true` only when a caster moves.
 3. **Render only when something changed.** Controls `change` event + `requestRenderIfNotRequested()` pattern for viewers, editors, configurators. Cuts GPU/battery to near zero.
 4. **Texture memory is width × height × 4 × 1.33.** 4096² RGBA = 89 MB. Use 1024-2048 for most maps, KTX2 (UASTC for normal maps, ETC1S for albedo) via `KTX2Loader`, `generateMipmaps` on, `anisotropy` ≤ 8 unless needed.

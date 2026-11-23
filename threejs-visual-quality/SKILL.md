@@ -52,7 +52,7 @@ Texture rules: color/albedo/emissive maps `texture.colorSpace = THREE.SRGBColorS
 1. No environment map → lit by a single light: black reflections, plastic look. Fix: `scene.environment` (RoomEnvironment or HDRI).
 2. Washed-out or neon colors → color textures not sRGB or double-converted. Fix: `colorSpace` on color maps only.
 3. Flat lighting → only `AmbientLight` + one `DirectionalLight` at intensity 1. Fix: key + fill + rim (or HDRI + key), physical intensities (directional 2-5, hemisphere 1-3, point/spot in candela, `decay = 2`).
-4. Hard, aliased, acne-ridden shadows → default 512 map, huge frustum. Fix: tight frustum, 2048 map, `normalBias`, VSM + `radius`, or CSM for large terrains, contact shadows for product shots.
+4. Hard, aliased, acne-ridden shadows → default 512 map, huge frustum. Fix: tight frustum, 2048 map, `normalBias`, VSM + `radius`, or CSM for large terrains, contact shadows for product shots. Edges that crawl while the camera moves are shadow shimmer: stabilize the shadow camera (CSM and SunLight snap to texels for you; manual snap code in `references/shadows-and-antialiasing.md`), separately from anti-aliasing.
 5. Jaggy edges and shimmering → no AA, or `antialias` ignored because of `EffectComposer`. Fix: MSAA (`antialias: true`, `samples` on composer target) or TRAA/FXAA/SMAA passes.
 6. Everything is `roughness: 0.5, metalness: 0.5` → dull. Fix: use real PBR ranges: dielectrics metalness 0, roughness 0.2-0.8 with a roughness map; metals metalness 1 and tinted base color; add normal maps for micro detail.
 7. Glass that is just `transparent: true, opacity: 0.5` → fake. Fix: `MeshPhysicalMaterial` with `transmission: 1, thickness, ior: 1.5, roughness ≤ 0.2`, env map, optional `dispersion`.
@@ -65,7 +65,7 @@ Texture rules: color/albedo/emissive maps `texture.colorSpace = THREE.SRGBColorS
 | Goal | WebGLRenderer (`three/addons/postprocessing/*`) | WebGPURenderer (`three/addons/tsl/display/*`, `three/tsl`) |
 |---|---|---|
 | Pipeline | New in r186: `new WebGLRenderer({ outputBufferType: THREE.HalfFloatType })` + `renderer.setEffects([bloomPass, taaPass])` (passes from `three/addons/postprocessing`, tone map + sRGB applied by the renderer, no composer; `setEffects(null)` to clear). Classic: `EffectComposer` → `RenderPass` → effects → `OutputPass` last | `RenderPipeline` (`PostProcessing` is the deprecated alias) with `pass(scene, camera)` → nodes → `outputColorTransform` |
-| Bloom | `UnrealBloomPass(res, strength 0.3-1, radius 0.2-0.8, threshold 0.8-1)` | `bloom(node, strength, radius, threshold)`; selective via `mrt({ output, emissive })` |
+| Bloom | `UnrealBloomPass(res, strength 0.3-1, radius 0.2-0.8, threshold 0.8-1)`; bloom ONLY on chosen objects needs layers + a second composer (`webgl_postprocessing_unreal_bloom_selective`), a threshold alone also blooms speculars | `bloom(node, strength, radius, threshold)`; selective via `mrt({ output, emissive })` |
 | AO | `GTAOPass` (best), `SSAOPass`/`SAOPass` (older) | `ao(depth, normal, camera)` from `GTAONode.js` + `denoise()`, `ssao()` |
 | Reflections / GI | `SSRPass` | `ssr()`, `ssgi()`, VXGI (`three/addons/lighting/vxgi/`) |
 | Depth of field | `BokehPass({ focus, aperture, maxblur })` | `dof(color, viewZ, focusDistance, focalLength, bokehScale)` |

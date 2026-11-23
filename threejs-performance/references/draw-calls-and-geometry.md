@@ -323,8 +323,8 @@ Instance management:
 
 Culling and ordering:
 
-- `perObjectFrustumCulled` (default `true`): per-instance CPU frustum test every frame in `onBeforeRender`.
-- `sortObjects` (default `true`): opaque sorted front-to-back, transparent back-to-front, per instance on CPU.
+- `perObjectFrustumCulled` (default `true`): per-instance CPU frustum test every frame in `onBeforeRender`. Keep it on when the camera sees only part of the batch (a city at street level: most buildings are culled, so the GPU draws less). Turn it off when nearly every instance is always in view (overview camera, small arena) or the CPU loop costs more than the culled geometry saves (100k+ tiny instances).
+- `sortObjects` (default `true`): opaque sorted front-to-back, transparent back-to-front, per instance on CPU. For an opaque batch, front-to-back only buys early-z rejection; turn it off when the material is opaque and overdraw is low (buildings rarely stack in view), keep it on for transparent instances, where wrong order is visible.
 - `setCustomSort(fn)` / `customSort`: `fn(list, camera)` over items with a `z` field; `addons/utils/SortUtils.js` exports `radixSort` (expects unsigned 32-bit integer keys) as a ready-made fast sort.
 - Cost model: with both flags `false` and no visibility changes, `onBeforeRender` returns early (source: `if (!this._visibilityChanged && !this.perObjectFrustumCulled && !this.sortObjects) return;`). Otherwise there is an O(instances) loop per frame, per camera, and again for each shadow pass (`onBeforeShadow`). For 100k+ instances turn off what you do not need.
 - Raycasting is supported (`BatchedMesh.raycast`).

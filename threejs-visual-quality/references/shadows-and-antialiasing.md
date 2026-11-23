@@ -53,7 +53,19 @@ scene.add(new THREE.CameraHelper(s.camera)); // always visualize while tuning
 dir.target.position.set(0, 0, 0); scene.add(dir.target);
 ```
 - `near/far` as tight as possible (depth precision). SpotLight: shadow camera fov follows `angle`; set `shadow.camera.near/far`, `shadow.focus` (0-1).
-- Move the shadow camera with the player and snap its center to texel increments to avoid shimmering while panning/rotating.
+- Shadow shimmer (edges crawl while the camera moves) is its own cause, separate from geometry aliasing: the shadow camera moves by sub-texel amounts each frame. Fix it by stabilizing, not by more MSAA:
+  - `CSM` and `SunLight` already do this in r187: `CSM.js` snaps each cascade's center to the texel grid (`Math.floor(center / texelWidth) * texelWidth`) and keeps cascade size constant; `SunLightShadow` fits a rotation-stable bounding sphere per cascade and snaps it to the texel grid. Using either one is the stabilization; say so.
+  - For one hand-rolled `DirectionalLight` that follows the player, snap in light space each frame:
+```js
+const texel = (s.camera.right - s.camera.left) / s.mapSize.x;   // world units per shadow texel
+const lightView = new THREE.Matrix4().lookAt(dir.position, dir.target.position, THREE.Object3D.DEFAULT_UP);
+const p = player.position.clone().applyMatrix4(lightView.clone().invert());  // player in light space
+p.x = Math.floor(p.x / texel) * texel; p.y = Math.floor(p.y / texel) * texel; // snap to the texel grid
+const snapped = p.applyMatrix4(lightView);                                    // back to world space
+const offset = dir.position.clone().sub(dir.target.position);
+dir.target.position.copy(snapped); dir.position.copy(snapped).add(offset);
+```
+  Keep the frustum size fixed (never refit `left/right` per frame), or the texel size changes and the snap stops working.
 - Bias (`shadow.bias`, default 0): tiny negative values, -0.0001 to -0.002 (examples: directional -0.0005, spot -0.002 for VSM; SunLight uses `normalBias`). Bias shifts depth: too small = acne, too large = peter-panning (shadow detaches from the contact point).
 - `shadow.normalBias` (default 0): offsets the lookup along the surface normal. Preferred fix for acne on grazing surfaces: 0.01-0.05 for ~1 m objects, 0.02-0.1 in large scenes; scales with world units. `SunLight` demo uses `normalBias = 1` (km scale) / 0.05.
 - WebGPU: `shadow.biasNode` (a node, overrides `bias`) for slope-/distance-scaled bias.

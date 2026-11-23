@@ -117,7 +117,7 @@ renderer.setAnimationLoop(() => pipeline.render());   // replaces renderer.rende
 
 ## Porting checklist (GLSL / ShaderMaterial / Shadertoy → TSL)
 
-1. Uniforms → `uniform()`; `iTime` → `time`; `iResolution` → `screenSize`; `gl_FragCoord.xy / iResolution` → `screenUV` (normalized [0,1], origin per backend handled for you; use `uv()` for mesh UVs, `screenCoordinate` for pixels).
+1. Uniforms → `uniform()`; `iTime` / `uTime` → the built-in `time` node (no CPU timer needed). If the time must be driven from JS, use `uniform(0)` updated from the `setAnimationLoop` timestamp or `THREE.Timer`; never `THREE.Clock`, deprecated since r183; `iResolution` → `screenSize`; `gl_FragCoord.xy / iResolution` → `screenUV` (normalized [0,1], origin per backend handled for you; use `uv()` for mesh UVs, `screenCoordinate` for pixels).
 2. Varyings → compute in a `Fn` and wrap in `varying()`/`vertexStage()`.
 3. `gl_Position` override → `material.vertexNode`; normally just set `positionNode` (local space) instead.
 4. Fragment output → `colorNode` (lit) or `fragmentNode` (unlit raw vec4) or `outputNode`.
