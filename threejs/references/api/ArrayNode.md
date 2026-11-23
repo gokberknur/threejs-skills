@@ -1,6 +1,6 @@
 ArrayNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # ArrayNode
 
@@ -60,7 +60,7 @@ This method builds the output node and returns the resulting array as a shader s
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generate   **Returns:** The generated shader string.
+The current node builder.   | **Overrides:** Node#generate   **Returns:** The generated shader string.
 
 ### .generateNodeType( builder : NodeBuilder ) : string
 
@@ -68,7 +68,7 @@ Returns the node's type.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generateNodeType   **Returns:** The type of the node.
+The current node builder.   | **Overrides:** Node#generateNodeType   **Returns:** The type of the node.
 
 ### .getArrayCount( builder : NodeBuilder ) : number
 
@@ -76,7 +76,7 @@ Returns the number of elements in the node array.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#getArrayCount   **Returns:** The number of elements in the node array.
+The current node builder.   | **Overrides:** Node#getArrayCount   **Returns:** The number of elements in the node array.
 
 ### .getElementType( builder : NodeBuilder ) : string
 
@@ -84,7 +84,7 @@ Returns the node's type.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#getElementType   **Returns:** The type of the node.
+The current node builder.   | **Overrides:** Node#getElementType   **Returns:** The type of the node.
 
 ### .getMemberType( builder : NodeBuilder, name : string ) : string
 
@@ -95,7 +95,7 @@ Returns the type of a member variable.
 The current node builder.  |
  | **name**  |
 
-The name of the member variable.   | **Overrides:** TempNode#getMemberType   **Returns:** The type of the member variable.
+The name of the member variable.   | **Overrides:** Node#getMemberType   **Returns:** The type of the member variable.
 
 ## Source
 

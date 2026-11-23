@@ -16,7 +16,7 @@ RectAreaLightTexturesLib is an addon, and must be imported explicitly, see Insta
 import { RectAreaLightTexturesLib } from 'three/addons/lights/RectAreaLightTexturesLib.js';
 ```
 
-## Properties
+## Static Properties
 
 ### .LTC_FLOAT_1 : DataTexture
 

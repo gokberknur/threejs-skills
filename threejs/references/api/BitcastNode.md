@@ -1,6 +1,6 @@
 BitcastNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # BitcastNode
 

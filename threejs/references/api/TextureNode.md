@@ -77,6 +77,12 @@ Represents the mip level that should be selected.
 
 Default is `null`.
 
+### .mergeable : boolean
+
+Whether the uniform may be merged with other uniforms at compile-time.
+
+Default is `true`.
+
 ### .offsetNode : Node.<(ivec2|ivec3)>
 
 Represents the optional texel offset applied to the unnormalized texture coordinate before sampling the texture.
@@ -100,12 +106,6 @@ Default is `true`.
 Whether the uv transformation matrix should be automatically updated or not. Use `setUpdateMatrix()` if you want to change the value of the property.
 
 Default is `false`.
-
-### .updateType : string
-
-By default the `update()` method is not executed. Depending on whether a uv transformation matrix and/or flipY is applied, `update()` is executed per object.
-
-Default is `'none'`.   **Overrides:** UniformNode#updateType
 
 ### .uvNode : Node.<(vec2|vec3)>
 
@@ -146,6 +146,10 @@ Samples the texture by executing a compare operation.
  | **compareNode**  |
 
 The node that defines the compare value.   | **Returns:** A texture node representing the texture sample.
+
+### .customCacheKey() : number
+
+Overwritten since the texture's type and filters influence the generated shader code.   **Overrides:** UniformNode#customCacheKey   **Returns:** The custom cache key.
 
 ### .depth( depthNode : Node.<int> ) : TextureNode
 
@@ -274,7 +278,7 @@ The uv node to transform.   | **Returns:** The transformed uv node.
 
 ### .getUniformHash( builder : NodeBuilder ) : string
 
-Overwritten since the uniform hash is defined by the texture's UUID.
+Overwritten since the uniform hash is defined by the texture's UUID - if mergeable - and the hash of its reference node otherwise.
 
  | **builder**  |
 
@@ -369,10 +373,6 @@ Returns the texture size of the requested level.
  | **levelNode**  |
 
 The level to compute the size for.   | **Returns:** The texture size.
-
-### .update()
-
-The update is used to implement the update of the uv transformation matrix.   **Overrides:** UniformNode#update
 
 ### .updateReference( state : any ) : Texture
 

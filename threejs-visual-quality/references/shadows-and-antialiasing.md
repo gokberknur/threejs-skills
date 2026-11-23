@@ -1,4 +1,4 @@
-# Shadows and anti-aliasing (three.js r186)
+# Shadows and anti-aliasing (three.js r187)
 
 ## When to read this
 Shadows are blocky, noisy, acned, detached ("peter-panning"), too expensive, or objects float; edges crawl/shimmer; you must choose between MSAA / FXAA / SMAA / TAA / SSAA for WebGL or WebGPU, or antialiasing breaks once you add post-processing.
@@ -32,7 +32,7 @@ Constants: `BasicShadowMap=0, PCFShadowMap=1, PCFSoftShadowMap=2 (removed), VSMS
 | Type | Look | Cost | Notes |
 |---|---|---|---|
 | `BasicShadowMap` | Hard, jagged, pixelated | Cheapest | `shadow.radius` has no effect. Needed for custom shaders that read raw depth (PCSS example `webgl_shadowmap_pcss` sets it) |
-| `PCFShadowMap` (default) | Filtered hard shadow; in r186 hardware 4-tap PCF x 5 Vogel-disk taps scaled by `shadow.radius` | Low-medium | Best default. Raise `radius` 1 -> 3-5 to soften (banding above ~6 at 1024 maps) |
+| `PCFShadowMap` (default) | Filtered hard shadow; in r187 hardware 4-tap PCF x 5 Vogel-disk taps scaled by `shadow.radius` | Low-medium | Best default. Raise `radius` 1 -> 3-5 to soften (banding above ~6 at 1024 maps) |
 | `PCFSoftShadowMap` | -- | -- | **Removed.** Setting it logs a warning and uses PCF (WebGLRenderer, WebGPURenderer). Do not use |
 | `VSMShadowMap` | Softest, blurred, penumbra-like (Gaussian blur via `radius` + `blurSamples`) | Medium-high (extra blur passes, RG half-float maps) | Light bleeding, can look "floating". All receivers also render into the map (`receiveShadow` objects cast). **Not supported for PointLights** (warns; use PCF/Basic) |
 
@@ -110,7 +110,7 @@ light.shadow.shadowNode = csm;  scene.add(light);
 ```
 Example `webgpu_shadowmap_csm`.
 
-`SunLight` + `SunLightShadow` (addons `lights/SunLight.js`): lightweight 2-cascade sun with automatic fitting to the view frustum up to `shadow.camera.far`; direction from `position` (no target); `shadow.mapSize` default 1024 per cascade. WebGPU: `renderer.library.addLight(SunLightNode, SunLight)` (`SunShadowNode`, `sunShadow`). Examples `webgl_shadowmap_performance`, `webgpu_lights_sunlight`. Best zero-config outdoor option.
+`SunLight` + `SunLightShadow` (addons `lights/SunLight.js`): lightweight 2-cascade sun with automatic fitting to the view frustum up to `shadow.camera.far`; direction from `position` (no target); `shadow.mapSize` default 1024 per cascade. WebGPU: `SunLight.registerNode(SunLightNode)` (r187; was `renderer.library.addLight(SunLightNode, SunLight)`) (`SunShadowNode`, `sunShadow`). Examples `webgl_shadowmap_performance`, `webgpu_lights_sunlight`. Best zero-config outdoor option.
 
 `TileShadowNode` (WebGPU, `three/addons/tsl/shadows/TileShadowNode.js`): splits one directional shadow into `tilesX x tilesY` tiles (default 2 x 2) for huge worlds; no VSM. Example `webgpu_shadowmap_array`.
 

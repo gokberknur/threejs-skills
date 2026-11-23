@@ -106,7 +106,8 @@ with cf.ThreadPoolExecutor(16) as ex:
     manual_html = dict(ex.map(fetch_manual, manual_slugs))
 
 tsl_guide = get('https://threejs.org/tsl/content/Guide.md')
-migration = get('https://raw.githubusercontent.com/wiki/mrdoob/three.js/Migration-Guide.md')
+# upstream wiki switched to CRLF at r187; normalize so section diffs stay meaningful
+migration = get('https://raw.githubusercontent.com/wiki/mrdoob/three.js/Migration-Guide.md').replace('\r\n', '\n')
 files_json = json.loads(get(f'https://raw.githubusercontent.com/mrdoob/three.js/r{rev}/examples/files.json'))
 llms = get('https://threejs.org/docs/llms.txt')
 

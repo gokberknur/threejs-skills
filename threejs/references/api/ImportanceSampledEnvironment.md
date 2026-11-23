@@ -36,7 +36,12 @@ View-space direction to camera.  |
  | **alpha**  |
 
 GGX roughness (alpha).  |
- | **f0**   |  | |
+ | **f0**   | |
+ | **f90**  |
+
+Grazing reflectance.
+
+Default is `1`.   | |
 
 ### .sampleEnvironmentMIS( params : Object ) : Node.<vec3>
 
@@ -58,6 +63,11 @@ View-space direction to camera.  |
 
 GGX roughness (alpha).  |
  | **f0**   | |
+ | **f90**  |
+
+Grazing reflectance.
+
+Default is `1`.  |
  | **Xi2**  |
 
 Second blue-noise sample (zw used for the CDF).   |  | See:

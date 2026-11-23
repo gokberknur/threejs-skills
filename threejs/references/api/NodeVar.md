@@ -6,7 +6,7 @@ NodeBuilder is going to create instances of this class during the build process 
 
 ## Constructor
 
-### new NodeVar( name : string, type : string, readOnly : boolean, count : number )
+### new NodeVar( name : string, type : string, readOnly : boolean, count : number, local : boolean )
 
 Constructs a new node variable.
 
@@ -26,6 +26,11 @@ Default is `false`.  |
 The size.
 
 Default is `null`.  |
+ | **local**  |
+
+Whether the variable is declared locally in the flow.
+
+Default is `false`.  |
 
 ## Properties
 
@@ -38,6 +43,12 @@ The size.
 This flag can be used for type testing.
 
 Default is `true`.
+
+### .local : boolean
+
+Whether the variable is declared locally in the flow.
+
+Default is `false`.
 
 ### .name : string
 

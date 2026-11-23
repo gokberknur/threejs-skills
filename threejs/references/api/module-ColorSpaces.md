@@ -2,7 +2,7 @@ ColorSpaces - Three.js Docs
 
 # ColorSpaces
 
-## Properties
+## Static Properties
 
 ### .DisplayP3ColorSpace : string (constant)
 

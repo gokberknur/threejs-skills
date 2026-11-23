@@ -1,6 +1,6 @@
 ToneMappingNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # ToneMappingNode
 
@@ -42,7 +42,7 @@ Default is `null`.
 
 ### .customCacheKey() : number
 
-Overwrites the default `customCacheKey()` implementation by including the tone mapping type into the cache key.   **Overrides:** TempNode#customCacheKey   **Returns:** The hash.
+Overwrites the default `customCacheKey()` implementation by including the tone mapping type into the cache key.   **Overrides:** Node#customCacheKey   **Returns:** The hash.
 
 ### .getToneMapping() : number
 

@@ -54,6 +54,14 @@ The default `magFilter` for storage textures is `THREE.LinearFilter`.   **Overri
 
 The default `minFilter` for storage textures is `THREE.LinearFilter`.   **Overrides:** Texture#minFilter
 
+### .mipmapsAutoUpdate : boolean
+
+Whether the renderer regenerates the mipmaps automatically.
+
+Overwritten and set to `false` by default since the WebGPU backend does not support mipmap generation for 3D textures.
+
+Default is `false`.   **Overrides:** Texture#mipmapsAutoUpdate
+
 ### .wrapR : number
 
 This defines how the texture is wrapped in the depth direction and corresponds to *W* in UVW mapping.

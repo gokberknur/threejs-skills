@@ -1,9 +1,9 @@
 ---
 name: threejs-performance
-description: Diagnose and fix three.js (r186) performance problems and design scenes that stay fast: low FPS, jank, stutter on load, high draw calls, too many objects, GPU/CPU bottlenecks, memory leaks and growing `renderer.info.memory`, slow mobile, thermal throttling, large glTF files, texture memory, shadow cost, post-processing cost, rendering only when needed, OffscreenCanvas workers, InstancedMesh vs BatchedMesh vs merged geometry, LOD, frustum culling, compute-based particles. Use whenever a user mentions FPS, "laggy", "slow", "optimize", "thousands of objects", "draw calls", "memory", "dispose", "profile", "Spector", "stats.js", or asks how to scale a three.js scene, even if they do not say "performance". Pair with the `threejs` core skill (API lookup) and `threejs-tsl-webgpu` for compute/WebGPU specifics.
+description: Diagnose and fix three.js (r187) performance problems and design scenes that stay fast: low FPS, jank, stutter on load, high draw calls, too many objects, GPU/CPU bottlenecks, memory leaks and growing `renderer.info.memory`, slow mobile, thermal throttling, large glTF files, texture memory, shadow cost, post-processing cost, rendering only when needed, OffscreenCanvas workers, InstancedMesh vs BatchedMesh vs merged geometry, LOD, frustum culling, compute-based particles. Use whenever a user mentions FPS, "laggy", "slow", "optimize", "thousands of objects", "draw calls", "memory", "dispose", "profile", "Spector", "stats.js", or asks how to scale a three.js scene, even if they do not say "performance". Pair with the `threejs` core skill (API lookup) and `threejs-tsl-webgpu` for compute/WebGPU specifics.
 ---
 
-# three.js r186 performance
+# three.js r187 performance
 
 Performance work is diagnosis first, technique second. Most three.js slowness is one of five bottlenecks, each with a different fix. Measure, name the bottleneck, then pick from the table. Never apply "optimizations" blind; instancing a scene that is fill-rate bound does nothing.
 

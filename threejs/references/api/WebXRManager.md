@@ -44,7 +44,9 @@ Creates a new binding if needed and the browser is capable of doing so.   **Retu
 
 Returns an instance of ArrayCamera which represents the XR camera of the active XR session. For each view it holds a separate camera object.
 
-The camera's `fov` is currently not used and does not reflect the fov of the XR camera. If you need the fov on app level, you have to compute in manually from the XR camera's projection matrices.   **Returns:** The XR camera.
+The camera's `fov` is currently not used and does not reflect the fov of the XR camera. If you need the fov on app level, you have to compute in manually from the XR camera's projection matrices.
+
+The camera's transformation and projection matrix are derived from the first sub camera (e.g. the left eye in a stereo setup).   **Returns:** The XR camera.
 
 ### .getCameraTexture( xrCamera : XRCamera ) : Texture
 

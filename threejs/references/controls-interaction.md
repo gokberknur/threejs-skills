@@ -1,4 +1,4 @@
-# Controls and interaction (three.js r186)
+# Controls and interaction (three.js r187)
 
 When to read this: camera controls (Orbit/Map/Trackball/Arcball/Fly/FirstPerson/PointerLock), moving objects (DragControls, TransformControls), picking (Raycaster, GPU picking), box selection, and HTML overlays/labels (CSS2D/CSS3D, projected DOM). All controls are addons (`three/addons/controls/...`) and work with both WebGLRenderer and WebGPURenderer (they only need a camera and a DOM element). Differences are called out where they exist (GPU picking readback).
 
@@ -172,7 +172,7 @@ tc.detach();  tc.reset();  tc.dragging /* readonly */;
 tc.getRaycaster();
 ```
 
-- Pre-r169 code did `scene.add(transformControls)`; in r186 that throws or silently shows nothing. Use `scene.add(tc.getHelper())`.
+- Pre-r169 code did `scene.add(transformControls)`; in r187 that throws or silently shows nothing. Use `scene.add(tc.getHelper())`.
 - Re-render on `change` if you render on demand. The gizmo must be rendered by the same camera as `tc.camera`; if you swap cameras set `tc.camera = newCamera`.
 - Must disable your OrbitControls while `dragging` (`dragging-changed` handler above) or the camera also orbits.
 - Does not transform the camera. Keyboard shortcuts (W/E/R, Shift snap) are demo code in `misc_controls_transform`, not part of the class.
@@ -196,7 +196,7 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
 ```
 
 - `setFromCamera(coords: Vector2 NDC, camera)` works for perspective and orthographic cameras. The camera's `matrixWorld` must be current (call `camera.updateMatrixWorld()` if you moved it this frame before rendering).
-- `intersectObject(obj, recursive=true, target=[])`, `intersectObjects(arr, recursive=true, target=[])` - recursive defaults to TRUE in r186 docs. Hidden objects (`visible=false`) are still tested unless you filter; use layers to exclude.
+- `intersectObject(obj, recursive=true, target=[])`, `intersectObjects(arr, recursive=true, target=[])` - recursive defaults to TRUE in r187 docs. Hidden objects (`visible=false`) are still tested unless you filter; use layers to exclude.
 - Manual-style picking tip: pick only the objects you need (`pickables` array), not `scene.children`, to skip helpers/lights/gizmos.
 - Back faces: meshes are hit only through front faces. For double-sided picking set `material.side = THREE.DoubleSide` (raycast respects material.side). Edge-on hits can return two coincident intersections.
 - Layers: `raycaster.layers.set(1); object.layers.enable(1);` Only objects whose layers overlap raycaster.layers are tested. Camera layers do not matter for raycasting.
@@ -206,7 +206,7 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
 - InstancedMesh: hit per instance via `instanceId`; transform = `mesh.getMatrixAt(instanceId, m)`. Raycast cost scales with instance count (bounding sphere of geometry per instance); `webgl_instancing_raycast`.
 - SkinnedMesh: `SkinnedMesh.raycast` applies bone transforms per vertex (`applyBoneTransform`) after a bounding-sphere test using `boundingSphere`; it is slow (CPU skinning of every vertex) and the bounding sphere is computed ONCE (see animation.md): recompute `computeBoundingSphere()` if the pose moves far, else rays miss. Prefer a simplified proxy mesh or GPU picking for characters.
 - Morph targets / vertex-shader displacement / alpha-tested textures / `PointsMaterial` sizeAttenuation shaders: CPU raycasting does not see them. Use GPU picking.
-- Speed: Raycaster is brute force (bounding sphere, then all triangles). For large meshes use `three-mesh-bvh` (external package, `webgl_raycaster_bvh`): `BufferGeometry.prototype.computeBoundsTree = computeBoundsTree; Mesh.prototype.raycast = acceleratedRaycast; geometry.computeBoundsTree(); raycaster.firstHitOnly = true;` `firstHitOnly` is a three-mesh-bvh property, not a core r186 property.
+- Speed: Raycaster is brute force (bounding sphere, then all triangles). For large meshes use `three-mesh-bvh` (external package, `webgl_raycaster_bvh`): `BufferGeometry.prototype.computeBoundsTree = computeBoundsTree; Mesh.prototype.raycast = acceleratedRaycast; geometry.computeBoundsTree(); raycaster.firstHitOnly = true;` `firstHitOnly` is a three-mesh-bvh property, not a core r187 property.
 - Hover: raycast in the animation loop from the last pointermove, not inside the move handler (avoids work between frames); clear pointer on `pointerleave`.
 - `Sprite.raycast`, `Points.raycast`, `Line.raycast`, `Mesh.raycast` are the per-type hooks; override `object.raycast = () => {}` to make an object unpickable.
 
@@ -224,7 +224,7 @@ if (raycaster.ray.intersectPlane(plane, p)) marker.position.copy(p);   // return
 When CPU raycasting is wrong or too slow: render ids to a 1x1 target under the cursor, read one pixel (manual `picking`).
 
 ```js
-const target = new THREE.WebGLRenderTarget(1, 1);          // RGBA8; or the r186 example: type IntType, format RGBAIntegerFormat, internalFormat 'RGBA32I'
+const target = new THREE.WebGLRenderTarget(1, 1);          // RGBA8; or the r187 example: type IntType, format RGBAIntegerFormat, internalFormat 'RGBA32I'
 const pixel = new Uint8Array(4);
 
 async function pick(clientX, clientY) {
@@ -319,7 +319,7 @@ No materials/geometries/lighting, no depth interplay with WebGL. To composite wi
 
 - `HTMLMesh` (`three/addons/interactive/HTMLMesh.js`): `new HTMLMesh(domElement)` renders a DOM subtree (limited subset: inputs/sliders/text) to a canvas texture on a plane; it re-renders itself on DOM `input`/mutation events (e.g. lil-gui changes). `mesh.dispose()`. Used for in-VR GUI (lil-gui in XR).
 - `InteractiveGroup` (`three/addons/interactive/InteractiveGroup.js`): `const g = new InteractiveGroup(); g.listenToPointerEvents(renderer, camera); g.listenToXRControllerEvents(controller);` then `g.add(htmlMesh)`. Raycasts (non-recursive: `intersectObjects(this.children, false)`, so add HTMLMesh directly) and dispatches `mousedown`/`mousemove`/`mouseup`/`click` events (carrying hit `uv` in `event.data`) to the hit child; XR `selectstart/selectend/select/move` map to these. Cleanup: `disconnect()`, `disconnectXrControllerEvents()`, `disconnectionPointerEvents()` (sic).
-- `InteractionManager` (`three/addons/interaction/InteractionManager.js`) exists in r186, but it is about `HTMLTexture` elements: `connect(renderer, camera)`, `add(...meshes)`, `remove`, `update()` each frame; computes CSS `matrix3d` for the HTML elements backing `HTMLTexture` meshes so they receive native pointer events. It is NOT a general pointer/raycast event manager; use Raycaster for that.
+- `InteractionManager` (`three/addons/interaction/InteractionManager.js`) exists in r187, but it is about `HTMLTexture` elements: `connect(renderer, camera)`, `add(...meshes)`, `remove`, `update()` each frame; computes CSS `matrix3d` for the HTML elements backing `HTMLTexture` meshes so they receive native pointer events. It is NOT a general pointer/raycast event manager; use Raycaster for that.
 
 ## 12. Input plumbing
 

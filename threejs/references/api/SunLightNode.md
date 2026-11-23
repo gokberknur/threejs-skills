@@ -4,12 +4,12 @@ EventDispatcher → Node → LightingNode → AnalyticLightNode →
 
 # SunLightNode
 
-Module for representing sun lights as nodes. Register it with the renderer's node library to use SunLight with `WebGPURenderer`:
+Module for representing sun lights as nodes. Register it with SunLight to use the light with `WebGPURenderer`:
 
 ## Code Example
 
 ```js
-renderer.library.addLight( SunLightNode, SunLight );
+SunLight.registerNode( SunLightNode );
 
 ```
 

@@ -38,7 +38,7 @@ Default is `16`.  |
 
 The number of rings. This can be any positive integer.
 
-Default is `16`.  |
+Default is `8`.  |
  | **divisions**  |
 
 The number of line segments used for each circle. This can be any positive integer.

@@ -8,7 +8,7 @@ However, if you want to evaluate the **same node** under different parameters (s
 
 `isolate( node )` or `.isolate()` tells TSL to create an **isolated cache scope**, forcing the node to be evaluated fresh without reusing or overwriting existing cache data.
 
-::: api isolate( node: Node ) : IsolateNode - Creates an isolated cache wrapper for a node.
+::: api isolate( node ) : IsolateNode - Creates an isolated cache wrapper for a node.
 - **node**: `Node` - The node whose evaluation cache should be isolated.
 :::
 

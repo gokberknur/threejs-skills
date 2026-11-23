@@ -1,4 +1,4 @@
-# Draw Calls and Geometry (three.js r186)
+# Draw Calls and Geometry (three.js r187)
 
 ## When to read this
 
@@ -360,7 +360,7 @@ import { SceneOptimizer } from 'three/addons/utils/SceneOptimizer.js';
 
 const optimizer = new SceneOptimizer(scene, { debug: false });
 optimizer.toBatchedMesh();        // replaces compatible meshes with BatchedMesh instances
-// optimizer.toInstancingMesh();  // abstract, NOT implemented in r186
+// optimizer.toInstancingMesh();  // abstract, NOT implemented in r187
 ```
 
 How it works (read from source):
@@ -509,7 +509,7 @@ Coarse broad-phase structures (when you do your own culling/collision):
 Vertex/triangle count matters for vertex shader cost, skinning/morphing cost, shadow passes (casters are drawn again per shadow light) and memory.
 
 - Build-time simplification: glTF tooling (gltf-transform / gltfpack with meshopt simplification) is the production route; not part of three.js.
-- `SimplifyModifier` (`three/addons/modifiers/SimplifyModifier.js`): meshoptimizer-based; `modify(geometry, count)` is async in r186 and returns a new geometry; `count` is the approximate number of vertices to REMOVE (not to keep).
+- `SimplifyModifier` (`three/addons/modifiers/SimplifyModifier.js`): meshoptimizer-based; `modify(geometry, count)` is async in r187 and returns a new geometry; `count` is the approximate number of vertices to REMOVE (not to keep).
   ```js
   import { SimplifyModifier } from 'three/addons/modifiers/SimplifyModifier.js';
   const modifier = new SimplifyModifier();
@@ -603,7 +603,7 @@ WebGPURenderer:
 await renderer.init();
 await renderer.compileAsync(scene, camera, null, (progress) => {});  // 4th arg: onProgress
 await renderer.compileComputeAsync(computeNode);                      // pipelines for compute
-// Renderer.compile() is an alias of compileAsync in r186
+// Renderer.compile() is an alias of compileAsync in r187
 ```
 
 Notes:
@@ -637,7 +637,7 @@ API pages (relative to the repo root of the threejs skill):
 - `../threejs/references/api/module-BufferGeometryUtils.md`, `module-GeometryCompressionUtils.md`, `SimplifyModifier.md`, `module-SortUtils.md`, `WorkerPool.md`, `BundleGroup.md`
 - `../threejs/references/api/WebGLRenderer.md` (`info`, `sortObjects`, `compile`, `compileAsync`, `setOpaqueSort`), `Renderer.md` (WebGPU: `compileAsync`, `compileComputeAsync`, `isOccluded`), `Info.md`, `InspectorBase.md`, `Material.md` (`forceSinglePass`, `needsUpdate`)
 
-Examples (three.js r186 `examples/`): `webgl_performance.html`, `webgl_instancing_performance.html`, `webgl_instancing_dynamic.html`, `webgl_instancing_raycast.html`, `webgl_instancing_morph.html`, `webgl_mesh_batch.html`, `webgpu_mesh_batch.html`, `webgl_batch_lod_bvh.html`, `webgpu_instance_mesh.html`, `webgpu_performance.html`, `webgpu_performance_renderbundle.html`, `webgl_lod.html`, `webgl_loader_gltf_progressive_lod.html`, `webgl_buffergeometry_instancing.html`.
+Examples (three.js r187 `examples/`): `webgl_performance.html`, `webgl_instancing_performance.html`, `webgl_instancing_dynamic.html`, `webgl_instancing_raycast.html`, `webgl_instancing_morph.html`, `webgl_mesh_batch.html`, `webgpu_mesh_batch.html`, `webgl_batch_lod_bvh.html`, `webgpu_instance_mesh.html`, `webgpu_performance.html`, `webgpu_performance_renderbundle.html`, `webgl_lod.html`, `webgl_loader_gltf_progressive_lod.html`, `webgl_buffergeometry_instancing.html`.
 
 Official manual: https://threejs.org/manual/en/optimize-lots-of-objects, https://threejs.org/manual/en/optimize-lots-of-objects-animated, https://threejs.org/manual/en/how-to-update-things, https://threejs.org/manual/en/how-to-dispose-of-objects
 

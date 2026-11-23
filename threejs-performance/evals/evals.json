@@ -11,7 +11,7 @@
         "Mentions merging geometries as an alternative for fully static content and InstancedMesh only where geometry is shared",
         "Covers secondary wins: matrixAutoUpdate=false, frustum culling / perObjectFrustumCulled, shadow budget, pixel ratio",
         "Tells the user to re-measure with renderer.info.render.calls / fps after the change",
-        "No invented API names (checks against r186: addGeometry, addInstance, setMatrixAt, perObjectFrustumCulled, sortObjects, optimize)"
+        "No invented API names (checks against r187: addGeometry, addInstance, setMatrixAt, perObjectFrustumCulled, sortObjects, optimize)"
       ]
     },
     {

@@ -26,6 +26,22 @@ GPU compute execution is structured into a hierarchy of execution units:
 - **workgroupSize**: `Array<number>` - (Optional) Workgroup thread dimensions. Defaults to `[ 64 ]`.
 :::
 
+::: api computeKernel( node, workgroupSize? ) : ComputeNode - Creates a compute kernel without an invocation count. The number of workgroups is passed at dispatch time with `renderer.compute( kernel, dispatchSize )`.
+- **node**: `Node` - TSL function containing the compute shader logic.
+- **workgroupSize**: `Array<number>` - (Optional) Workgroup thread dimensions. Defaults to `[ 64 ]`.
+:::
+
+::: api .computeKernel( workgroupSize? ) : ComputeNode - Chains a compute kernel definition directly onto a TSL function call. :::
+
+```js
+// Dispatch 8x8 workgroups of 16x16 threads
+const kernel = computeFn().computeKernel( [ 16, 16 ] );
+
+renderer.compute( kernel, [ 8, 8, 1 ] );
+```
+
+> AI: Since r187, `renderer.compute( node, dispatchSize )` throws an error if the node was created with `compute( count )`. Use `.compute( count )` and call `renderer.compute( node )` when the total invocation count is known, or use `.computeKernel( workgroupSize )` and pass the workgroup count (or an `IndirectStorageBufferAttribute`) as `dispatchSize`.
+
 ::: api workgroupArray( type, count ) : Node - Allocates high-speed on-chip shared memory accessible by all invocations within the local workgroup.
 - **type**: `string` - The data type of the buffer elements (e.g. `'float'`, `'vec3'`, `'vec4'`).
 - **count**: `number` - Total number of elements in the workgroup buffer.

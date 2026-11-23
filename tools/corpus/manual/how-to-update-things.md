@@ -39,6 +39,16 @@ object.updateMatrix();
 
  This means that if you know an attribute of your BufferGeometry will grow, say the number of vertices, you must pre-allocate a buffer large enough to hold any new vertices that may be created. Of course, this also means that there will be a maximum size for your BufferGeometry - there is no way to create a BufferGeometry that can efficiently be extended indefinitely.
 
+ If an update exceeds the pre-allocated buffer capacity, create a new geometry instead of replacing attributes with larger buffers on a geometry that has already been rendered. Dispose of the old geometry when it is no longer used to release its GPU resources.
+
+```js
+
+const newGeometry = new THREE.BufferGeometry().setFromPoints( newPoints );
+line.geometry.dispose();
+line.geometry = newGeometry;
+
+```
+
  We'll use the example of a line that gets extended at render time. We'll allocate space in the buffer for 500 vertices but draw only two at first, using `BufferGeometry.drawRange`.
 
 ```js
@@ -125,7 +135,7 @@ Also GLstate related parameters can change any time (depthTest, blending, polygo
 
 The following properties can't be easily changed at runtime (once the material is rendered at least once):
 - numbers and types of uniforms
-- presence or not of
+- usage or configuration of
 - texture
 - fog
 - vertex colors
@@ -133,6 +143,7 @@ The following properties can't be easily changed at runtime (once the material i
 - shadow map
 - alpha test
 - transparent
+- side
 
 Changes in these require building of new shader program. You'll need to set `material.needsUpdate = true`
 

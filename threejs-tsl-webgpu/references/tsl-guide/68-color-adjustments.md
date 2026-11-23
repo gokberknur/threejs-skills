@@ -6,18 +6,22 @@ Functions for adjusting and manipulating colors.
 
 <code name="colorAdjustmentsExample" default="true">Color Adjustments Showcase</code>
 
-::: api grayscale( color ) - Computes a grayscale color value for the given RGB color based on luminance. Returns `vec3`.
+::: api grayscale( color, luminanceCoefficients? ) - Computes a grayscale value for the given RGB color based on luminance. Returns `float`.
 - **color**: `vec3` - Input RGB color value.
+- **luminanceCoefficients**: `vec3` - (Optional) Luminance coefficients node. Defaults to `workingLuminanceCoefficients`.
 :::
+
+::: api workingLuminanceCoefficients : vec3 - Luminance coefficients of the current working color space. Evaluated once per build, so it can be used as the default value of a parameter in functions with layout. :::
 
 ::: api luminance( color, luminanceCoefficients? ) - Calculates the luminance (perceived brightness) of an RGB color. Returns `float`.
 - **color**: `vec3` - Input RGB color value.
 - **luminanceCoefficients**: `vec3` - (Optional) Luminance coefficients node. Defaults to current working color space coefficients.
 :::
 
-::: api saturation( color, adjustment? ) - Adjusts the saturation of an RGB color. Returns `vec3`.
+::: api saturation( color, adjustment?, luminanceCoefficients? ) - Adjusts the saturation of an RGB color. Returns `vec3`.
 - **color**: `vec3` - Input RGB color value.
 - **adjustment**: `float` - (Optional) Conversion factor. Values `< 1` desaturate, values `> 1` super-saturate. Defaults to `float( 1 )`.
+- **luminanceCoefficients**: `vec3` - (Optional) Luminance coefficients node. Defaults to `workingLuminanceCoefficients`.
 :::
 
 ::: api vibrance( color, adjustment? ) - Selectively enhances the intensity of less saturated RGB colors while preserving saturated ones. Returns `vec3`.

@@ -1,6 +1,6 @@
 PackFloatNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # PackFloatNode
 

@@ -156,6 +156,8 @@ A **Layout** defines the signature of a TSL function, specifying its parameter t
 - **Layout**:
   - Generates an equivalent native function based on the `NodeBuilder` target backend (e.g. WGSL or GLSL).
   - Compiled once into the shader program and efficiently reused across materials via a persistent cache.
+  - The function body must depend only on its explicit inputs and constants, not on uniforms or material context, since the generated function is shared across shaders.
+  - Parameters can have default values. Missing inputs are completed with the defaults at the call site, so values like `uv()` are evaluated where the function is called.
 
 <code name="layoutExample">Layout example</code>
 
@@ -187,7 +189,16 @@ const clampColorLayout = Fn( ( { val } ) => {
 	return val;
 
 }, { val: 'float', return: 'float' } );
+
+// Layout with default parameters: `scaleUV()` calls the native function with ( 2.0, uv )
+const scaleUV = Fn( ( [ scale = float( 2 ), coord = uv() ] ) => {
+
+	return coord.mul( scale );
+
+}, { scale: 'float', coord: 'vec2', return: 'vec2' } );
 ```
+
+> AI: Prefer the compact layout object `Fn( fn, { a: 'float', return: 'vec3' } )` over the verbose `.setLayout( { name, type, inputs } )` form. Since r187, layout functions support default parameters. The defaults are resolved once per function and shared by all calls, so a default that must be evaluated per build should be a node like `Fn( ... ).once()().toVar( name )` (e.g. `workingLuminanceCoefficients`). If a default depends on another parameter, the call is expanded inline instead of generating a native function.
 
 ```tsl layoutExample
 import 'scenes/shaderball';

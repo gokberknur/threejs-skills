@@ -4,10 +4,10 @@
     {
       "id": 1,
       "prompt": "Write a single self-contained index.html (no bundler) that loads a glTF model from ./assets/robot.glb with Draco compression, shows it on a ground plane with a shadow, lets me orbit with the mouse, and plays the model's first animation clip. Use the current three.js version from a CDN import map.",
-      "expected_output": "One HTML file using an import map pinned to three@0.186.x, three/addons imports (GLTFLoader, DRACOLoader with decoder path, OrbitControls with damping + update), renderer with shadows enabled, DirectionalLight with castShadow and a sized shadow camera, ground receiveShadow, AnimationMixer updated with a Timer/Clock delta in setAnimationLoop, resize handler, sRGB/tone mapping correct, no deprecated APIs (outputEncoding, sRGBEncoding, examples/js, Geometry).",
+      "expected_output": "One HTML file using an import map pinned to three@0.187.x, three/addons imports (GLTFLoader, DRACOLoader with decoder path, OrbitControls with damping + update), renderer with shadows enabled, DirectionalLight with castShadow and a sized shadow camera, ground receiveShadow, AnimationMixer updated with a Timer/Clock delta in setAnimationLoop, resize handler, sRGB/tone mapping correct, no deprecated APIs (outputEncoding, sRGBEncoding, examples/js, Geometry).",
       "files": [],
       "assertions": [
-        "Import map pins three@0.186.x and uses three/addons/ paths",
+        "Import map pins three@0.187.x and uses three/addons/ paths",
         "Uses DRACOLoader with an explicit setDecoderPath",
         "Shadows: shadowMap.enabled, light castShadow, ground receiveShadow, meshes castShadow",
         "AnimationMixer plays gltf.animations[0] and is updated with a frame delta in the loop",

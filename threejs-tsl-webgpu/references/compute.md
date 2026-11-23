@@ -1,4 +1,4 @@
-# GPGPU / compute shaders with TSL (three.js r186)
+# GPGPU / compute shaders with TSL (three.js r187)
 
 When to read this: writing or debugging compute shaders in three.js WebGPURenderer: particle systems, boids, simulations, procedural textures, geometry deformation, reductions, sorting, indirect draws, GPU->CPU readback, and how compute results feed rendering. For renderer setup/init/profiling see `webgpu-renderer.md`; for TSL syntax (`Fn`, `If`, `Loop`, structs, uniforms) see `tsl-reference.md` and `tsl-guide/`. Facts verified against r186 source (`src/nodes/gpgpu/*`, `src/nodes/accessors/Storage*.js`, `src/renderers/common/Renderer.js`, `WebGPUBackend.compute`, `WebGLBackend.compute`) and the `examples/webgpu_compute_*.html` files.
 
@@ -58,7 +58,7 @@ Forms:
 | API | Meaning |
 |---|---|
 | `fn().compute( count, wg? )` / `compute( node, count, wg? )` | `count` number -> invocation count + auto bounds check. `count` array/non-number -> stored as `dispatchSize` (workgroup counts, no bounds check). `wg` default `[ 64 ]`, 1-3 positive integers, padded to 3 with 1s. |
-| `fn().computeKernel( wg? )` / `computeKernel( node, wg? )` | Same node but with **no count**: you must pass the dispatch to `renderer.compute( node, n \| [x,y,z] )`. Invalid sizes log a TSL error. |
+| `fn().computeKernel( wg? )` / `computeKernel( node, wg? )` | Same node but with **no count**: you must pass the dispatch to `renderer.compute( node, n \| [x,y,z] )`. Since r187 this is the ONLY kind of node that accepts a dispatch size. Invalid sizes log a TSL error. |
 | `kernel.setName( s )` | Debug name (shader identifiers, Inspector). |
 | `kernel.onInit( ( { renderer } ) => {} )` | Runs once, the first time the node is dispatched, before that dispatch. |
 | `Fn( ( { storageTexture } ) => ... )( { storageTexture } )` | Object params (texture example) or array params `Fn( ( [ readTex, writeTex ] ) => ... )( a, b )` (pingpong example) to reuse one kernel for several resources. |
@@ -73,9 +73,10 @@ Fn `.once()` is **shader-build memoization** (used by `normalLocal`), not "dispa
 await renderer.init();                    // required before sync compute()
 renderer.compute( kernel );               // one node
 renderer.compute( [ kernelA, kernelB ] ); // same command encoder/pass, executed in order
-renderer.compute( kernel, 50000 );        // override invocation count (bounds-check still uses kernel.count!)
-renderer.compute( kernel, [ 8, 8, 1 ] );  // override WORKGROUP counts (water: 128*128 cells = 8*8 workgroups of 16x16)
-renderer.compute( kernel, indirectAttr ); // IndirectStorageBufferAttribute holds x,y,z workgroup counts (WebGPU only)
+// r187: a dispatch size may only be passed for nodes built with computeKernel(); for compute( count ) nodes it THROWS
+renderer.compute( kernel, 50000 );        // computeKernel node: invocation count
+renderer.compute( kernel, [ 8, 8, 1 ] );  // computeKernel node: WORKGROUP counts (water: 128*128 cells = 8*8 workgroups of 16x16)
+renderer.compute( kernel, indirectAttr ); // computeKernel node: IndirectStorageBufferAttribute holds x,y,z workgroup counts (WebGPU only)
 await renderer.computeAsync( kernel );    // inits renderer first
 await renderer.compileComputeAsync( kernel );   // pre-build pipeline to avoid first-dispatch hitch
 ```
@@ -239,7 +240,7 @@ const draw = storage( drawBuffer, DrawStruct, drawBuffer.count );
 const computeDraw = Fn( () => { atomicStore( draw.get( 'instanceCount' ), visibleCount ); } )().compute( 1 );
 renderer.compute( computeDraw );     // then renderer.render(): drawIndirect( buffer, offset ) per offset
 ```
-Array offsets issue multiple indirect draws. Indirect dispatch: pass the attribute as 2nd arg to `renderer.compute( node, indirectAttr )` (`dispatchWorkgroupsIndirect( buffer, 0 )`). Both WebGPU only; WebGL fallback warns and uses `node.count`. Examples: webgpu_struct_drawindirect.html, webgpu_particles.html, webgpu_compute_rasterizer(.ibl).html.
+Array offsets issue multiple indirect draws. Indirect dispatch: pass the attribute as 2nd arg to `renderer.compute( node, indirectAttr )` (`dispatchWorkgroupsIndirect( buffer, 0 )`). Both WebGPU only; WebGL fallback warns and uses `node.count`. Examples: webgpu_struct_drawindirect.html, webgpu_particles.html, webgpu_meshlets_*.html (r187; replaced webgpu_compute_rasterizer).
 
 ## 9. Reading results back
 
@@ -258,7 +259,7 @@ rb.dispose();   // when done (also removes it from renderer.info.memory.readback
 ```
 - Readback copies GPU->staging->CPU and awaits `mapAsync`: stalls; do it on demand (audio example computes once then plays), not each frame. For per-frame data prefer keeping the data on the GPU and rendering from it.
 - Pass the attribute (`node.value`), not the node. The copy is queued after previously submitted compute work (submit order).
-- Doc/example discrepancy: `webgpu_compute_reduce.html` calls `new THREE.ReadbackBuffer( selectedBuffer.value )` and `getArrayBufferAsync( readbackBuffer )` without the attribute argument; that does not match the r186 signature/doc (`ReadbackBuffer( maxByteLength: number )`). Follow the signature above.
+- Reference: r187 `webgpu_compute_reduce.html` uses the signature above, `new THREE.ReadbackBuffer( readbackBufferSize )` then `getArrayBufferAsync( selectedStorageNode.value, readbackBuffer, 0, size )`. (The r186 version passed an attribute to the constructor; ignore old copies of it.)
 - On WebGL fallback the storage node needs `.setPBO( true )` for this to work (audio/cloth/birds comments).
 - Textures: `renderer.readRenderTargetPixelsAsync( renderTarget, ... )` is for RenderTargets; for StorageTextures copy into a RenderTarget texture first or sample them into a render pass.
 
@@ -306,7 +307,7 @@ Other notes:
 Double buffering / ping-pong:
 ```js
 const A = instancedArray( data, 'float' ), B = instancedArray( new Float32Array( data ), 'float' );
-const step = ( rd, wr ) => Fn( () => { wr.element( instanceIndex ).assign( f( rd.element( instanceIndex ) ) ); } )().compute( N, [ 16, 16 ] );
+const step = ( rd, wr ) => Fn( () => { wr.element( instanceIndex ).assign( f( rd.element( instanceIndex ) ) ); } )().compute( N, [ 16, 16 ] );   // count-based: dispatch with renderer.compute( AtoB ), no size
 const AtoB = step( A, B ).setName( 'A->B' ), BtoA = step( B, A ).setName( 'B->A' );
 const readFromA = uniform( 1 );                        // render side chooses the freshest buffer
 material.positionNode = select( readFromA, A.element( vertexIndex ), B.element( vertexIndex ) );  // vec3(positionLocal.xy, h)
@@ -516,7 +517,7 @@ const makeStep = ( rd, wr ) => Fn( () => {
   const nh = n.add( s ).add( e ).add( w ).mul( 0.5 ).sub( ph ).mul( viscosity );        // wave equation
   // + mouse ripple using globalId.x / globalId.y -> uv, cos( clamp( dist * PI / size ) ) * deep * speed
   prev.element( instanceIndex ).assign( h ); wr.element( instanceIndex ).assign( nh );
-} )().compute( W * W, [ 16, 16 ] );
+} )().computeKernel( [ 16, 16 ] );   // r187 example: kernel without count, dispatched with an explicit size below
 const AtoB = makeStep( A, B ).setName( 'Update Height A->B' ), BtoA = makeStep( B, A ).setName( 'Update Height B->A' );
 
 // render: positionNode = vec3( positionLocal.x, positionLocal.y, select( readFromA, A.element( vertexIndex ), B.element( vertexIndex ) ) )
@@ -557,7 +558,7 @@ Practical rules: feature-detect with `renderer.backend.isWebGPUBackend`; give st
 ## 15. Debugging
 
 - `.setName()` on kernels, storage nodes and uniforms: names appear in generated WGSL and in the Inspector (`renderer.inspector = new Inspector()`), making `GPUValidationError` messages readable.
-- Print generated source: attach `.debug()` to a node inside the kernel (prints compute-stage code up to that node), or `renderer.debug.onNodeBuilderCreated = ( builder ) => {}` to hook the builder. `renderer.debug.getShaderAsync( scene, camera, object )` only returns vertex/fragment sources of a render object (no compute equivalent in r186).
+- Print generated source: attach `.debug()` to a node inside the kernel (prints compute-stage code up to that node), or `renderer.debug.onNodeBuilderCreated = ( builder ) => {}` to hook the builder. `renderer.debug.getShaderAsync( scene, camera, object )` only returns vertex/fragment sources of a render object (no compute equivalent in r187).
 - Errors: `renderer.onError`, `renderer.onDeviceLost`, `renderer.debug.checkShaderErrors = true` (default).
 - Verify data by reading back a small slice (`getArrayBufferAsync( attr, null, 0, 64 )`, byte counts) and logging it; `webgpu_compute_reduce.html` has a "Log Left/Right Side" button doing this with `ReadbackBuffer`.
 - Inspector `Memory` tab / `renderer.info.memory.storageAttributes(Size)`, `readbackBuffers`, `indirectStorageAttributes` show buffer budgets.
@@ -568,7 +569,7 @@ Practical rules: feature-detect with `renderer.backend.isWebGPUBackend`; give st
 
 1. `renderer.compute()` before `await renderer.init()` returns a Promise (warns); do init first or use `computeAsync`.
 2. Numeric `count` adds a bounds guard, but kernels with any barrier lose it (`allowEarlyReturns = false`).
-3. `renderer.compute( node, [x,y,z] )` are workgroups; `renderer.compute( node, n )` is invocations; the guard still uses `node.count`.
+3. `renderer.compute( node, [x,y,z] )` are workgroups; `renderer.compute( node, n )` is invocations. Since r187 both only work for `computeKernel()` nodes; passing a size for a `compute( count )` node throws `A dispatch size cannot be passed to "renderer.compute()" for nodes created with "compute( count )"`.
 4. Vertex/fragment stages see storage buffers read-only; write only in compute.
 5. `toAttribute()` vs `.element( instanceIndex )` in vertex shader: only the latter needs `requiredLimits.maxStorageBuffersInVertexStage`.
 6. Set `object.count` (Sprite/Mesh/Points) or InstancedMesh count manually; set `frustumCulled = false` for GPU-moved geometry.
@@ -589,6 +590,6 @@ API (sibling `threejs` skill, `references/api/`): `ComputeNode.md`, `ComputeBuil
 
 Local guides: `tsl-guide/28-compute-stage.md`, `29-events.md`, `30-atomic.md`, `36-storage.md`, `37-storage-texture.md`, `38-storage-array.md`, `22-struct.md`, `26-loop.md`, `66-debug.md`, `73-setname.md`; `webgpu-renderer.md` (init, limits, timestamps).
 
-Examples (three.js r186 `examples/`): webgpu_compute_particles, webgpu_compute_particles_rain, webgpu_compute_particles_snow, webgpu_compute_particles_fluid (atomics, fixed point, structs), webgpu_compute_points, webgpu_compute_texture, webgpu_compute_texture_pingpong, webgpu_compute_texture_3d, webgpu_compute_geometry, webgpu_compute_birds, webgpu_compute_water, webgpu_compute_cloth (verlet, spring lists, PBO), webgpu_compute_audio (readback), webgpu_compute_reduce (workgroup + subgroup reductions, timestamps), webgpu_compute_sort_bitonic, webgpu_compute_rasterizer(.ibl) (atomics, indirect), webgpu_storage_buffer (WebGPU vs WebGL side-by-side), webgpu_struct_drawindirect, webgpu_particles (indirect), webgpu_tsl_compute_attractors_particles, webgpu_instance_*.
+Examples (three.js r187 `examples/`): webgpu_compute_particles, webgpu_compute_particles_rain, webgpu_compute_particles_snow, webgpu_compute_particles_fluid (atomics, fixed point, structs), webgpu_compute_points, webgpu_compute_texture, webgpu_compute_texture_pingpong, webgpu_compute_texture_3d, webgpu_compute_geometry, webgpu_compute_birds, webgpu_compute_water, webgpu_compute_cloth (verlet, spring lists, PBO), webgpu_compute_audio (readback), webgpu_compute_reduce (workgroup + subgroup reductions, timestamps), webgpu_compute_sort_bitonic, webgpu_meshlets_* (r187 replacement for webgpu_compute_rasterizer: atomics, indirect), webgpu_storage_buffer (WebGPU vs WebGL side-by-side), webgpu_struct_drawindirect, webgpu_particles (indirect), webgpu_tsl_compute_attractors_particles, webgpu_instance_*.
 
 Official: https://threejs.org/docs/#ComputeNode, https://threejs.org/docs/#StorageBufferNode, https://threejs.org/manual/#en/webgpurenderer, https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language

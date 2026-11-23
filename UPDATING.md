@@ -19,7 +19,7 @@ layers, and they age differently:
    ```
 
    Read the report: added/removed API pages, new migration-guide sections, and
-   files still mentioning the old `0.186.x` string.
+   files still mentioning the previous release's version string.
 
 2. **Read the new migration-guide section** in `tools/corpus/migration.md`
    (`## 186 → 187`). Every line there is a potential wrong statement in a digest.
@@ -27,7 +27,7 @@ layers, and they age differently:
    `*/references/*.md` (excluding `api/`, `tsl-guide/`, `tsl-reference.md`) and fix.
 
 3. **Bump version strings** in the four `SKILL.md` files and `README.md`:
-   `0.186.1` → new version, `r186` → new revision. The import-map snippets pin
+   `0.187.0` → new version, `r187` → new revision. The import-map snippets pin
    the exact version on purpose.
 
 4. **Re-digest what changed.** For small releases, editing by hand is enough.
@@ -73,3 +73,22 @@ that memory gets wrong:
 - `src/Three.Legacy.js` is empty; old names throw rather than warn.
 - TSL renames land without aliases (`tslFn`, `timerLocal`, `cond`,
   `storageObject` are gone); always verify against `tsl-reference.md`.
+
+## Things that bit us at r187
+
+- The wiki's `Migration-Guide.md` switched to CRLF line endings, so every
+  section looked "new" in the change report. `update-corpus.py` now normalizes
+  line endings before diffing.
+- The Migration Guide misses some removals. r187 deleted everything deprecated
+  in r177 (#34517, e.g. `ColorManagement.fromWorkingColorSpace`) and dropped
+  TSL `transformedNormalView/World` and `VarIntent`, none of it in the guide.
+  Check three more sources:
+  - the GitHub release notes;
+  - the TSL guide diff: its `> AI:` notes carried the r187 integer-truncation
+    and compute-dispatch changes
+    (`git diff -U0 -- threejs-tsl-webgpu/references/tsl-guide | grep '^+> AI:'`);
+  - members removed per API page, where signature changes hide
+    (`LightProbeGrid.falloff`, the PMREM return type), plus removed
+    `tsl-reference.md` entries (`git diff | grep '^-### '`).
+- Signature changes hide in `tsl-reference.md` too: `grayscale()` returns a
+  `float` since r187, not a `vec3`.

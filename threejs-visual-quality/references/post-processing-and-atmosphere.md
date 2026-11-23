@@ -1,4 +1,4 @@
-# Post-processing and atmosphere (three.js r186)
+# Post-processing and atmosphere (three.js r187)
 
 ## When to read this
 Building the effect stack (bloom, AO, SSR/SSGI, DoF, motion blur, god rays, grain/vignette/CA, LUT, outline) on WebGLRenderer (EffectComposer / `renderer.setEffects`) or WebGPURenderer (`RenderPipeline` + TSL nodes), and the atmosphere layer (fog, sky, water, reflections, refraction, particles, volumes, clouds). Read `color-and-tone-mapping.md` first: pass ordering relative to tone mapping is the top source of bugs.
@@ -38,7 +38,7 @@ renderer.setAnimationLoop(() => composer.render());       // composer.render(del
 - MSAA: pass a `WebGLRenderTarget` with `samples: 4, type: HalfFloatType` to the composer constructor, or use SSAA/TAA/FXAA.
 - Masking: `MaskPass`/`ClearMaskPass` (example `webgl_postprocessing_masking`); `renderPass.clearAlpha = 0` for transparent canvases.
 
-### WebGL built-in chain (r186): `setEffects`
+### WebGL built-in chain (new in r186): `setEffects`
 ```js
 const renderer = new THREE.WebGLRenderer({ antialias: true, outputBufferType: THREE.HalfFloatType }); // HalfFloat/Float required
 renderer.toneMapping = THREE.AgXToneMapping;

@@ -1,4 +1,4 @@
-# Textures, GPU Memory and Allocation Discipline (three.js r186)
+# Textures, GPU Memory and Allocation Discipline (three.js r187)
 
 ## When to read this
 
@@ -57,6 +57,7 @@ Rule: shrink dimensions, not just file size. Choose the lowest resolution that l
 - `texture.generateMipmaps = true` is the default for `Texture`. Mips add 1/3 memory but are required for quality and performance of minified sampling: a GPU samples the small mip, which is cache-friendly. Disabling mips on textures that are sometimes minified causes shimmering and more memory traffic (manual: with `Nearest`/`Linear` filters the GPU picks from the original and "flicker in the distance").
 - `minFilter` default is `LinearMipmapLinearFilter` (trilinear, 8 texel reads per sample, best quality). `LinearMipmapNearestFilter` / `NearestMipmapNearestFilter` are cheaper; `LinearFilter` and `NearestFilter` do not use mips.
 - Turn mipmaps off (`generateMipmaps = false`, `minFilter = LinearFilter`) for: UI/HUD textures drawn 1:1, render target textures sampled at the same resolution (post-processing inputs), data textures (positions, matrices, lookup tables), and `DataArrayTexture` (defaults are already `generateMipmaps = false`, `magFilter = NearestFilter`).
+- `texture.mipmapsAutoUpdate = false` (r187, default `true`; needs `generateMipmaps`): keep mips allocated but stop the renderer regenerating them on every upload, render or copy. Use it for render targets or video/canvas textures updated often where you write mip levels yourself or stale mips are acceptable, to skip a mip-chain rebuild each update.
 - Non-power-of-two (NPOT): WebGL2 and WebGPU support NPOT with mipmaps and repeat wrapping, so POT is not required for correctness. Keep POT (or multiples of 4 for block-compressed formats) as a rule of thumb: block compression requires dimensions that are multiples of the block size (4 for ETC/BC/ASTC 4x4), mip chains are cleaner, and GPU texture caches handle them well.
 - `texture.flipY` / `premultiplyAlpha` are applied at upload for HTML images (a CPU pass in the driver); ignored for `ImageBitmap` (configure at bitmap creation, section 6). Compressed textures cannot be flipped at upload.
 - `texture.colorSpace`: set `SRGBColorSpace` for color maps; leave data maps (normal, roughness, AO) at the default `NoColorSpace`. Wrong settings cost correctness, not memory.
@@ -190,7 +191,7 @@ CPU-side image memory: the decoded HTMLImageElement / bitmap remains in RAM afte
 
 ## 7. Video textures
 
-`VideoTexture(video)` re-uploads the current frame to the GPU on each new video frame. In r186 it uses `video.requestVideoFrameCallback` when available (flagging `needsUpdate` only on actual new frames), otherwise polls `update()` each render.
+`VideoTexture(video)` re-uploads the current frame to the GPU on each new video frame. In r187 it uses `video.requestVideoFrameCallback` when available (flagging `needsUpdate` only on actual new frames), otherwise polls `update()` each render.
 
 Costs:
 
@@ -224,7 +225,7 @@ Render target memory = `width * height * bytesPerTexel * attachments` (+ depth/s
 
 ## 9. PMREM and environment maps
 
-`PMREMGenerator` (WebGLRenderer) converts an equirectangular / cube / scene into a prefiltered cube-UV render target used for roughness-dependent IBL. Generation does several GPU passes and compiles shaders: a one-time cost (tens to hundreds of milliseconds at 256 output; rule of thumb) that must not happen per frame or per object.
+`PMREMGenerator` (WebGLRenderer) converts an equirectangular / cube / scene into a prefiltered cube render target (a `WebGLCubeRenderTarget` since r187; the old cube-UV atlas and `CubeUVReflectionMapping` are gone) used for roughness-dependent IBL. Generation does several GPU passes and compiles shaders: a one-time cost (tens to hundreds of milliseconds at 256 output; rule of thumb) that must not happen per frame or per object.
 
 ```js
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -243,7 +244,7 @@ pmrem.dispose();      // frees the generator's internal shader/targets
 Rules:
 
 - Generate once, reuse for all materials via `scene.environment` rather than setting `material.envMap` on every material.
-- Ideal input sizes per `PMREMGenerator.md`: equirectangular 1024 x 512 (1k) matches the 256 x 256 cube output; cubemap input 256 x 256 per face; minimum equirect 64 x 32, cube 16 x 16. Larger inputs only increase load and VRAM (the HDR source as RGBA half/float: 4096 x 2048 half = 64 MB) with no visible gain in the prefiltered output; use high resolution only for `scene.background`, which is the unfiltered source.
+- Output size follows the input since r187 (`PMREMGenerator.md`): equirect face size = image width / 4, cube face size = input face size, both rounded down to a power of two and at least 256. So a 1024 x 512 equirect gives 256 faces, and a 4096 x 2048 one gives 1024 faces (16x the VRAM of 256). Pick the source width for the reflection sharpness you need; use a high-resolution source for `scene.background` separately if only the backdrop must be sharp.
 - `fromScene(scene, sigma, near, far, { size, position })` renders a scene into a PMREM (default `size` 256), useful for procedural skies: it re-renders the scene 6 times; call once or rarely.
 - `PMREMGenerator` is documented as "static": one instance is enough, and disposing one makes any others unusable.
 - Dispose the old PMREM render target when swapping environments (`oldRT.dispose()`).
@@ -327,7 +328,7 @@ Leak hunting:
 ## 11. Shared resources
 
 - One geometry per shape, shared by all meshes (and cloned meshes: `mesh.clone()` shares geometry and material by reference).
-- One material per look, shared. Per-object variation: `InstancedMesh` color, vertex colors, uniform per object via `onBeforeRender` (costly) or `material.clone()` only when really needed (each clone is its own set of uniforms; programs are shared when parameters match).
+- One material per look, shared. Per-object variation: `InstancedMesh` color, vertex colors, uniform per object via `onBeforeRender` (costly), on WebGPURenderer `NodeMaterialInstance` (r187: per-instance values, one shared shader build; see `threejs-tsl-webgpu` node-materials), or `material.clone()` only when really needed (each clone is its own set of uniforms; programs are shared when parameters match).
 - Textures: reuse the same `Texture` instance (or share `Source`) across materials; load each URL once (keep a `Map<url, Promise<Texture>>`; `THREE.Cache.enabled = true` also caches raw file data).
 - `gltf.scene.clone()` shares geometry/material/texture (and `SkinnedMesh` needs `SkeletonUtils.clone`). Dispose the shared resources once, at the end.
 - `AnimationObjectGroup`: a group of objects sharing one animation state so a mixer/clip action drives many objects with one property binding set; the properties must be compatible among all objects (documented limitation).

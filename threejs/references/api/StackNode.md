@@ -111,13 +111,18 @@ The index of the node. If not specified, the node will be added to the end of th
 
 Default is `-1`.   | **Returns:** A reference to this stack node.
 
-### .addToStackBefore( node : Node ) : StackNode
+### .addToStackBefore( node : Node, beforeNode : Node ) : StackNode
 
-Adds a node to the stack before the current node.
+Adds a node to the stack before the given node, by default the current node.
 
  | **node**  |
 
-The node to add.   | **Returns:** A reference to this stack node.
+The node to add.  |
+ | **beforeNode**  |
+
+The node of the stack that the node is added before.
+
+Default is `this._currentNode`.   | **Returns:** A reference to this stack node.
 
 ## Source
 

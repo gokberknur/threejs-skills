@@ -1,6 +1,6 @@
 BitcountNode - Three.js Docs
 
-EventDispatcher → Node → TempNode → MathNode →
+EventDispatcher → Node → MathNode →
 
 # BitcountNode
 

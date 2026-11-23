@@ -1,6 +1,6 @@
 VXGINode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # VXGINode
 
@@ -125,7 +125,7 @@ Set to `true` to re-inject lighting in the next frame.
 
 ### .needsUpdate : boolean
 
-Set to `true` to re-voxelize the scene in the next frame.   **Overrides:** TempNode#needsUpdate
+Set to `true` to re-voxelize the scene in the next frame.   **Overrides:** Node#needsUpdate
 
 ### .normalNode : TextureNode
 
@@ -145,7 +145,7 @@ The scene to voxelize.
 
 The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node renders its effect once per frame in `updateBefore()`.
 
-Default is `'frame'`.   **Overrides:** TempNode#updateBeforeType
+Default is `'frame'`.   **Overrides:** Node#updateBeforeType
 
 ### .useTemporalFiltering : boolean
 
@@ -161,7 +161,7 @@ The voxel volume. Use it to configure bounds, layers and bounces.
 
 ### .dispose()
 
-Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** TempNode#dispose
+Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** Node#dispose
 
 ### .getAONode() : PassTextureNode
 
@@ -188,7 +188,7 @@ This method is used to setup the effect's TSL code.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#setup
+The current node builder.   | **Overrides:** Node#setup
 
 ### .updateBefore( frame : NodeFrame )
 
@@ -196,7 +196,7 @@ This method is used to render the effect once per frame.
 
  | **frame**  |
 
-The current node frame.   | **Overrides:** TempNode#updateBefore
+The current node frame.   | **Overrides:** Node#updateBefore
 
 ## Source
 

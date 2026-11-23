@@ -4,14 +4,14 @@
     {
       "id": 1,
       "prompt": "I built a three.js product viewer for a watch (glTF with metal and glass parts). It looks flat and plasticky with a black background. I want it to look like a premium e-commerce render. What should I change? Give me the code for the lighting/rendering setup.",
-      "expected_output": "Environment lighting (RoomEnvironment via PMREMGenerator or HDRI with HDRLoader + EquirectangularReflectionMapping as scene.environment), tone mapping (Neutral or ACES/AgX) with exposure, sRGB output, soft shadows (VSM or contact shadow / ShadowMaterial ground), glass via MeshPhysicalMaterial transmission/ior/thickness, metal with metalness 1 and roughness map, blurred background (backgroundBlurriness) or gradient, optional bloom on highlights and GTAO; AA via antialias:true. Uses r186 names (HDRLoader, outputColorSpace, no PCFSoftShadowMap).",
+      "expected_output": "Environment lighting (RoomEnvironment via PMREMGenerator or HDRI with HDRLoader + EquirectangularReflectionMapping as scene.environment), tone mapping (Neutral or ACES/AgX) with exposure, sRGB output, soft shadows (VSM or contact shadow / ShadowMaterial ground), glass via MeshPhysicalMaterial transmission/ior/thickness, metal with metalness 1 and roughness map, blurred background (backgroundBlurriness) or gradient, optional bloom on highlights and GTAO; AA via antialias:true. Uses r187 names (HDRLoader, outputColorSpace, no PCFSoftShadowMap).",
       "assertions": [
         "Adds environment lighting: PMREMGenerator + RoomEnvironment or HDRI via HDRLoader with EquirectangularReflectionMapping set as scene.environment",
         "Sets tone mapping (ACES/AgX/Neutral) with exposure and keeps outputColorSpace sRGB",
         "Glass via MeshPhysicalMaterial transmission/ior/thickness; metal via metalness 1 + roughness, not opacity hacks",
         "Replaces black background: blurred environment (backgroundBlurriness), gradient or studio color",
         "Soft shadow or contact shadow on a ground catcher (ShadowMaterial / VSM / radius)",
-        "Anti-aliasing enabled (antialias: true or AA pass) and no deprecated names (RGBELoader, outputEncoding, PCFSoftShadowMap, GammaCorrectionShader)"
+        "Anti-aliasing enabled (antialias: true or AA pass) and no deprecated names (RGBELoader, outputEncoding, PCFSoftShadowMap, GammaCorrectionShader, iridescenceThicknessRange, renderer.library.addLight)"
       ]
     },
     {

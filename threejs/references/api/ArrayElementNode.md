@@ -56,6 +56,10 @@ The current node builder.  |
 
 The member name.   | **Overrides:** Node#getMemberType   **Returns:** The member type.
 
+### .getScope() : Node
+
+Returns the scope of the array-like node so assignments to elements mark the underlying value as mutable.   **Overrides:** Node#getScope   **Returns:** The scope of the node.
+
 ## Source
 
  src/nodes/utils/ArrayElementNode.js (https://github.com/mrdoob/three.js/blob/master/src/nodes/utils/ArrayElementNode.js)

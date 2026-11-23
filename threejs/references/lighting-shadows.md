@@ -1,6 +1,6 @@
 # Lighting, shadows, environment, and color management
 
-When to read this: you are adding or tuning lights, shadows (including cascaded/tiled), image-based lighting (HDR/PMREM/RoomEnvironment), light probes, area lights, baked light maps, many-light setups on WebGPU, or debugging "too dark / too bright / shadow wrong". Covers WebGLRenderer and WebGPURenderer differences. Version: three r186.
+When to read this: you are adding or tuning lights, shadows (including cascaded/tiled), image-based lighting (HDR/PMREM/RoomEnvironment), light probes, area lights, baked light maps, many-light setups on WebGPU, or debugging "too dark / too bright / shadow wrong". Covers WebGLRenderer and WebGPURenderer differences. Version: three r187.
 
 ## Contents
 1. Color management essentials
@@ -207,7 +207,7 @@ sun.shadow.camera.far = 200;               // maximum shadow distance
 sun.shadow.mapSize.setScalar(2048);        // per cascade (default 1024)
 sun.shadow.normalBias = 0.05;
 scene.add(sun);
-// WebGPU only, once: import { SunLightNode } from 'three/addons/lights/SunLightNode.js'; renderer.library.addLight(SunLightNode, SunLight);
+// WebGPU only, once: import { SunLightNode } from 'three/addons/lights/SunLightNode.js'; SunLight.registerNode(SunLightNode);  // r187; was renderer.library.addLight(SunLightNode, SunLight)
 ```
 `SunLightShadow` fits cascades to the view frustum automatically (`camera.left/right/top/bottom` ignored; `getCamera(i)`, `getFrustum(i)`, `getMatrix(i)`). Examples: `webgl_lights_sunlight.html`, `webgpu_lights_sunlight.html`. Choose SunLight for a zero-config sun; CSM/CSMShadowNode when you need 3-5 cascades or split-mode control.
 
@@ -228,7 +228,7 @@ const tsm = new TileShadowNode(dirLight, { tilesX: 2, tilesY: 2 });       // opt
 dirLight.shadow.shadowNode = tsm;
 scene.add(dirLight, new TileShadowNodeHelper(tsm));                        // helper optional (debug)
 ```
-Not supported with `VSMShadowMap`. Static-frustum alternative to CSM (cascades follow the view; tiles divide a fixed area). Example: `webgpu_shadowmap_array.html`. (`webgpu_lights_tiled.html` does not exist in r186; see Doc gaps.)
+Not supported with `VSMShadowMap`. Static-frustum alternative to CSM (cascades follow the view; tiles divide a fixed area). Example: `webgpu_shadowmap_array.html`. (`webgpu_lights_tiled.html` does not exist in r187; see Doc gaps.)
 
 ---
 
@@ -238,6 +238,7 @@ Not supported with `VSMShadowMap`. Static-frustum alternative to CSM (cascades f
 - **`ShadowMesh`** (`three/addons/objects/ShadowMesh.js`): flattens a mesh onto one plane: `const s = new ShadowMesh(cube); scene.add(s); s.update(plane, lightPosition4D)` (Vector4, w=1 for point light). Hard shadow on one flat plane only. Example `webgl_shadowmesh.html`.
 - **Contact shadows:** render depth from below into a render target and blur (`webgl_shadow_contact.html`, `webgpu_shadow_contact.html`).
 - **Baked light maps / AO:** section 12. **`ProgressiveLightMap`** accumulates soft baked shadows at runtime (`three/addons/misc/ProgressiveLightMap.js`, WebGL; `ProgressiveLightMapGPU.js` for WebGPU): `const p = new ProgressiveLightMap(renderer, 1024); p.addObjectsToLightMap([...objects]); p.update(camera)` each frame while jittering lights; it rewrites objects' lightmaps and UV channel 1 (`uv1`), so objects must not need that channel. Examples `webgl_shadowmap_progressive.html`, `webgpu_shadowmap_progressive.html`.
+- **`LightMapper`** (r187, WebGPU only, `three/addons/lighting/LightMapper.js`): bakes indirect diffuse into a light map from any TSL irradiance function, e.g. `new LightMapper(renderer, size, (p, n) => lightProbeGridIrradiance(probes, p, n))`; `addObjects(meshes)`, then `update()` per frame (progressive) or bake N samples at once (max 256). Needs `uv1` light-map UVs; call `reset()` after moving geometry or lights.
 - One shadow-casting directional light + hemisphere/environment fill is the usual budget.
 
 ---
@@ -312,7 +313,7 @@ const grid = new LightProbeGrid(5.6, 4.7, 5.6, 6, 6, 6);          // width,heigh
 grid.position.set(0, 2.35, 0);                                    // volume is centered on position
 scene.add(grid);
 await grid.bake(renderer, scene, { cubemapSize: 32, near: 0.05, far: 20, bounces: 1 });   // also sampleCount (512), start/count/pass for incremental
-grid.falloff = 0.5;                                               // blend distance at volume edge when using several grids
+grid.priority = 1;                                                // r187: where grids overlap, highest priority wins (ties: newest grid); `falloff` was removed
 // WebGL: import { LightProbeGridWebGL } from 'three/addons/lighting/LightProbeGridWebGL.js' (same bake API); helper LightProbeGridHelperWebGL
 ```
 Bake at load/offline; GPU-resident (no CPU readback); shadow-casting `SunLight`s are temporarily replaced by directional lights during bake. Examples `webgpu_lightprobes.html`, `webgl_lightprobes.html`, `*_lightprobes_complex`, `*_lightprobes_sponza`. Also `examples/jsm/lighting/vxgi` (voxel GI experiment; not documented in api/).
@@ -435,7 +436,7 @@ Checklist for a standard outdoor scene: `HemisphereLight` (or `scene.environment
 
 ## 17. Doc gaps
 
-- `webgpu_lights_tiled.html` does not exist in r186 examples; tiled shadows are shown in `webgpu_shadowmap_array.html`; tiled/clustered lights in `webgpu_lights_clustered.html`.
+- `webgpu_lights_tiled.html` does not exist in r187 examples; tiled shadows are shown in `webgpu_shadowmap_array.html`; tiled/clustered lights in `webgpu_lights_clustered.html` and `webgpu_lights_clustered_city.html` (new in r187).
 - Local docs do not state units for `DirectionalLight` (lux) or `RectAreaLight` (nits) intensity; they are inferred from `webgl_lights_physical.html` and upstream conventions.
 - `api/SpotLightShadow.md` description says "directional lights" (typo upstream). `api/SpotLightHelper.md` constructor type lists `HemisphereLight` (typo; takes SpotLight).
 - No manual page on PMREM or IBL beyond API pages; `LightProbeGrid` baking options documented partially (`start`, `count`, `pass`).

@@ -2,6 +2,15 @@
 <p align=center>⚠️ <strong>When updating old projects, it's recommended to update the library in increments of 10 ⚠️</strong><br/>
 Updating in steps helps manage API changes, as deprecation warnings last for 10 releases</p>
 
+## 187 → 188
+
+- `Float16BufferAttribute` now relies on `Float16Array`, see [#35507](https://github.com/mrdoob/three.js/pull/35507).
+- `iblIrradiance` has been removed, see [#35570](https://github.com/mrdoob/three.js/pull/35570). The environment irradiance is now added to `irradiance`, and `RE_IndirectSpecular()` lost its `irradiance` parameter. Rough materials lit by an environment map may look slightly different.
+- `AmbientLight` and `HemisphereLight` now also add specular reflections to `MeshStandardMaterial` and `MeshPhysicalMaterial`, see [#35580](https://github.com/mrdoob/three.js/pull/35580). Without an environment map, metals no longer render black and rough surfaces get brighter at grazing angles. If a scene uses an environment map together with one of these lights as a fill, the fill now reflects too, so consider lowering its `intensity`.
+- `MeshStandardMaterial` and `MeshPhysicalMaterial` now use multi-bounce ambient occlusion which noticeably weakens occlusion on bright and metallic surfaces for all AO sources, see [#35586](https://github.com/mrdoob/three.js/pull/35586). To compensate with screen-space AO, increase the strength of the effect (e.g. `scale` of `GTAONode` or `intensity` of `SSAONode`). To compensate with an `aoMap`, re-bake or darken the texture. Do not raise `aoMapIntensity` above `1`, its range is `[0,1]` and higher values produce artifacts in strongly occluded areas.
+- `LightProbe` has been deprecated and no longer contributes to lighting, see [#35615](https://github.com/mrdoob/three.js/pull/35615). Use `Scene.environment`, or a `LightProbeGrid` (`LightProbeGridWebGL` with `WebGLRenderer`) for baked local irradiance. A `1x1x1` grid matches the old `LightProbe` but only lights surfaces inside its bounds, so size it to cover the area it should light. `LightProbeGenerator` and `LightProbeHelper` have been deprecated as well: the generator returns an empty `LightProbe` and the helper renders nothing.
+- `XREstimatedLight.lightProbe` is now a `1x1x1` `LightProbeGridWebGL` instead of a `LightProbe`, see [#35619](https://github.com/mrdoob/three.js/pull/35619). It no longer has an `sh` property: the estimated spherical harmonics are packed into the grid's `texture`.
+
 ## 186 → 187
 
 - In TSL, operands and parameters of math functions are implicitly coerced to broader common types now, see [#33695](https://github.com/mrdoob/three.js/pull/33695).
@@ -16,7 +25,7 @@ Updating in steps helps manage API changes, as deprecation warnings last for 10 
 
 ## 185 → 186
 
-- `Object3D` has now a `dispose()` method, see [#34141](https://github.com/mrdoob/three.js/pull/34141). If you have custom 3D object types in your project with `dispose()` methods, make sure to call `super.dispose();` in their implementations.
+- `Object3D` now has a `dispose()` method, see [#34141](https://github.com/mrdoob/three.js/pull/34141). If you have custom 3D object types in your project with `dispose()` methods, make sure to call `super.dispose();` in their implementations.
 - The distance model of `GTAONode` has been improved which means `distanceExponent` and `distanceFallOff` are deprecated and have no effect on the AO anymore, see [#33895](https://github.com/mrdoob/three.js/pull/33895).
 - `BufferGeometryUtils.toTrianglesDrawMode()` does not clone the given geometry anymore, see [#33878](https://github.com/mrdoob/three.js/pull/33878). Instead, the geometry's index is changed "in-place". To restore the previous behavior, do a manual `clone()` before calling the function.
 - `LightProbeGrid` has been renamed to `LightProbeGridWebGL`. `LightProbeGridHelper` is now `LightProbeGridHelperWebGL`. The free names will be used for the `WeGPURenderer` version, see [#33911](https://github.com/mrdoob/three.js/pull/33911).

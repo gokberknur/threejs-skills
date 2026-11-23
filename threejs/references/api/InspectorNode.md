@@ -6,6 +6,8 @@ EventDispatcher → Node →
 
 InspectorNode is a wrapper node that allows inspection of node values during rendering. It can be used to debug or analyze node outputs in the rendering pipeline.
 
+The inspector node is registered by the inspected node when it is built, see Node#_setupInspector.
+
 ## Constructor
 
 ### new InspectorNode( node : Node, name : string, callback : function  | null )
@@ -22,11 +24,11 @@ Optional name for the inspector node.
 Default is `''`.  |
  | **callback**  |
 
-Optional callback to modify the node during setup.
+Optional callback to modify the node presented by the inspector.
 
 Default is `null`.  |
 
-## Properties
+## Static Properties
 
 ### .type
 
@@ -45,14 +47,6 @@ The node builder.   | **Overrides:** Node#generateNodeType
 ### .getName() : string
 
 Returns the name of the inspector node.
-
-### .setup( builder : NodeBuilder ) : Node
-
-Sets up the inspector node.
-
- | **builder**  |
-
-The node builder.   | **Overrides:** Node#setup   **Returns:** The setup node.
 
 ### .update( frame : NodeFrame )
 

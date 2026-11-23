@@ -27,7 +27,7 @@ Default is `null`.  |
 
 This index can be used when overriding setupRenderTarget with a RenderTarget Array to specify the depth layer.
 
-Default is `true`.
+Default is `0`.
 
 ### .isShadowNode : boolean (readonly)
 

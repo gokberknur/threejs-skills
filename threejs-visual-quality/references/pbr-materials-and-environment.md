@@ -1,4 +1,4 @@
-# PBR materials, environment lighting, studio lighting (three.js r186)
+# PBR materials, environment lighting, studio lighting (three.js r187)
 
 ## When to read this
 Materials look plastic/flat/CG, glass looks fake, metals look black, product shots lack depth, or you need a lighting recipe (HDRI + key light, 3-point area lights, sun + sky) and complete starter scenes. Pair with `color-and-tone-mapping.md` (mandatory) and `shadows-and-antialiasing.md`.
@@ -69,7 +69,8 @@ Cost: higher per-pixel cost; each feature adds shader work only when enabled (mo
 | Volume | `thickness > 0` makes a volume boundary; `thickness 0` = thin-walled | thin bottle wall ~ 0.002-0.02 in mesh units; solid gem 0.5-2 | `attenuationDistance` is in world units: smaller = stronger tint |
 | Dispersion | `dispersion` 0, typical range [0,1] | diamond/crystal 0.3-1; glass 0-0.1 | Only for transmissive; 3 refraction samples |
 | IOR | `ior` 1.5 (range 1.0-2.333); `reflectivity` 0.5 == ior 1.5 | water 1.33, glass 1.5, sapphire 1.77, diamond 2.4 (clamped 2.333) | `reflectivity` and `ior` are linked; set one |
-| Iridescence | `iridescence` 0, `iridescenceIOR` 1.3, `iridescenceThicknessRange` [100,400] nm, maps | soap bubble: 1, IOR 1.3, [100,800]; oil slick/beetle: 1, [200,500]; subtle car flip: 0.3 | Thin-film interference; costs extra Fresnel math |
+| Iridescence | `iridescence` 0, `iridescenceIOR` 1.3, `iridescenceThicknessMinimum` 100 / `iridescenceThicknessMaximum` 400 nm (r187; `iridescenceThicknessRange` deprecated), maps | soap bubble: 1, IOR 1.3, [100,800]; oil slick/beetle: 1, [200,500]; subtle car flip: 0.3 | Thin-film interference; costs extra Fresnel math |
+| Diffuse roughness (r187) | `diffuseRoughness` 0, `diffuseRoughnessMap` (R) | matte powdery surfaces (clay, plaster, dust): try 0.5-1; leave 0 for most materials | 0 is Lambert; >0 switches to the EON (energy-preserving Oren-Nayar) diffuse BRDF, the flatter look of rough matte surfaces |
 | Anisotropy | `anisotropy` 0..1, `anisotropyRotation` (radians), `anisotropyMap` | brushed metal/hair/CD: 0.5-1; rotation aligns stretch direction | `anisotropyMap`: R,G = direction in tangent space, B = strength; needs UVs |
 | Specular | `specularIntensity` 1, `specularColor` white (+maps) | leave default; <1 for dull dielectrics | Non-metal F0 control; glTF KHR_materials_specular |
 | Retroreflectivity | `retroreflectivity` 0..1 | road signs, tape: 1 | New in recent releases |
@@ -84,7 +85,7 @@ new THREE.MeshPhysicalMaterial({ color: 0x9a0f12, metalness: 0.9, roughness: 0.4
 // velvet
 new THREE.MeshPhysicalMaterial({ color: 0x400808, roughness: 0.9, sheen: 1, sheenColor: new THREE.Color(0xff6a6a), sheenRoughness: 0.4 });
 // soap bubble
-new THREE.MeshPhysicalMaterial({ transmission: 1, roughness: 0, thickness: 0.001, iridescence: 1, iridescenceIOR: 1.3, iridescenceThicknessRange: [100, 800] });
+new THREE.MeshPhysicalMaterial({ transmission: 1, roughness: 0, thickness: 0.001, iridescence: 1, iridescenceIOR: 1.3, iridescenceThicknessMinimum: 100, iridescenceThicknessMaximum: 800 });
 ```
 Transparent alternative for cheap glass: `transparent:true, opacity:0.2` + high `specularIntensity`/env; opacity attenuates reflections too, which is why transmission looks better. Sort with `renderOrder`, `depthWrite:false`, `side: DoubleSide` (`forceSinglePass: true` for double-sided transmissive meshes if artifacts).
 
@@ -129,7 +130,7 @@ scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; // sig
 ```
 Methods: `fromEquirectangular(tex, renderTarget)`, `fromCubemap(cube, renderTarget)`, `fromScene(scene, sigma=0, near=0.1, far=100, options)`, `compileEquirectangularShader()`, `dispose()`. `fromScene` also works for a custom light-box built from emissive planes (softbox studio) or a `Sky` mesh (sect. 8).
 
-Intensity semantics (r186 `WebGLRenderer`): if `material.envMap === null` and `scene.environment !== null`, **`scene.environmentIntensity` is used and `material.envMapIntensity` is ignored**. `material.envMapIntensity` only applies when you assign `material.envMap` yourself. Same for rotation: `scene.environmentRotation` vs `material.envMapRotation`.
+Intensity semantics (r187 `WebGLRenderer`): if `material.envMap === null` and `scene.environment !== null`, **`scene.environmentIntensity` is used and `material.envMapIntensity` is ignored**. `material.envMapIntensity` only applies when you assign `material.envMap` yourself. Same for rotation: `scene.environmentRotation` vs `material.envMapRotation`.
 - Override per material: `mat.envMap = otherPmremTexture; mat.envMapIntensity = 2;` (e.g. a dedicated reflection env for a chrome ball, or a CubeCamera render for a dynamic mirror).
 - HDRI exposure: indoor/studio HDRIs 1-3 intensity needs no light; outdoor sun HDRIs are very bright; use `renderer.toneMappingExposure` 0.3-0.8 or `environmentIntensity` 0.3-0.6 when adding a DirectionalLight for shadows.
 - Env maps give no shadows. Add one `DirectionalLight` matching the brightest spot of the HDRI (same azimuth/elevation; flip rotation if you rotate the env) to get coherent shadows. Intensity: ~1-3 for studio fill, 3-5 for sun alongside environmentIntensity ~0.5.
@@ -144,7 +145,7 @@ scene.add(sky); scene.environment = env;        // keep scene.background null
 ```
 WebGPU: `getGroundProjectedNormal` from `three/addons/tsl/utils/GroundedSkybox.js` (example `webgpu_materials_envmaps_groundprojected`). Keep models within ~height*0.3 of the origin; scale the model so the horizon looks right.
 
-Global illumination (indirect bounce): `LightProbe` (single SH, `LightProbeGenerator`), `LightProbeGrid` (WebGPU: `three/addons/lighting/LightProbeGrid.js`, ctor `(w,h,d,wProbes,hProbes,dProbes)`, `await probes.bake(renderer, scene, options)`, `falloff`; WebGL: `LightProbeGridWebGL.js`; helper `LightProbeGridHelper`). It is a Light: add to scene, position-dependent diffuse GI for static interiors (examples `webgpu_lightprobes`, `webgl_lightprobes`, `webgl_lightprobes_sponza`). Realtime GI: SSGI node (post file), `VXGI` (`three/addons/lighting/vxgi/VXGINode.js`, example `webgpu_vxgi`, heavy).
+Global illumination (indirect bounce): `LightProbe` (single SH, `LightProbeGenerator`), `LightProbeGrid` (WebGPU: `three/addons/lighting/LightProbeGrid.js`, ctor `(w,h,d,wProbes,hProbes,dProbes)`, `await probes.bake(renderer, scene, options)`, `priority` for overlapping grids (r187; `falloff` removed); WebGL: `LightProbeGridWebGL.js`; helper `LightProbeGridHelper`). It is a Light: add to scene, position-dependent diffuse GI for static interiors (examples `webgpu_lightprobes`, `webgl_lightprobes`, `webgl_lightprobes_sponza`). Realtime GI: SSGI node (post file), `VXGI` (`three/addons/lighting/vxgi/VXGINode.js`, example `webgpu_vxgi`, heavy).
 
 ## 7. Background vs environment
 - `scene.environment` lights objects; `scene.background` is just what the camera sees. They can differ: dark/blurred/solid background with a bright studio env.
@@ -167,7 +168,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure
 // bake sky into env for reflections/IBL
 const rt = new THREE.PMREMGenerator(renderer).fromScene(skyOnlyScene); scene.environment = rt.texture; // re-run when sun moves
 ```
-WebGPU: `SkyMesh` from `three/addons/objects/SkyMesh.js` with `sky.turbidity.value`, `rayleigh`, `mieCoefficient`, `mieDirectionalG`, `sunPosition.value`, `cloudCoverage/Density/Elevation/Scale/Speed`, `showSunDisc.value = false` (let the light be the sun). Use `SunLight` (`three/addons/lights/SunLight.js`, `renderer.library.addLight(SunLightNode, SunLight)` for WebGPU) for large-scene 2-cascade shadows (see shadows file).
+WebGPU: `SkyMesh` from `three/addons/objects/SkyMesh.js` with `sky.turbidity.value`, `rayleigh`, `mieCoefficient`, `mieDirectionalG`, `sunPosition.value`, `cloudCoverage/Density/Elevation/Scale/Speed`, `showSunDisc.value = false` (let the light be the sun). Use `SunLight` (`three/addons/lights/SunLight.js`, `SunLight.registerNode(SunLightNode)` for WebGPU, r187+) for large-scene 2-cascade shadows (see shadows file).
 - Elevation drives color: low sun (< 10 deg) = warm light color + fog; midday = near white. Lerp `light.color` and `light.intensity` with elevation (example `webgpu_lights_sunlight`: `intensity = 3 + daylight*2`, `daylight = min(1, elev/30)`).
 
 ## 9. Studio lighting
@@ -330,7 +331,7 @@ import { SkyMesh } from 'three/addons/objects/SkyMesh.js';
 import { SunLight } from 'three/addons/lights/SunLight.js';
 import { SunLightNode } from 'three/addons/lights/SunLightNode.js';
 const renderer = new THREE.WebGPURenderer({ antialias: true });
-renderer.library.addLight(SunLightNode, SunLight);   // register before use
+SunLight.registerNode(SunLightNode);   // register before use (r187; was renderer.library.addLight before)
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.6;
 renderer.shadowMap.enabled = true;
 await renderer.init();

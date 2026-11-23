@@ -1,4 +1,4 @@
-# Loaders, Assets, Textures I/O, Exporters (three.js r186)
+# Loaders, Assets, Textures I/O, Exporters (three.js r187)
 
 When to read this: loading glTF/other models, setting up Draco/KTX2/Meshopt decoders, loading textures / HDR / EXR / cube maps / Gaussian splats, tracking load progress, cloning skinned models, exporting scenes, or freeing loaded assets. For material/texture property semantics see `materials.md`.
 
@@ -84,6 +84,8 @@ m.setURLModifier((url) => files.get(url.split('/').pop()) ?? url);
 | `setCrossOrigin('anonymous')` | `crossOrigin` for image loads. Default `'anonymous'`. WebGL texture upload fails (SecurityError) for images from other origins without CORS headers |
 | `setWithCredentials(true)` | send cookies/auth with cross-origin fetch/XHR |
 | `setRequestHeader({Authorization: 'Bearer ...'})` | custom headers (FileLoader) |
+| `setPriority('high' \| 'low' \| 'auto')` (r187) | browser fetch-priority hint (`HTMLImageElement.fetchPriority` for image loaders); inherited by internally created loaders; e.g. `high` for the hero model, `low` for background props. Browsers may ignore it |
+| `setCache('default' \| 'no-store' \| 'reload' \| 'no-cache' \| 'force-cache')` (r187) | HTTP cache mode passed to `fetch()` (`no-cache` revalidates, `no-store` bypasses); does not affect `THREE.Cache` or image-element requests |
 | `FileLoader.setResponseType('arraybuffer'|'json'|'blob'|'document'|'')`, `setMimeType()` | low-level fetch (`FileLoader` uses fetch) |
 
 - Absolute URLs (`http`, `//`, `data:`, `blob:`) ignore `path` prefix.
@@ -126,9 +128,9 @@ const gltf = await loader.loadAsync('model.glb');
 scene.add(gltf.scene);
 ```
 
-Facts (verified in r186 source/API):
-- In r186, `DRACOLoader` and `KTX2Loader` default to decoders bundled next to the addon via `new URL('../libs/draco/draco_wasm_wrapper.js', import.meta.url)` / `libs/basis/basis_transcoder.*`. Works out of the box in bundlers that rewrite `new URL(..., import.meta.url)` (Vite, webpack 5); otherwise (CDN import map, strict bundlers, Next.js) the files 404: call `setDecoderPath`/`setTranscoderPath` with a folder you serve. Older tutorials requiring `setDecoderPath` first are partly obsolete but harmless.
-- `DRACOLoader.setDecoderPath(path | {js, wasm, dep_js})` and `setDecoderConfig({type: 'js'|'wasm'})`; config cannot change after decoding began. `setWorkerLimit(n)` (default 4). Decoder/worker chosen automatically (WASM if supported). Create ONE DRACOLoader and reuse; `draco.dispose()` terminates workers when done (e.g. after the last glTF).
+Facts (verified in r187 source/API):
+- In r187, `DRACOLoader` and `KTX2Loader` default to decoders bundled next to the addon via `new URL('../libs/draco/draco_wasm_wrapper.js', import.meta.url)` / `libs/basis/basis_transcoder.*`. Works out of the box in bundlers that rewrite `new URL(..., import.meta.url)` (Vite, webpack 5); otherwise (CDN import map, strict bundlers, Next.js) the files 404: call `setDecoderPath`/`setTranscoderPath` with a folder you serve. Older tutorials requiring `setDecoderPath` first are partly obsolete but harmless.
+- `DRACOLoader.setDecoderPath(path | {js, wasm, dep_js})`. `setDecoderConfig({type})` is deprecated (warns "will be removed in r194"); do not call it, the decoder type is picked automatically. `setWorkerLimit(n)` (default 4). Decoder/worker chosen automatically (WASM if supported). Create ONE DRACOLoader and reuse; `draco.dispose()` terminates workers when done (e.g. after the last glTF).
 - `KTX2Loader.detectSupport(renderer)` accepts WebGLRenderer or WebGPURenderer; `detectSupportAsync` is **deprecated**. `ktx2.dispose()` terminates workers. `setWorkerLimit(n)`.
 - `MeshoptDecoder` lives in `three/addons/libs/meshopt_decoder.module.js` (also `meshopt_clusterizer`, `meshopt_simplifier` there). Passed to `setMeshoptDecoder`; needed for `EXT_meshopt_compression`/`KHR_meshopt_compression`.
 - Missing decoder throws: "No DRACOLoader instance provided", "setKTX2Loader must be called before loading KTX2 textures", "setMeshoptDecoder must be called before loading compressed files". Only needed if the file uses those extensions; set all three for generic viewers.
@@ -247,6 +249,7 @@ t.needsUpdate = true;
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';       // .hdr (RGBE)
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';       // .exr
 import { UltraHDRLoader } from 'three/addons/loaders/UltraHDRLoader.js'; // .jpg with gain map (e.g. royal_esplanade_2k.hdr.jpg)
+import { JXLLoader } from 'three/addons/loaders/JXLLoader.js';         // .jxl HDR JPEG XL (r187), browser-native decode, half-float linear-sRGB; needs float16 Canvas2D + globalHDRHeadroom, so check support
 
 const env = await new HDRLoader().loadAsync('studio.hdr');           // DataTexture, HalfFloatType default, LinearSRGBColorSpace
 env.mapping = THREE.EquirectangularReflectionMapping;                // MUST set yourself
@@ -401,7 +404,7 @@ node_modules/three/examples/jsm/libs/
   meshopt_decoder.module.js (+ meshopt_clusterizer, meshopt_simplifier)
   fflate.module.js, ktx-parse.module.js, zstddec.module.js, utif.module.js (used by loaders)
 ```
-Copy `draco/gltf/` and `basis/` into your `public/` folder (Vite: `public/draco/`, `public/basis/`) and point `setDecoderPath('/draco/')` / `setTranscoderPath('/basis/')`; trailing slash required. CDN alternatives: `https://www.gstatic.com/draco/versioned/decoders/1.5.7/` (Draco) or `https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/draco/gltf/` / `.../libs/basis/`. Verify the CDN version matches your installed `three`.
+Copy `draco/gltf/` and `basis/` into your `public/` folder (Vite: `public/draco/`, `public/basis/`) and point `setDecoderPath('/draco/')` / `setTranscoderPath('/basis/')`; trailing slash required. CDN alternatives: `https://www.gstatic.com/draco/versioned/decoders/1.5.7/` (Draco) or `https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/libs/draco/gltf/` / `.../libs/basis/`. Verify the CDN version matches your installed `three`.
 
 ---
 

@@ -52,6 +52,8 @@ TSL includes pre-defined property nodes representing values computed during the 
 
 ::: api iridescence : float - Iridescence intensity. :::
 
+::: api diffuseRoughness : float - Diffuse roughness of the EON (Energy-Preserving Oren-Nayar) diffuse BRDF. :::
+
 ::: api transmission : float - Optical transmission (refraction) factor. :::
 
 ::: api thickness : float - Volume thickness for subsurface scattering and transmission. :::

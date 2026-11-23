@@ -1,6 +1,6 @@
 RenderOutputNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # RenderOutputNode
 
@@ -50,6 +50,12 @@ Default is `true`.
 ### .outputColorSpace : string
 
 The output color space.
+
+### .premultipliedAlpha : boolean
+
+Whether the color node uses premultiplied alpha. The output uses the same alpha mode.
+
+Default is `true`.
 
 ## Methods
 

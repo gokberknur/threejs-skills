@@ -2,7 +2,7 @@
 
 When to read this: you need a working minimal setup, a quick diagnosis for a blank/black/wrong render, or a self-contained pattern for backgrounds, transparency, multi-view rendering, billboards, canvas textures, text, lines, HTML labels, Shadertoy ports, basic post-processing, disposal, debugging, screenshots, game-loop structure, or the "what needs `needsUpdate`" matrix. Lighting/shadows/environment lives in `lighting-shadows.md`; deep post-processing, picking, rendering-on-demand and OffscreenCanvas have their own references (short cross-refs below).
 
-Version: three r186 (npm `three@0.186.1`).
+Version: three r187 (npm `three@0.187.0`).
 
 ## Contents
 1. Scene setup starter (Vite, import map CDN, WebGPURenderer)
@@ -66,13 +66,13 @@ renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, came
 ```html
 <script type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+  "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"
 } }
 </script>
 <script type="module" src="main.js"></script>
 ```
-Alternative CDN host: `https://unpkg.com/three@0.186.1/build/three.module.js` and `https://unpkg.com/three@0.186.1/examples/jsm/`. Use one version and one CDN for everything (mixing duplicates the library and breaks `instanceof`). For WebGPU/TSL import from `three/webgpu` and `three/tsl` (package exports map to `build/three.webgpu.js` and `build/three.tsl.js`); with an import map add `"three/webgpu": ".../build/three.webgpu.js"` and `"three/tsl": ".../build/three.tsl.js"`. Do not mix `three` and `three/webgpu` classes in one app: import everything from `three/webgpu` (it re-exports core).
+Alternative CDN host: `https://unpkg.com/three@0.187.0/build/three.module.js` and `https://unpkg.com/three@0.187.0/examples/jsm/`. Use one version and one CDN for everything (mixing duplicates the library and breaks `instanceof`). For WebGPU/TSL import from `three/webgpu` and `three/tsl` (package exports map to `build/three.webgpu.js` and `build/three.tsl.js`); with an import map add `"three/webgpu": ".../build/three.webgpu.js"` and `"three/tsl": ".../build/three.tsl.js"`. Do not mix `three` and `three/webgpu` classes in one app: import everything from `three/webgpu` (it re-exports core).
 
 ### WebGPURenderer (async init)
 ```js
@@ -237,7 +237,7 @@ Gotchas:
 - Scissor/viewport are in CSS pixels (renderer multiplies by pixel ratio).
 - Set each scene's `background` (opaque) or clear color per view; with scissor test the scene background only fills the scissor area.
 - Share geometries/materials/textures freely across scenes (one context).
-- Not in r186: `Scene.autoUpdate` does not exist (grep of `src/` finds none). `Object3D.matrixWorldAutoUpdate`/`matrixAutoUpdate` and `shadowMap.autoUpdate` are the real auto-update flags.
+- Not in r187: `Scene.autoUpdate` does not exist (grep of `src/` finds none). `Object3D.matrixWorldAutoUpdate`/`matrixAutoUpdate` and `shadowMap.autoUpdate` are the real auto-update flags.
 
 ### Solution B (WebGPURenderer): `CanvasTarget`
 One renderer drawing to several canvases: `const target = new THREE.CanvasTarget(canvas); renderer.setCanvasTarget(target); renderer.render(scene, camera);` (see `examples/webgpu_multiple_canvas.html`, `api/CanvasTarget.md`, `api/Renderer.md` `setCanvasTarget`/`getCanvasTarget`). Call `target.dispose()` when done.
@@ -450,7 +450,7 @@ composer.addPass(new OutputPass());                                   // tone ma
 - Composer ping-pongs two render targets; each `Pass` has `enabled`, `needsSwap`, `clear`, `renderToScreen` (last enabled pass renders to screen automatically).
 - Working buffers are linear half-float; `OutputPass` is what applies `renderer.toneMapping`/`outputColorSpace`. Without it, output looks dark/flat. The renderer's own tone mapping is skipped when rendering to a render target.
 - `composer.dispose()` frees render targets; also dispose passes that have `dispose()`.
-- Tune effects through their `uniforms`/properties (e.g. `bloomPass.strength`, `filmPass.uniforms.intensity.value`). Available passes in r186 examples: AfterimagePass, BloomPass, BokehPass, DotScreenPass, FilmPass, FXAAPass, GlitchPass, GTAOPass, HalftonePass, LUTPass, OutlinePass, OutputPass, RenderPixelatedPass, RenderTransitionPass, SAOPass, SMAAPass, SSAARenderPass, SSAOPass, SSRPass, TAARenderPass, UnrealBloomPass, ShaderPass, TexturePass, SavePass, MaskPass, ClearPass, CubeTexturePass.
+- Tune effects through their `uniforms`/properties (e.g. `bloomPass.strength`, `filmPass.uniforms.intensity.value`). Available passes in r187 examples: AfterimagePass, BloomPass, BokehPass, DotScreenPass, FilmPass, FXAAPass, GlitchPass, GTAOPass, HalftonePass, LUTPass, OutlinePass, OutputPass, RenderPixelatedPass, RenderTransitionPass, SAOPass, SMAAPass, SSAARenderPass, SSAOPass, SSRPass, TAARenderPass, UnrealBloomPass, ShaderPass, TexturePass, SavePass, MaskPass, ClearPass, CubeTexturePass.
 - Antialiasing: MSAA from `antialias: true` does not apply to the composer's targets; add `FXAAPass`/`SMAAPass` or give the composer a multisampled target (`new WebGLRenderTarget(w, h, { samples: 4 })`).
 - **WebGPU:** `EffectComposer` does not apply. Use `THREE.RenderPipeline` (renamed from `PostProcessing` in r183) with TSL: `const rp = new THREE.RenderPipeline(renderer); const scenePass = pass(scene, camera); rp.outputNode = scenePass.getTextureNode('output').add(bloom(...))`; render with `rp.render()`. See `examples/webgpu_postprocessing_bloom.html` and the dedicated post-processing reference.
 

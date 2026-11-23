@@ -1,6 +1,6 @@
 FlipNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # FlipNode
 
@@ -49,7 +49,7 @@ This method is overwritten since the node type is inferred from the source node.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generateNodeType   **Returns:** The node type.
+The current node builder.   | **Overrides:** Node#generateNodeType   **Returns:** The node type.
 
 ## Source
 

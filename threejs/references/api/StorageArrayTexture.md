@@ -50,6 +50,14 @@ The default `magFilter` for storage textures is `THREE.LinearFilter`.   **Overri
 
 The default `minFilter` for storage textures is `THREE.LinearFilter`.   **Overrides:** Texture#minFilter
 
+### .mipmapsAutoUpdate : boolean
+
+Whether the renderer regenerates the mipmaps automatically.
+
+Overwritten and set to `false` by default.
+
+Default is `false`.   **Overrides:** Texture#mipmapsAutoUpdate
+
 ## Methods
 
 ### .setSize( width : number, height : number, depth : number )

@@ -1,6 +1,6 @@
 RotateNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # RotateNode
 
@@ -38,7 +38,7 @@ Represents the rotation that is applied to the position node. Depending on wheth
 
 ### .customCacheKey() : number
 
-Overwrites the default `customCacheKey()` implementation by including the Euler order into the cache key.   **Overrides:** TempNode#customCacheKey   **Returns:** The hash.
+Overwrites the default `customCacheKey()` implementation by including the Euler order into the cache key.   **Overrides:** Node#customCacheKey   **Returns:** The hash.
 
 ### .generateNodeType( builder : NodeBuilder ) : string
 
@@ -46,7 +46,7 @@ The type of the RotateNode#positionNode defines the node's type.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generateNodeType   **Returns:** The node's type.
+The current node builder.   | **Overrides:** Node#generateNodeType   **Returns:** The node's type.
 
 ### .getOrder() : string
 

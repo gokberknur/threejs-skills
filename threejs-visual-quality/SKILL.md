@@ -1,9 +1,9 @@
 ---
 name: threejs-visual-quality
-description: Make three.js (r186) scenes look professional, realistic or cinematic: correct color/tone-mapping pipeline, PBR materials (MeshPhysicalMaterial clearcoat, transmission, sheen, iridescence), HDR environment lighting and PMREM, studio and sun lighting setups, shadow quality (CSM, VSM, contact shadows), anti-aliasing (MSAA/FXAA/SMAA/TAA/TRAA), post-processing stacks (bloom, GTAO, SSR, SSGI, DOF, LUT grading, film grain, god rays) for both WebGLRenderer (EffectComposer) and WebGPURenderer (RenderPipeline nodes), sky, water, fog and atmosphere. Use whenever a user says a scene looks flat, washed out, too dark, plastic, fake, "like a demo", or asks for "realistic", "photoreal", "beautiful", "AAA", "cinematic", "product viewer", "architectural", "glass", "car paint", "glow", "depth of field", "ambient occlusion", "HDRI", "environment map", "skybox", or wants a polished portfolio-quality scene. Pair with the `threejs` core skill and `threejs-performance` to keep it fast.
+description: Make three.js (r187) scenes look professional, realistic or cinematic: correct color/tone-mapping pipeline, PBR materials (MeshPhysicalMaterial clearcoat, transmission, sheen, iridescence), HDR environment lighting and PMREM, studio and sun lighting setups, shadow quality (CSM, VSM, contact shadows), anti-aliasing (MSAA/FXAA/SMAA/TAA/TRAA), post-processing stacks (bloom, GTAO, SSR, SSGI, DOF, LUT grading, film grain, god rays) for both WebGLRenderer (EffectComposer) and WebGPURenderer (RenderPipeline nodes), sky, water, fog and atmosphere. Use whenever a user says a scene looks flat, washed out, too dark, plastic, fake, "like a demo", or asks for "realistic", "photoreal", "beautiful", "AAA", "cinematic", "product viewer", "architectural", "glass", "car paint", "glow", "depth of field", "ambient occlusion", "HDRI", "environment map", "skybox", or wants a polished portfolio-quality scene. Pair with the `threejs` core skill and `threejs-performance` to keep it fast.
 ---
 
-# three.js r186 visual quality
+# three.js r187 visual quality
 
 Most three.js scenes look amateur for pipeline reasons, not material reasons. Fix the pipeline in this order, each step is a bigger win than everything after it: color/tone mapping → environment lighting → material correctness → shadows → anti-aliasing → post-processing → atmosphere. Do not tweak `roughness` sliders on a scene with no environment map.
 
@@ -43,7 +43,7 @@ scene.add(sun);
 
 Texture rules: color/albedo/emissive maps `texture.colorSpace = THREE.SRGBColorSpace`; normal/roughness/metalness/AO/height maps stay `NoColorSpace` (linear). glTF loader handles this. `texture.anisotropy = renderer.capabilities.getMaxAnisotropy()` (WebGL) for ground planes seen at grazing angles. Never set `material.toneMapped = false` except for UI/overlays.
 
-## Tone mapping modes (r186 constants)
+## Tone mapping modes (r187 constants)
 
 `NoToneMapping`, `LinearToneMapping`, `ReinhardToneMapping`, `CineonToneMapping`, `ACESFilmicToneMapping` (classic filmic, desaturates brights), `AgXToneMapping` (modern filmic, best highlight rolloff, slightly lower contrast), `NeutralToneMapping` (Khronos PBR Neutral, preserves colors for e-commerce), `CustomToneMapping`. Exposure 0.6-1.5 typical. With post-processing, tone mapping happens in `OutputPass` (WebGL) or at the end of `RenderPipeline` via `outputColorTransform`/`renderOutput()` (WebGPU), not during the scene pass.
 

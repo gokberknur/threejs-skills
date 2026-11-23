@@ -8,27 +8,27 @@ These functions return uniform nodes that update automatically when light object
 
 <code name="lightFunctionsExample" default="true">Light Functions</code>
 
-::: api lightPosition( light: Light ) : vec3 - Returns a uniform node representing the light source's position in world space.
+::: api lightPosition( light ) : vec3 - Returns a uniform node representing the light source's position in world space.
 - **light**: `Light` - The light instance to access.
 :::
 
-::: api lightTargetPosition( light: Light ) : vec3 - Returns a uniform node for the target position of a directional or spot light in world space.
+::: api lightTargetPosition( light ) : vec3 - Returns a uniform node for the target position of a directional or spot light in world space.
 - **light**: `Light` - The light instance to access.
 :::
 
-::: api lightViewPosition( light: Light ) : vec3 - Returns a uniform node representing the light source's position in camera view space.
+::: api lightViewPosition( light ) : vec3 - Returns a uniform node representing the light source's position in camera view space.
 - **light**: `Light` - The light instance to access.
 :::
 
-::: api lightTargetDirection( light: Light ) : vec3 - Returns the normalized target direction vector of the light in camera view space.
+::: api lightTargetDirection( light ) : vec3 - Returns the normalized target direction vector of the light in camera view space.
 - **light**: `Light` - The light instance to access.
 :::
 
-::: api lightShadowMatrix( light: Light ) : mat4 - Returns the shadow projection matrix uniform node for the specified light.
+::: api lightShadowMatrix( light ) : mat4 - Returns the shadow projection matrix uniform node for the specified light.
 - **light**: `Light` - The light source whose shadow matrix to retrieve.
 :::
 
-::: api lightProjectionUV( light: Light, position: vec3 = null ) : vec3 - Computes projected UV coordinates from a light's shadow projection matrix for spotlights and projector effects.
+::: api lightProjectionUV( light, position? ) : vec3 - Computes projected UV coordinates from a light's shadow projection matrix for spotlights and projector effects.
 - **light**: `Light` - The light source used for projection.
 - **position**: `vec3` - (Optional) The world-space position to project. Defaults to `positionWorld`.
 :::

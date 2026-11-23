@@ -52,6 +52,8 @@ When referenced in a TSL graph, nodes like `materialColor`, `materialRoughness`,
 
 ::: api materialDispersion : float - Chromatic dispersion strength. :::
 
+::: api materialDiffuseRoughness : float - Diffuse roughness of the EON diffuse BRDF (composed via `diffuseRoughness * diffuseRoughnessMap.r`). :::
+
 ### Environment & Occlusion
 
 ::: api materialAO : float - Ambient occlusion value (composed via `aoMap.r - 1 * aoMapIntensity + 1`). :::
@@ -71,6 +73,26 @@ When referenced in a TSL graph, nodes like `materialColor`, `materialRoughness`,
 :::
 
 > Note: `materialReference()` creates a live link to any JavaScript material property: whenever `material[ name ]` is modified on the CPU, the GPU uniform updates automatically without triggering a shader recompilation.
+
+### Node Material Instance
+
+`NodeMaterialInstance` creates material instances that reuse the shader of a node material with their own property values. All instances created from the same node material share a single shader build, and their values are read in the shared node graph with `materialReference( name, type )`:
+
+```js
+import * as THREE from 'three/webgpu';
+import { materialReference } from 'three/tsl';
+
+const nodeMaterial = new THREE.MeshBasicNodeMaterial();
+nodeMaterial.colorNode = materialReference( 'myColor', 'color' );
+
+const redMaterial = new THREE.NodeMaterialInstance( nodeMaterial );
+redMaterial.myColor = new THREE.Color( 1, 0, 0 );
+
+const blueMaterial = new THREE.NodeMaterialInstance( nodeMaterial );
+blueMaterial.myColor = new THREE.Color( 0, 0, 1 );
+```
+
+> Note: Configure the node material before creating instances. Node properties such as `colorNode` are read-only on the instance and always read from the node material.
 
 ```tsl materialInputsExample
 import 'scenes/shaderball';

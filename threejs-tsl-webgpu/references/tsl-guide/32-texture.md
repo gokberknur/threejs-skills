@@ -41,17 +41,29 @@ In TSL, `texture( map, uv? )` samples a 2D texture with automatic filtering, mip
 
 ### Methods
 
-::: api .uv( uvNode: vec2 ) : Node - Returns a sample of the texture using new UV coordinates. :::
+::: api .uv( uvNode ) : Node - Returns a sample of the texture using new UV coordinates.
+- **uvNode**: `vec2`
+:::
 
-::: api .level( levelNode: int ) : Node - Explicitly selects the mipmap level for sampling. :::
+::: api .level( levelNode ) : Node - Explicitly selects the mipmap level for sampling.
+- **levelNode**: `int`
+:::
 
-::: api .bias( biasNode: float ) : Node - Applies a level-of-detail bias to mipmap selection. :::
+::: api .bias( biasNode ) : Node - Applies a level-of-detail bias to mipmap selection.
+- **biasNode**: `float`
+:::
 
-::: api .size( level?: int ) : uvec2 - Returns the dimensions of the texture at the specified mip level. :::
+::: api .size( level? ) : uvec2 - Returns the dimensions of the texture at the specified mip level.
+- **level**: `int` - (Optional) The mip level to query. Defaults to `0`.
+:::
 
-::: api .sample( uvNode: vec2 ) : vec4 - Samples the texture with filtering at the given UV coordinates. :::
+::: api .sample( uvNode ) : vec4 - Samples the texture with filtering at the given UV coordinates.
+- **uvNode**: `vec2`
+:::
 
-::: api .load( uvNode: ivec2 ) : vec4 - Loads the texel at the given pixel coordinates without filtering. :::
+::: api .load( uvNode ) : vec4 - Loads the texel at the given pixel coordinates without filtering.
+- **uvNode**: `ivec2`
+:::
 
 ```tsl textureExample
 import 'scenes/shaderball';

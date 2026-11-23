@@ -204,6 +204,10 @@ Chromatic color-similarity distance between two linear base colors (albedo).
 
 TSL object that represents the shader variable `DiffuseContribution`.
 
+### .diffuseRoughness : PropertyNode.<float> (constant)
+
+TSL object that represents the shader variable `DiffuseRoughness`.
+
 ### .dispersion : PropertyNode.<float> (constant)
 
 TSL object that represents the shader variable `Dispersion`.
@@ -243,6 +247,10 @@ Specular dominant direction — smooth surfaces lean toward reflection, rough to
 ### .getTemporalVarianceFactor (constant)
 
 Temporal accumulation variance factor in `[0, 1]`. Higher values mean more history confidence.
+
+### .ggxReflectionSample (constant)
+
+Importance-samples the GGX/VNDF specular lobe for one pixel and returns the reflected ray direction plus the Monte-Carlo weight to apply to the gathered radiance, along with the GGX terms the SSR env-miss MIS fallback needs.
 
 ### .globalId : ComputeBuiltinNode.<uvec3> (constant)
 
@@ -389,6 +397,10 @@ TSL object that represents the clearcoat roughness of the current material. The 
 ### .materialColor : Node.<vec3> (constant)
 
 TSL object that represents the diffuse color of the current material. The value is composed via `color` * `map`.
+
+### .materialDiffuseRoughness : Node.<float> (constant)
+
+TSL object that represents the diffuse roughness of the current material. The value is composed via `diffuseRoughness` * `diffuseRoughnessMap.r`.
 
 ### .materialDispersion : Node.<float> (constant)
 
@@ -833,18 +845,6 @@ Represents the elapsed time in seconds.
 
 TSL object that represents the global tone mapping exposure of the renderer.
 
-### .transformedClearcoatNormalView : Node.<vec3> (constant)
-
-TSL object that represents the transformed clearcoat vertex normal of the current rendered object in view space.   **Deprecated:** since r178. Use `clearcoatNormalView` instead.
-
-### .transformedNormalView : Node.<vec3> (constant)
-
-TSL object that represents the transformed vertex normal of the current rendered object in view space.   **Deprecated:** since r178. Use `normalView` instead.
-
-### .transformedNormalWorld : Node.<vec3> (constant)
-
-TSL object that represents the transformed vertex normal of the current rendered object in world space.   **Deprecated:** since r178. Use `normalWorld` instead.
-
 ### .transmission : PropertyNode.<float> (constant)
 
 TSL object that represents the shader variable `Transmission`.
@@ -902,6 +902,10 @@ const computeFn = Fn( () => {
 // Buffer Output =  [0, 1, 2, 0, 0, 0, 6, 7, 8, 0, 0, 0];
 
 ```
+
+### .workingLuminanceCoefficients : VarNode.<vec3> (constant)
+
+TSL object that represents the luminance coefficients of the current working color space. It is evaluated once per build, so it can also be used as the default value of a parameter of a function with layout.
 
 ## Methods
 
@@ -985,14 +989,6 @@ The node for which a variable should be created.  |
  | **name**  |
 
 The name of the variable in the shader.  |
-
-### .VarIntent( node : Node ) : VarNode
-
-TSL function for creating a var intent node.
-
- | **node**  |
-
-The node for which a variable should be created.  |
 
 ### .abs( x : Node  | number ) : Node
 
@@ -1702,7 +1698,7 @@ The node whose context should be modified.
 
 Default is `null`.  |
 
-### .bumpMap( textureNode : Node.<float>, scaleNode : Node.<float> ) : BumpMapNode
+### .bumpMap( textureNode : Node.<float>, scaleNode : Node.<float>, normalNode : Node.<vec3> ) : BumpMapNode
 
 TSL function for creating a bump map node.
 
@@ -1714,6 +1710,11 @@ Represents the bump map data.  |
 Controls the intensity of the bump effect.
 
 Default is `null`.  |
+ | **normalNode**  |
+
+The view-space normal to perturb.
+
+Default is `normalView`.  |
 
 ### .bypass( outputNode : Node, callNode : Node ) : BypassNode
 
@@ -1883,7 +1884,7 @@ TSL function that creates a clustered lights node.
 
  | **maxLights**  |
 
-Maximum number of point lights.
+Maximum number of point and spot lights.
 
 Default is `1024`.  |
  | **tileSize**  |
@@ -2817,13 +2818,16 @@ The camera the scene is rendered with.  |
 
 The light the godrays are rendered for.  |
 
-### .grayscale( color : Node.<vec3> ) : Node.<vec3>
+### .grayscale( color : Node.<vec3>, luminanceCoefficients : Node.<vec3> ) : Node.<float>
 
 Computes a grayscale value for the given RGB color value.
 
  | **color**  |
 
-The color value to compute the grayscale for.   | **Returns:** The grayscale color.
+The color value to compute the grayscale for.  |
+ | **luminanceCoefficients**  |
+
+The luminance coefficients. By default predefined values of the current working color space are used.   | **Returns:** The grayscale value.
 
 ### .greaterThan( a : Node, b : Node ) : OperatorNode
 
@@ -2935,9 +2939,9 @@ Optional name for the inspector node.
 Default is `''`.  |
  | **callback**  |
 
-Optional callback to modify the node during setup.
+Optional callback to modify the node presented by the inspector.
 
-Default is `null`.   | **Returns:** The inspector node.
+Default is `null`.   | **Returns:** The inspected node.
 
 ### .instance( matrices : InstancedBufferAttribute  | StorageInstancedBufferAttribute, colors : InstancedBufferAttribute  | StorageInstancedBufferAttribute )
 
@@ -3015,6 +3019,8 @@ Default is `0`.  |
 
 TSL wrapper for applying instanced mesh rendering setup.
 
+The instance data of the rendered mesh are bound per object via ReferenceAttributeNode, so instanced meshes share builds.
+
  | **instancedMesh**  |
 
 The instanced mesh.  |
@@ -3056,6 +3062,14 @@ Returns the inverse of the square root of the parameter.
  | **x**  |
 
 The parameter.  |
+
+### .isBackgroundDepth( depth : Node.<float> ) : Node.<bool>
+
+Returns `true` if the given depth value belongs to the background, i.e. the cleared far plane. Takes the renderer's reversed depth buffer into account.
+
+ | **depth**  |
+
+The depth value.   | **Returns:** Whether the depth value belongs to the background.
 
 ### .isolate( node : Node ) : IsolateNode
 
@@ -3102,6 +3116,22 @@ Calculate the squared length of a vector.
  | **a**  |
 
 The vector.  |
+
+### .lensDirt( textureNode : Node.<vec4>, dirtTextureNode : TextureNode, intensity : Node.<float> ) : Node.<vec4>
+
+Applies a lens dirt effect. The lens dirt texture is revealed wherever the scene's luminance is bright. The input is typically a blurred luminance of the scene, e.g. the result of a bloom pass. A wider blur reveals the dirt over a larger area around bright spots.
+
+ | **textureNode**  |
+
+The node that represents the scene's blurred luminance.  |
+ | **dirtTextureNode**  |
+
+The lens dirt texture.  |
+ | **intensity**  |
+
+Defines the intensity of the lens dirt.
+
+Default is `float(1)`.   | **Returns:** The lens dirt.
 
 ### .lensflare( node : TextureNode, params : Object ) : LensflareNode
 
@@ -3212,7 +3242,7 @@ TSL function for getting the light target position in world space for the given 
 
 The light source.   | **Returns:** The light target position in world space.
 
-### .lightViewPosition( light : Light ) : UniformNode.<vec3>
+### .lightViewPosition( light : Light ) : Node.<vec3>
 
 TSL function for getting the position in view space for the given light.
 
@@ -3391,6 +3421,14 @@ The first input.  |
  | **b**  |
 
 The second input.  |
+
+### .morphColor( color : Node.<vec4> ) : Node.<vec4>
+
+TSL function that applies the color morph targets to the given color. The result is computed in the vertex stage.
+
+ | **color**  |
+
+The color to morph. Must be available in the vertex stage.   | **Returns:** The morphed color.
 
 ### .morphReference( mesh : Mesh )
 
@@ -3708,7 +3746,7 @@ The node whose context should be modified.
 
 Default is `null`.   | **Returns:** The created override context node.
 
-### .overrideNodes( overrides : Map.<Node, (function()|Node)>  | Array.<Array.<(Node|function()|Node)>>, flowNode : Node  | null ) : OverrideContextNode
+### .overrideNodes( overrides : Map.<Node, (function()|Node)>  | Array.<Array.<(Node|function()|Node)>>, flowNode : Node  | null, shaderStage : string ) : OverrideContextNode
 
 TSL function for creating an `OverrideContextNode` to override multiple target nodes.
 
@@ -3726,6 +3764,11 @@ The overrides mapping target nodes to callback functions or overriding nodes.  |
  | **flowNode**  |
 
 The node whose context should be modified.
+
+Default is `null`.  |
+ | **shaderStage**  |
+
+The shader stage the overrides apply to, all stages by default. With fragment overrides, all varyings of the context are evaluated in the fragment stage, e.g. if the surface is reconstructed per fragment.
 
 Default is `null`.   | **Returns:** The created override context node.
 
@@ -3914,7 +3957,7 @@ The camera's near value.  |
 
 The camera's far value.  |
 
-### .pixelationPass( scene : Scene, camera : Camera, pixelSize : Node.<float>  | number, normalEdgeStrength : Node.<float>  | number, depthEdgeStrength : Node.<float>  | number ) : PixelationPassNode
+### .pixelationPass( scene : Scene, camera : Camera, pixelSize : number, normalEdgeStrength : Node.<float>  | number, depthEdgeStrength : Node.<float>  | number ) : PixelationPassNode
 
 TSL function for creating a pixelation render pass node for post processing.
 
@@ -3940,7 +3983,7 @@ The depth edge strength.
 
 Default is `0.4`.  |
 
-### .pmremTexture( value : Texture, uvNode : Node.<vec2>, levelNode : Node.<float> ) : PMREMNode
+### .pmremTexture( value : Texture, uvNode : Node.<vec3>, levelNode : Node.<float> ) : PMREMNode
 
 TSL function for creating a PMREM node.
 
@@ -4041,6 +4084,20 @@ This function is useful for converting a non-premultiplied alpha color into a pr
 
 The input color with non-premultiplied alpha.   | **Returns:** The color with premultiplied alpha.
 
+### .projectionDepth( depth : Node.<float>, near : Node.<float>, far : Node.<float> ) : Node.<float>
+
+TSL function for retrieving the depth value as produced by the camera's projection matrix.
+
+ | **depth**  |
+
+The depth value.  |
+ | **near**  |
+
+The camera's near value.  |
+ | **far**  |
+
+The camera's far value.  |
+
 ### .property( type : string, name : string, placeholderNode : Node ) : PropertyNode
 
 TSL function for creating a property node.
@@ -4059,13 +4116,16 @@ The placeholder node if not assigned.
 
 Default is `null`.  |
 
-### .quadBroadcast( e : number ) : number
+### .quadBroadcast( e : number, id : number ) : number
 
 Broadcasts e from the quad invocation with id equal to id.
 
  | **e**  |
 
-The value to broadcast.   | **Returns:** The broadcast value.
+The value to broadcast.  |
+ | **id**  |
+
+The quad invocation id to broadcast from.   | **Returns:** The broadcast value.
 
 ### .quadSwapDiagonal( e : number ) : number
 
@@ -4209,6 +4269,24 @@ The uniform type that should be used to represent the property value.  |
  | **object**  |
 
 The object the property belongs to.  |
+
+### .referenceAttribute( name : string, type : string, object : Object ) : ReferenceAttributeNode
+
+TSL function for creating a reference attribute node.
+
+ | **name**  |
+
+The name of the property the node refers to.  |
+ | **type**  |
+
+The node type. Inferred from the attribute if not set.
+
+Default is `null`.  |
+ | **object**  |
+
+The object the property belongs to. The rendered object if not set.
+
+Default is `null`.  |
 
 ### .referenceBuffer( name : string, type : string, count : number, object : Object ) : ReferenceBaseNode
 
@@ -4511,6 +4589,18 @@ The rotation defined in radians.  |
 
 The center of rotation   | **Returns:** The rotated uv coordinates.
 
+### .roughnessToMip( roughness : Node.<float>, maxLod : Node.<float> ) : Node.<float>
+
+Returns the mip level of a PMREM that has been prefiltered for the given roughness. Uses the inverse of `PMREMGenerator.lodToRoughness()`.
+
+ | **roughness**  |
+
+The roughness.  |
+ | **maxLod**  |
+
+The last mip level of the PMREM.   | See:
+- Filament: perceptualRoughnessToLod() (https://github.com/google/filament/blob/main/shaders/src/surface_light_indirect.fs)     **Returns:** The mip level.
+
 ### .round( x : Node  | number ) : Node
 
 Rounds the parameter to the nearest integer.
@@ -4598,7 +4688,7 @@ Constrains a value between `0` and `1`.
 
 The value to constrain.  |
 
-### .saturation( color : Node.<vec3>, adjustment : Node.<float> ) : Node.<vec3>
+### .saturation( color : Node.<vec3>, adjustment : Node.<float>, luminanceCoefficients : Node.<vec3> ) : Node.<vec3>
 
 Super-saturates or desaturates the given RGB color.
 
@@ -4609,7 +4699,10 @@ The input color.  |
 
 Specifies the amount of the conversion. A value under `1` desaturates the color, a value over `1` super-saturates it.
 
-Default is `1`.   | **Returns:** The saturated color.
+Default is `1`.  |
+ | **luminanceCoefficients**  |
+
+The luminance coefficients. By default predefined values of the current working color space are used.   | **Returns:** The saturated color.
 
 ### .scanlines( color : Node.<vec3>, intensity : Node.<float>, count : Node.<float>, speed : Node.<float>, coord : Node.<vec2> ) : Node.<vec3>
 
@@ -5814,7 +5907,7 @@ The data type of the array elements.  |
 
 ### .uniformCubeTexture( value : CubeTexture ) : CubeTextureNode
 
-TSL function for creating a uniform cube texture node.
+TSL function for creating a non-mergeable uniform cube texture node.
 
  | **value**  |
 
@@ -5840,7 +5933,7 @@ The name of the uniform group node.  |
 
 ### .uniformTexture( value : Texture ) : TextureNode
 
-TSL function for creating a uniform texture node.
+TSL function for creating a non-mergeable uniform texture node.
 
  | **value**  |
 
@@ -6510,6 +6603,18 @@ Default is `false`.  |
  Node.<float>  |
 
 Per-pixel metalness. Drives GGX reflection sampling and, with `reflectNonMetals=false`, the non-metal early-out.
+
+Default is `null`.  |
+ | **specularNode**
+ Node.<vec3>  |
+
+Stochastic mode only: material normal-incidence reflectance (F0), typically an MRT `specularColorBlended` attachment (it already includes IOR, specular intensity and metalness; raw `material.specularColor` reflects too brightly). Defaults to the metalness/base-color approximation.
+
+Default is `null`.  |
+ | **specularF90Node**
+ Node.<float>  |
+
+Stochastic mode only: material grazing reflectance, typically an MRT `specularF90` attachment. Defaults to one.
 
 Default is `null`.  |
  | **roughnessNode**

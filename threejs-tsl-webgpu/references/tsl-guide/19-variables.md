@@ -55,3 +55,5 @@ model.material.colorNode = texture( map, uvScaled );
 ```
 
 > IA: When the `NodeBuilder` encounters issues generating the optimal shader structure or variable optimizations, `.toVar()` can help by explicitly declaring a variable in the shader scope rather than relying on automatic generation. While not recommended for common use (since TSL manages variables automatically), it is an effective tool for debugging: you can assign a custom name like `.toVar( 'debugVal' )` and inspect the generated variable directly in the compiled WGSL / GLSL output.
+
+> AI: `VarIntent()` and `.toVarIntent()` were removed in r187. Nodes are now their own variable intents: TSL declares a variable automatically when a node is reused or assigned, so remove these calls and use `.toVar()` only when an explicit variable is needed. For custom node extensions, `nodeProxyIntent()` and `nodeObjectIntent()` were replaced by `nodeProxyAssignable()` and `nodeObjectAssignable()`.

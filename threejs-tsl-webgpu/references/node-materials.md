@@ -1,6 +1,6 @@
-# NodeMaterial family (three.js r186)
+# NodeMaterial family (three.js r187)
 
-When to read this: you are choosing a `*NodeMaterial`, wiring TSL nodes into material slots, overriding the material pipeline (`setupXXX`, custom lighting model), instancing/skinning/morphing with node materials, migrating `onBeforeCompile`/`ShaderMaterial` code, or you want a complete working material recipe. For TSL syntax and functions read `tsl-cheatsheet.md`. Verified against `src/materials/nodes/*.js`, `src/nodes/**`, the API pages, and `examples/webgpu_*.html` (r186).
+When to read this: you are choosing a `*NodeMaterial`, wiring TSL nodes into material slots, overriding the material pipeline (`setupXXX`, custom lighting model), instancing/skinning/morphing with node materials, migrating `onBeforeCompile`/`ShaderMaterial` code, or you want a complete working material recipe. For TSL syntax and functions read `tsl-cheatsheet.md`. Verified against `src/materials/nodes/*.js`, `src/nodes/**`, the API pages, and `examples/webgpu_*.html` (r187).
 
 ## Table of contents
 
@@ -54,7 +54,7 @@ There is no `shadowNode` or `shadowPositionNode` slot on any material (shadows a
 
 ## 2. How slots are evaluated
 
-`NodeMaterial.setup(builder)` (r186) in order:
+`NodeMaterial.setup(builder)` (r187) in order:
 
 ```
 VERTEX stage (builder.addStack)
@@ -102,8 +102,8 @@ All `null` by default (`null` = use the classic property / default behavior). Ty
 | `opacityNode` | float | fragment | replaces `opacity` x `alphaMap` (default `materialOpacity`) | multiplied into `diffuseColor.a`; set `material.transparent = true` for blending |
 | `alphaTestNode` | float | fragment | threshold; discards when `a <= node` | classic `alphaTest` used when null and > 0; works with `alphaToCoverage` (smoothed) |
 | `maskNode` | bool | fragment | `bool(maskNode).not().discard()` runs FIRST | discards when `false`; does not touch alpha; shadow equivalent: `maskShadowNode` |
-| `normalNode` | vec3 (view space) | fragment | replaces `normalMap`/`bumpMap` (default `materialNormal`) | must be a view-space normal: `normalMap(...)`, `bumpMap(...)`, `normalView`, `normalFlat`, `modelNormalMatrix.mul(n)`; for world-space use `transformNormalByViewMatrix(n)` |
-| `emissiveNode` | vec3 | fragment | added to outgoing light; replaces `emissive` x `emissiveMap` | declared on `MeshStandardNodeMaterial`; also honored on any NodeMaterial subclass (`MeshBasicNodeMaterial` example: `webgpu_instance_uniform`); not tone-clamped, HDR values bloom |
+| `normalNode` | vec3 (view space) | fragment | replaces `normalMap`/`bumpMap` (default `materialNormal`) | must be a view-space normal: `normalMap(...)`, `bumpMap(height, scale, baseNormal?)` (third arg since r187 layers bump on top of e.g. a `normalMap(...)`), `normalView`, `normalFlat`, `modelNormalMatrix.mul(n)`; for world-space use `transformNormalByViewMatrix(n)` |
+| `emissiveNode` | vec3 | fragment | added to outgoing light; replaces `emissive` x `emissiveMap` | declared on `MeshStandardNodeMaterial` and, since r187, on `MeshLambertNodeMaterial`, `MeshPhongNodeMaterial`, `MeshToonNodeMaterial`; also honored on any NodeMaterial subclass (`MeshBasicNodeMaterial` example: `webgpu_instance_uniform`); not tone-clamped, HDR values bloom |
 | `aoNode` | float | fragment | ambient occlusion: multiplies indirect diffuse/specular | default `materialAO` when `aoMap` present |
 | `envNode` | vec3 / lighting node | fragment | replaces env map / `scene.environment` IBL | wrapped in `EnvironmentNode` (Standard/Physical) or `BasicEnvironmentNode` |
 | `lightsNode` | `LightsNode` | fragment | selective lights; `lights([])` = no lights; with `.context({ lightingModel })` custom model | when set, lighting runs even if `material.lights === false` |
@@ -286,7 +286,7 @@ mesh.count = 500;                                       // draw fewer instances 
 
 - Per-instance random data: `range(min, max)` (attribute), `hash(instanceIndex)`; per-instance value from JS: `instancedBufferAttribute(attr)` or a custom `Node` with `updateType = NodeUpdateType.OBJECT` (see `webgpu_instance_uniform`: `update(frame){ this.uniformNode.value.copy(frame.object.color) }`, `setup(){ return this.uniformNode }`).
 - GPU-driven matrices: `Instance.js` reads the matrix from a storage buffer when `mesh.instanceMatrix.isStorageInstancedBufferAttribute`; otherwise from a UBO (`buffer(...)`, when the matrices fit the uniform limit) or an `InstancedInterleavedBuffer` attribute.
-- Manual: `instance(matricesAttr, colorsAttr?)` (r186 signature; the old `instance(count, matrix, color)` no longer exists) and `instancedMesh(mesh)` are the building blocks; the material calls `instancedMesh(object)` itself.
+- Manual: `instance(matricesAttr, colorsAttr?)` (r187 signature; the old `instance(count, matrix, color)` no longer exists) and `instancedMesh(mesh)` are the building blocks; the material calls `instancedMesh(object)` itself.
 - `BatchedMesh`: handled by `batch(object)`; per-geometry colors via `batchColor`, multiplied into `colorNode`; `batchIndirectIndex` available. Example: `webgpu_mesh_batch`.
 - Morph targets: `morphReference(mesh)` applied when geometry has `morphAttributes.position|normal|color`. `mesh.morphTargetInfluences` update at runtime. Instanced + morph: `webgpu_instancing_morph` (`mesh.morphTexture`).
 - Skinning: `skinning(skinnedMesh)` applied for `SkinnedMesh`; `computeSkinning(skinnedMesh, toPosition)` writes skinned positions in a compute pass (see `webgpu_skinning_points`). Instanced skinning: `webgpu_skinning_instancing`.
@@ -405,8 +405,9 @@ m.colorNode = vec3(uv(), 0.5);
 - `node.needsUpdate = true` bumps the node version (rarely needed).
 - `NodeMaterialObserver` (per render object) decides when GPU state refresh is required: tracks material property values/texture versions, geometry attribute versions, instance matrix/color versions, morph/batch textures, object matrix when animated.
 - Shared nodes: one node instance can sit in several materials; one `uniform` shared across them updates all. Same graph on two materials = one compiled program only if state also matches.
+- `NodeMaterialInstance` (r187, `three/webgpu`, renamed from `ProxyNodeMaterial`): `new THREE.NodeMaterialInstance( nodeMaterial )` reuses the base material's single shader build with its own property values; read per-instance values in the shared graph with `materialReference( 'myColor', 'color' )` and set `inst.myColor = new THREE.Color(...)`. Configure the base material first: node slots like `colorNode` are read-only on instances. Use it for many color/param variants without extra compiles.
 - Serialization: `material.toJSON()` writes `inputNodes` (slot -> node uuid) plus a `nodes` table; load with `THREE.NodeMaterialLoader` (materials only) or `THREE.NodeObjectLoader` (whole scenes) from `three/webgpu`; custom Node classes must be registered (`loader.nodes[Type] = Class`, `loader.nodeMaterials[Type] = Class`) and implement `serialize/deserialize`. `ObjectLoader`/`MaterialLoader` from `three` do not know node types.
-- Disposal: `material.dispose()` frees programs; `renderer.dispose()` is async in r186.
+- Disposal: `material.dispose()` frees programs; `renderer.dispose()` is async in r187.
 
 ---
 

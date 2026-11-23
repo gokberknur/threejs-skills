@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Using three.js WebGPURenderer and TSL, make a MeshStandardMaterial whose color is a procedural animated gradient (based on world position and time) and whose vertices are displaced along the normal with a sine wave. Also show a bloom post-processing effect on it. Latest three.js.",
-      "expected_output": "Imports from 'three/webgpu' and 'three/tsl' only; uses colorNode with positionWorld/time/mix, positionNode = positionLocal.add(normalLocal.mul(sin(...))), RenderPipeline (not EffectComposer; PostProcessing acceptable only as noted deprecated alias) with pass(scene,camera), bloom from three/addons/tsl/display/BloomNode.js, setAnimationLoop and no ShaderMaterial/GLSL strings; function names exist in r186 (Fn, uniform, time, positionLocal, normalLocal, sin, mix).",
+      "expected_output": "Imports from 'three/webgpu' and 'three/tsl' only; uses colorNode with positionWorld/time/mix, positionNode = positionLocal.add(normalLocal.mul(sin(...))), RenderPipeline (not EffectComposer; PostProcessing acceptable only as noted deprecated alias) with pass(scene,camera), bloom from three/addons/tsl/display/BloomNode.js, setAnimationLoop and no ShaderMaterial/GLSL strings; function names exist in r187 (Fn, uniform, time, positionLocal, normalLocal, sin, mix).",
       "assertions": [
         "Imports only from three/webgpu, three/tsl and three/addons (never bare three)",
         "Sets positionNode = positionLocal + normalLocal * sine of time (vertex displacement)",
         "Sets colorNode from positionWorld and time via TSL nodes (no GLSL strings, no ShaderMaterial)",
         "Post-processing uses RenderPipeline (or PostProcessing noted as deprecated alias) with pass() and bloom from three/addons/tsl/display/BloomNode.js, not EffectComposer",
-        "Every TSL function used exists in r186 (Fn, uniform, time, sin, mix, positionLocal, normalLocal, positionWorld, pass, bloom)",
+        "Every TSL function used exists in r187 (Fn, uniform, time, sin, mix, positionLocal, normalLocal, positionWorld, pass, bloom)",
         "Uses renderer.setAnimationLoop or awaits renderer.init() before rendering"
       ]
     },

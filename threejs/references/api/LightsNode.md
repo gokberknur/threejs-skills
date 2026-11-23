@@ -38,14 +38,6 @@ A node representing the total specular light.
 
 ## Methods
 
-### .analyze( builder : NodeBuilder )
-
-Analyzes the node's dependencies by building all nested light nodes and the output node.
-
- | **builder**  |
-
-A reference to the current node builder.   | **Overrides:** Node#analyze
-
 ### .customCacheKey() : number
 
 Overwrites the default Node#customCacheKey implementation by including light data into the cache key.   **Overrides:** Node#customCacheKey   **Returns:** The custom cache key.

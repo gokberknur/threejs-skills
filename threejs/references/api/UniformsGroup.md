@@ -98,6 +98,10 @@ Clears all update ranges of this buffer.   **Overrides:** UniformBuffer#clearUpd
 
 Returns a new uniforms group with copied values from this instance.   **Overrides:** UniformBuffer#clone   **Returns:** A clone of this instance.
 
+### .clone() : UniformsGroup
+
+Returns a clone of this uniforms group. The clone has its own buffer and update state.   **Overrides:** UniformBuffer#clone   **Returns:** The cloned uniforms group.
+
 ### .copy( source : UniformsGroup ) : UniformsGroup
 
 Copies the values of the given uniforms group to this instance.

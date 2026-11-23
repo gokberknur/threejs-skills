@@ -1,4 +1,4 @@
-# Animation (three.js r186)
+# Animation (three.js r187)
 
 When to read this: playing glTF/FBX clips, crossfading or additively blending animations, building clips from keyframes in code, cloning/retargeting skinned characters, driving morph targets, IK, or optimizing many animated objects. Animation is renderer-agnostic: `AnimationMixer` runs on the CPU and writes to Object3D properties, so everything here is identical for WebGLRenderer and WebGPURenderer.
 
@@ -39,7 +39,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const timer = new THREE.Timer();
-timer.connect(document);               // pauses on tab hidden; examples in r186 use Timer
+timer.connect(document);               // pauses on tab hidden; examples in r187 use Timer
 let mixer;
 
 new GLTFLoader().load('Soldier.glb', (gltf) => {

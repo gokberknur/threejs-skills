@@ -34,7 +34,9 @@ They are ideal for procedural texture generation, image processing filters, flui
 
 ::: api .toReadWrite() : Node - Sets the storage texture access mode to read-write. :::
 
-::: api .setMipLevel( level: int ) : Node - Sets the mipmap level to write to. :::
+::: api .setMipLevel( level ) : Node - Sets the mipmap level to write to.
+- **level**: `int`
+:::
 
 ```tsl storageTextureExample
 import 'scenes/shaderball';

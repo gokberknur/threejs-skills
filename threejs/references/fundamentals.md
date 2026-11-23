@@ -1,7 +1,7 @@
-# three.js r186 Fundamentals
+# three.js r187 Fundamentals
 
 ## When to read this
-Read before writing any three.js app: app skeleton (renderer/scene/camera/loop), responsive canvas and pixel ratio, scene graph and transforms, cameras, built-in primitives, texture basics, lights and shadows overview, fog, render targets, and the "what needs `needsUpdate`" rules. Geometry authoring is in `geometry.md`; materials/color management/loaders/animation are in their own reference files. Version: three@0.186.1 (r186).
+Read before writing any three.js app: app skeleton (renderer/scene/camera/loop), responsive canvas and pixel ratio, scene graph and transforms, cameras, built-in primitives, texture basics, lights and shadows overview, fog, render targets, and the "what needs `needsUpdate`" rules. Geometry authoring is in `geometry.md`; materials/color management/loaders/animation are in their own reference files. Version: three@0.187.0 (r187).
 
 ## Table of contents
 1. [Project setup and imports](#1-project-setup-and-imports)
@@ -48,8 +48,8 @@ No bundler: use an import map. Paths must start with `./` or `../` or be URLs.
 ```html
 <script type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+  "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"
 } }
 </script>
 <script type="module" src="main.js"></script>
@@ -113,7 +113,7 @@ Rules:
 - Default render clears color/depth/stencil each call (`autoClear`, `autoClearColor`, `autoClearDepth`, `autoClearStencil` all `true`). Multi-pass overlays: set `renderer.autoClear = false` and call `renderer.clear()` / `clearDepth()` manually.
 - Pre-warm shaders to avoid first-frame jank: `renderer.compile(scene, camera)` or `await renderer.compileAsync(scene, camera)`.
 
-WebGLRenderer constructor options (all defaults from r186 docs): `canvas`, `context`, `precision='highp'`, `alpha=false`, `premultipliedAlpha=true`, `antialias=false`, `stencil=false`, `preserveDrawingBuffer=false`, `powerPreference='default'`, `failIfMajorPerformanceCaveat=false`, `depth=true`, `logarithmicDepthBuffer=false`, `reversedDepthBuffer=false` (needs `EXT_clip_control`), `outputBufferType=UnsignedByteType` (use `HalfFloatType` for HDR output).
+WebGLRenderer constructor options (all defaults from r187 docs and source): `canvas`, `context`, `precision='highp'`, `alpha=false`, `premultipliedAlpha=true`, `antialias=false`, `stencil=false`, `preserveDrawingBuffer=false`, `powerPreference='default'`, `failIfMajorPerformanceCaveat=false`, `depth=true`, `logarithmicDepthBuffer=false`, `reversedDepthBuffer=false` (needs `EXT_clip_control`; since r187 it makes the renderer ignore `logarithmicDepthBuffer`), `outputBufferType=UnsignedByteType` (use `HalfFloatType` for HDR output).
 
 Renderer state worth knowing: `outputColorSpace = SRGBColorSpace` (default), `toneMapping = NoToneMapping`, `toneMappingExposure = 1`, `sortObjects = true`, `shadowMap.{enabled=false, type=PCFShadowMap, autoUpdate=true, needsUpdate=false}`, `info.render` / `info.memory` (draw calls, triangles, geometries, textures; `info.autoReset=false` + manual `info.reset()` for multi-pass frames), `setClearColor(color, alpha)`, `getDrawingBufferSize(v2)`, `getSize(v2)`.
 
@@ -296,7 +296,7 @@ const cam2d = new THREE.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1, 1);
 ```
 `zoom` scales the visible box (OrbitControls zoom on an ortho camera changes `zoom`; call `updateProjectionMatrix()`).
 
-Other cameras: `ArrayCamera` (multi-viewport), `CubeCamera` (+ `WebGLCubeRenderTarget`; env maps/reflections), `StereoCamera`. `CameraHelper(camera)` draws a frustum.
+Other cameras: `ArrayCamera` (multi-viewport) (r187: `perCameraFrustumCulled = true` culls per sub-camera; enable only when sub-frustums barely overlap, no effect with multiview), `CubeCamera` (+ `WebGLCubeRenderTarget`; env maps/reflections), `StereoCamera`. `CameraHelper(camera)` draws a frustum.
 
 ### Multiple views (scissor)
 ```js
@@ -305,13 +305,13 @@ renderer.setViewport(x, y, w, h);  renderer.setScissor(x, y, w, h);   // origin 
 renderer.render(scene, camera);
 renderer.setScissorTest(false);
 ```
-`setViewport/setScissor` take logical pixels (pixel ratio applied internally).
+`setViewport/setScissor` take logical pixels (pixel ratio applied internally) when drawing to the canvas. Since r187, WebGLRenderer does NOT scale by pixel ratio while a render target is bound: pass render-target pixels there.
 
 ---
 
 ## 8. Primitives
 
-All extend `BufferGeometry`; sizes in world units, angles in radians. Constructor signatures below are verified against `src/geometries/*.js` r186. Every geometry stores its constructor args in `.parameters` (read-only snapshot; editing it does nothing) and is built once at construction. To change shape, build a new one and dispose the old.
+All extend `BufferGeometry`; sizes in world units, angles in radians. Constructor signatures below are verified against `src/geometries/*.js` r187. Every geometry stores its constructor args in `.parameters` (read-only snapshot; editing it does nothing) and is built once at construction. To change shape, build a new one and dispose the old.
 
 | Class | Constructor (defaults) |
 |---|---|
@@ -605,7 +605,7 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 if (WebGL.isWebGL2Available()) init(); else document.body.appendChild(WebGL.getWebGL2ErrorMessage());
 // WebGPU: three/addons/capabilities/WebGPU.js (file exists) for feature detection
 ```
-WebGLRenderer requires WebGL 2 in r186 (WebGL 1 support removed). `renderer.capabilities` exposes limits (`getMaxAnisotropy()`, etc.).
+WebGLRenderer requires WebGL 2 in r187 (WebGL 1 support removed). `renderer.capabilities` exposes limits (`getMaxAnisotropy()`, etc.).
 
 FAQ digest:
 - Best format: **glTF/GLB** (`GLTFLoader`); FBX/Collada/OBJ exist but start with glTF.
