@@ -9,9 +9,11 @@
         "Identifies draw calls (8012 calls) as the bottleneck with reasoning",
         "Recommends BatchedMesh as the primary fix (shared material, many different geometries) with working addGeometry/addInstance/setMatrixAt code",
         "Mentions merging geometries as an alternative for fully static content and InstancedMesh only where geometry is shared",
-        "Covers secondary wins: matrixAutoUpdate=false, frustum culling / perObjectFrustumCulled, shadow budget, pixel ratio",
+        "Names BatchedMesh's perObjectFrustumCulled and sortObjects flags and when to turn them off",
+        "Covers other secondary wins: matrixAutoUpdate = false for static buildings, shadow budget, pixel ratio cap",
         "Tells the user to re-measure with renderer.info.render.calls / fps after the change",
-        "No invented API names (checks against r187: addGeometry, addInstance, setMatrixAt, perObjectFrustumCulled, sortObjects, optimize)"
+        "No invented API names (checks against r187: addGeometry, addInstance, setMatrixAt, perObjectFrustumCulled, sortObjects, optimize)",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
@@ -23,7 +25,8 @@
         "Stops the render loop (setAnimationLoop(null)) and removes event listeners / controls.dispose() on unmount",
         "Reuses one renderer or calls renderer.dispose() (plus forceContextLoss only if discarding it)",
         "Mentions renderer.info.memory (geometries/textures counts) to verify the leak is fixed",
-        "No deprecated APIs (outputEncoding, Clock without note, PCFSoftShadowMap)"
+        "No deprecated APIs (outputEncoding, Clock without note, PCFSoftShadowMap)",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
@@ -35,7 +38,8 @@
         "Handles OrbitControls damping by keeping rendering while controls are still settling",
         "Caps pixel ratio, e.g. setPixelRatio(Math.min(devicePixelRatio, 2))",
         "Resize handler updates camera and renderer size and requests a render",
-        "No deprecated APIs (Clock without note, renderAsync)"
+        "No deprecated APIs (Clock without note, renderAsync)",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     }
   ]

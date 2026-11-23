@@ -11,7 +11,9 @@
         "Glass via MeshPhysicalMaterial transmission/ior/thickness; metal via metalness 1 + roughness, not opacity hacks",
         "Replaces black background: blurred environment (backgroundBlurriness), gradient or studio color",
         "Soft shadow or contact shadow on a ground catcher (ShadowMaterial / VSM / radius)",
-        "Anti-aliasing enabled (antialias: true or AA pass) and no deprecated names (RGBELoader, outputEncoding, PCFSoftShadowMap, GammaCorrectionShader, iridescenceThicknessRange, renderer.library.addLight)"
+        "Anti-aliasing that survives the pipeline: antialias: true without a composer, or with EffectComposer a multisampled render target (samples > 0) or an SMAA/FXAA pass",
+        "No pre-r187 names (RGBELoader, outputEncoding, GammaCorrectionShader)",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
@@ -19,12 +21,13 @@
       "prompt": "Add a cinematic post-processing stack to my three.js WebGLRenderer scene: bloom only on emissive neon signs, ambient occlusion, slight film grain and vignette, and depth of field focused on the character. Keep tone mapping correct.",
       "expected_output": "EffectComposer with RenderPass, GTAOPass, UnrealBloomPass (selective via layers/emissive strategy with threshold near 1 or material trick), BokehPass, FilmPass, vignette via ShaderPass or VignetteShader, OutputPass last (tone mapping + sRGB), HalfFloatType render target, composer.setSize on resize and MSAA samples; correct ordering and no GammaCorrectionShader.",
       "assertions": [
-        "Uses EffectComposer with RenderPass first and OutputPass last (or renderer.setEffects with no OutputPass), so tone mapping is applied once",
-        "Bloom limited to the neon signs (selective bloom via layers/MRT/emissive threshold), not global bloom",
+        "Tone mapping applied exactly once: one OutputPass with only display-space passes (grain, vignette, FXAA) after it, or renderer.setEffects with no OutputPass",
+        "Bloom is truly selective: neon meshes isolated via layers / a second composer or an emissive MRT target, not only a global luminance threshold",
         "Adds ambient occlusion (GTAOPass, SAOPass or SSAOPass)",
         "Adds depth of field (BokehPass or equivalent) focused on the character distance",
         "Adds film grain and vignette (FilmPass plus a vignette pass/shader)",
-        "Uses an HDR (HalfFloatType) render target or explains why it matters for bloom"
+        "Uses an HDR (HalfFloatType) render target or explains why it matters for bloom",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
@@ -37,7 +40,8 @@
         "Addresses shimmering from shadow texels (stabilized cascades / texel snapping) separately from geometry aliasing",
         "Enables anti-aliasing (antialias: true MSAA, or SMAA/TAA/FXAA pass) for edge shimmer",
         "No PCFSoftShadowMap; uses PCFShadowMap/VSMShadowMap",
-        "If WebGPU SunLight is shown, registers it with SunLight.registerNode(SunLightNode), not renderer.library.addLight"
+        "If WebGPU SunLight is shown, registers it with SunLight.registerNode(SunLightNode), not renderer.library.addLight",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     }
   ]

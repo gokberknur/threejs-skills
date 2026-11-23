@@ -11,7 +11,8 @@
         "Sets colorNode from positionWorld and time via TSL nodes (no GLSL strings, no ShaderMaterial)",
         "Post-processing uses RenderPipeline (or PostProcessing noted as deprecated alias) with pass() and bloom from three/addons/tsl/display/BloomNode.js, not EffectComposer",
         "Every TSL function used exists in r187 (Fn, uniform, time, sin, mix, positionLocal, normalLocal, positionWorld, pass, bloom)",
-        "Uses renderer.setAnimationLoop or awaits renderer.init() before rendering"
+        "Uses renderer.setAnimationLoop or awaits renderer.init() before rendering",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
@@ -25,7 +26,8 @@
         "r187 dispatch rule: a .compute(count) node is dispatched with renderer.compute(node) and no size (a size is passed only to computeKernel nodes)",
         "No integer-node times fractional literal (e.g. instanceIndex.mul(0.5)) without converting to float first",
         "Renders the particles as points reading the storage buffer in positionNode (or toAttribute)",
-        "Initializes the renderer before compute (await renderer.init() or setAnimationLoop)"
+        "Initializes the renderer before compute (await renderer.init() or setAnimationLoop)",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
@@ -37,8 +39,9 @@
         "Replaces vUv with uv() and uTime with time or a uniform()",
         "Computes distance(uv(), vec2(0.5)) and the sin(d*20 - t*3) ring",
         "Handles smoothstep with edge0 > edge1 (undefined in WGSL), e.g. via oneMinus(smoothstep(0, 0.02, x)) or swapped edges with a note",
-        "Outputs the color vec3(ring) * vec3(0.2, 0.6, 1.0) with alpha 1",
-        "Imports from three/webgpu and three/tsl"
+        "Outputs vec3(ring) * vec3(0.2, 0.6, 1.0) and addresses color space: colorNode output is converted to the output color space, unlike a raw gl_FragColor write, so the result is matched explicitly or the difference is explained",
+        "Imports from three/webgpu and three/tsl",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     }
   ]

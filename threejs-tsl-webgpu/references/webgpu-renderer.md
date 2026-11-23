@@ -209,7 +209,7 @@ renderer.toneMappingExposure = 1.0;
 Shadows:
 ```js
 renderer.shadowMap.enabled = true;                 // default false
-renderer.shadowMap.type = THREE.PCFShadowMap;      // default; also PCFSoftShadowMap, VSMShadowMap, BasicShadowMap
+renderer.shadowMap.type = THREE.PCFShadowMap;      // default; also VSMShadowMap, BasicShadowMap (PCFSoftShadowMap was removed: it warns and falls back to PCF)
 renderer.shadowMap.transmitted = false;            // light transmission through non-opaque materials
 light.castShadow = true; mesh.castShadow = true; mesh.receiveShadow = true;
 ```

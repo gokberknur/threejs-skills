@@ -8,12 +8,12 @@
       "files": [],
       "assertions": [
         "Import map pins three@0.187.x and uses three/addons/ paths",
-        "Uses DRACOLoader with an explicit setDecoderPath",
+        "Draco decoding works from the CDN: the default decoder path, or setDecoderPath with the same three version as the import map",
         "Shadows: shadowMap.enabled, light castShadow, ground receiveShadow, meshes castShadow",
         "AnimationMixer plays gltf.animations[0] and is updated with a frame delta in the loop",
         "OrbitControls with enableDamping and controls.update() per frame",
         "Resize handler updates camera aspect, projection matrix and renderer size",
-        "No deprecated APIs (outputEncoding, sRGBEncoding, Clock without note, PCFSoftShadowMap, examples/js)",
+        "No deprecated or removed APIs (outputEncoding, sRGBEncoding, Clock, PCFSoftShadowMap, examples/js)",
         "Environment lighting or correct tone mapping so glTF PBR is not dark"
       ]
     },
@@ -26,7 +26,8 @@
         "Explains ColorManagement / outputColorSpace defaults (sRGB output) as the reason",
         "Mentions tone mapping / exposure as a secondary cause of brightness",
         "Explains material.needsUpdate = true is needed when a map is added after the first render (shader define changes)",
-        "Does not suggest the removed texture.encoding / sRGBEncoding API"
+        "Does not suggest the removed texture.encoding / sRGBEncoding API",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
@@ -39,7 +40,8 @@
         "Highlights the selected box (emissive or material change) and restores it on deselect",
         "Drags on the ground plane via ray.intersectPlane(THREE.Plane) or DragControls",
         "Disables OrbitControls during the drag (or explains the conflict)",
-        "Uses setPointerCapture or equivalent so drags continue outside the box"
+        "Uses setPointerCapture or equivalent so drags continue outside the box",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     }
   ]
