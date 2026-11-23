@@ -18,7 +18,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;   // or AgXToneMapping / Neu
 renderer.toneMappingExposure = 1.0;
 renderer.outputColorSpace = THREE.SRGBColorSpace;     // default; stated for clarity
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.VSMShadowMap;          // soft; PCFShadowMap is the default; PCFSoftShadowMap was removed
+renderer.shadowMap.type = THREE.VSMShadowMap;          // soft; PCFShadowMap is the default. PCFSoftShadowMap is a deprecated constant: setting it logs "has been removed" and falls back to PCFShadowMap
 
 // Environment lighting: this is what makes PBR materials read as real
 const pmrem = new THREE.PMREMGenerator(renderer);

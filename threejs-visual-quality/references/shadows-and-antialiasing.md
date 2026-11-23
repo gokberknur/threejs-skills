@@ -33,7 +33,7 @@ Constants: `BasicShadowMap=0, PCFShadowMap=1, PCFSoftShadowMap=2 (removed), VSMS
 |---|---|---|---|
 | `BasicShadowMap` | Hard, jagged, pixelated | Cheapest | `shadow.radius` has no effect. Needed for custom shaders that read raw depth (PCSS example `webgl_shadowmap_pcss` sets it) |
 | `PCFShadowMap` (default) | Filtered hard shadow; in r187 hardware 4-tap PCF x 5 Vogel-disk taps scaled by `shadow.radius` | Low-medium | Best default. Raise `radius` 1 -> 3-5 to soften (banding above ~6 at 1024 maps) |
-| `PCFSoftShadowMap` | -- | -- | **Removed.** Setting it logs a warning and uses PCF (WebGLRenderer, WebGPURenderer). Do not use |
+| `PCFSoftShadowMap` | -- | -- | **Deprecated constant, feature removed.** Setting it logs "has been removed" and uses PCF (WebGLRenderer, WebGPURenderer). Do not use |
 | `VSMShadowMap` | Softest, blurred, penumbra-like (Gaussian blur via `radius` + `blurSamples`) | Medium-high (extra blur passes, RG half-float maps) | Light bleeding, can look "floating". All receivers also render into the map (`receiveShadow` objects cast). **Not supported for PointLights** (warns; use PCF/Basic) |
 
 ```js
