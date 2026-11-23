@@ -9,7 +9,7 @@
         "Adds environment lighting: PMREMGenerator + RoomEnvironment or HDRI via HDRLoader with EquirectangularReflectionMapping set as scene.environment",
         "Sets tone mapping (ACES/AgX/Neutral) with exposure and keeps outputColorSpace sRGB",
         "Glass via MeshPhysicalMaterial transmission/ior/thickness; metal via metalness 1 + roughness, not opacity hacks",
-        "Replaces black background: blurred environment (backgroundBlurriness), gradient or studio color",
+        "Replaces the black background with a studio look: blurred environment (backgroundBlurriness), a gradient or a lit backdrop; a flat solid color alone does not count",
         "Soft shadow or contact shadow on a ground catcher (ShadowMaterial / VSM / radius)",
         "Anti-aliasing that survives the pipeline: antialias: true without a composer, or with EffectComposer a multisampled render target (samples > 0) or an SMAA/FXAA pass",
         "No pre-r187 names (RGBELoader, outputEncoding, GammaCorrectionShader)",
@@ -27,6 +27,7 @@
         "Adds depth of field (BokehPass or equivalent) focused on the character distance",
         "Adds film grain and vignette (FilmPass plus a vignette pass/shader)",
         "Uses an HDR (HalfFloatType) render target or explains why it matters for bloom",
+        "Anti-aliasing survives the composer: multisampled render target (samples > 0) or an SMAA/FXAA pass; antialias: true alone does not count",
         "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },

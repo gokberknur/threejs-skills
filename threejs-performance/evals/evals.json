@@ -26,6 +26,7 @@
         "Reuses one renderer or calls renderer.dispose() (plus forceContextLoss only if discarding it)",
         "Mentions renderer.info.memory (geometries/textures counts) to verify the leak is fixed",
         "No deprecated APIs (outputEncoding, Clock without note, PCFSoftShadowMap)",
+        "Closes ImageBitmap sources (texture.source.data.close()) only for textures no other page or cache still uses, and says a closed bitmap cannot be re-uploaded",
         "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
@@ -39,6 +40,7 @@
         "Caps pixel ratio, e.g. setPixelRatio(Math.min(devicePixelRatio, 2))",
         "Resize handler updates camera and renderer size and requests a render",
         "No deprecated APIs (Clock without note, renderAsync)",
+        "Keeps rendering while something animates on its own (AnimationMixer clips, tweens, video): the code requests frames until the animation ends, not only on input events",
         "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     }

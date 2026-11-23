@@ -24,7 +24,7 @@
         "Stores position and velocity in GPU storage buffers (instancedArray or storage) with one element per particle",
         "Compute kernel written with Fn and instanceIndex, applying gravity and respawning below y=-5 with If/select",
         "r187 dispatch rule: a .compute(count) node is dispatched with renderer.compute(node) and no size (a size is passed only to computeKernel nodes)",
-        "No integer-node times fractional literal (e.g. instanceIndex.mul(0.5)) without converting to float first",
+        "Wherever instanceIndex feeds float math (spreading positions, random seeds, hashes), it is converted to float first (toFloat() / float()), and no integer node is multiplied by a fractional literal",
         "Renders the particles as points reading the storage buffer in positionNode (or toAttribute)",
         "Initializes the renderer before compute (await renderer.init() or setAnimationLoop)",
         "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"

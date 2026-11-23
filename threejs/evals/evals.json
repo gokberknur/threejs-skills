@@ -14,7 +14,7 @@
         "OrbitControls with enableDamping and controls.update() per frame",
         "Resize handler updates camera aspect, projection matrix and renderer size",
         "No deprecated or removed APIs (outputEncoding, sRGBEncoding, Clock, PCFSoftShadowMap, examples/js)",
-        "Environment lighting or correct tone mapping so glTF PBR is not dark"
+        "Sets scene.environment from an environment map (PMREM of RoomEnvironment or an HDR) so glTF PBR is not dark; tone mapping alone does not count"
       ]
     },
     {
@@ -23,7 +23,7 @@
       "expected_output": "Explains texture.colorSpace = THREE.SRGBColorSpace for color maps (ColorManagement on by default, outputColorSpace default sRGB), mentions tone mapping/exposure as second suspect, and explains material.needsUpdate = true is required when adding a map after first compile (define change), not texture.needsUpdate. No mention of the removed `encoding` API as a fix.",
       "assertions": [
         "Sets texture.colorSpace = THREE.SRGBColorSpace for the color map",
-        "Explains ColorManagement / outputColorSpace defaults (sRGB output) as the reason",
+        "Explains the mechanism: the untagged sRGB PNG is read as linear and sRGB-encoded again on output (double encoding), not just that output is sRGB",
         "Mentions tone mapping / exposure as a secondary cause of brightness",
         "Explains material.needsUpdate = true is needed when a map is added after the first render (shader define changes)",
         "Does not suggest the removed texture.encoding / sRGBEncoding API",
@@ -37,7 +37,7 @@
       "assertions": [
         "Uses Raycaster.setFromCamera with normalized device coordinates computed from the canvas rect",
         "Uses pointer events (pointerdown/move/up) so mouse and touch share one path, with touch-action: none on the canvas",
-        "Highlights the selected box (emissive or material change) and restores it on deselect",
+        "Highlights only the selected box (per-box material or clone, so the other boxes stay unlit) and restores it on deselect",
         "Drags on the ground plane via ray.intersectPlane(THREE.Plane) or DragControls",
         "Disables OrbitControls during the drag (or explains the conflict)",
         "Uses setPointerCapture or equivalent so drags continue outside the box",
