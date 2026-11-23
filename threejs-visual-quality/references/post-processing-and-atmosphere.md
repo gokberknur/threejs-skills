@@ -95,7 +95,7 @@ composer.addPass(bloom);   // after RenderPass (and after AO/DoF), before Output
 ```
 Recommended: threshold 0.85-1.0 (linear luminance; > 1 = only HDR emissives), strength 0.2-0.8 (subtle) up to 1.5 (neon), radius 0.3-0.6. Lower `toneMappingExposure` ~ bloom looks stronger: tune together.
 Selective bloom (WebGL), two options:
-1. Emissive-driven: make glowing materials `emissive` with `emissiveIntensity` 3-10 and `threshold ~1`; nothing else exceeds 1. Cheapest.
+1. Emissive-driven (approximate): make glowing materials `emissive` with `emissiveIntensity` 3-10 and `threshold ~1`. Cheapest, but not truly selective: in an HDR scene bright speculars, the sun disc or a hot sky also exceed 1 and bloom. Fine for "neon looks glowy"; when the user asks for bloom ONLY on specific objects, use option 2.
 2. Layers (`webgl_postprocessing_unreal_bloom_selective`): `bloomLayer = new THREE.Layers(); bloomLayer.set(1)`; render a `bloomComposer` (`renderToScreen=false`, HalfFloat target) with non-bloom meshes swapped to a black material (`scene.traverse(darkenNonBloomed)`), then `finalComposer` mixes `bloomComposer.renderTarget2.texture` via a `ShaderPass` (additive) before `OutputPass`. Two scene renders.
 WebGPU (`bloom(node, strength = 1, radius = 0, threshold = 0)`; uniforms `.strength/.radius/.threshold` are nodes: set `.value`):
 ```js

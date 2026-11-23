@@ -110,7 +110,7 @@ light.shadow.shadowNode = csm;  scene.add(light);
 ```
 Example `webgpu_shadowmap_csm`.
 
-`SunLight` + `SunLightShadow` (addons `lights/SunLight.js`): lightweight 2-cascade sun with automatic fitting to the view frustum up to `shadow.camera.far`; direction from `position` (no target); `shadow.mapSize` default 1024 per cascade. WebGPU: `SunLight.registerNode(SunLightNode)` (r187; was `renderer.library.addLight(SunLightNode, SunLight)`) (`SunShadowNode`, `sunShadow`). Examples `webgl_shadowmap_performance`, `webgpu_lights_sunlight`. Best zero-config outdoor option.
+`SunLight` + `SunLightShadow` (addons `lights/SunLight.js`): lightweight 2-cascade sun with automatic fitting to the view frustum up to `shadow.camera.far`; direction from `position` (no target); `shadow.mapSize` default 1024 per cascade. WebGPU: `SunLight.registerNode(SunLightNode)` (r187; was `renderer.library.addLight(SunLightNode, SunLight)`) (`SunShadowNode`, `sunShadow`). Examples `webgl_lights_sunlight`, `webgpu_lights_sunlight`. Best zero-config outdoor option.
 
 `TileShadowNode` (WebGPU, `three/addons/tsl/shadows/TileShadowNode.js`): splits one directional shadow into `tilesX x tilesY` tiles (default 2 x 2) for huge worlds; no VSM. Example `webgpu_shadowmap_array`.
 

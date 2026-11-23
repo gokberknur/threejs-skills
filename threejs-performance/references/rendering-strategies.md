@@ -85,7 +85,7 @@ Details:
 - Every external change must request a frame: loaders (`onLoad`), WebSocket data, GUI `onChange`, video textures (a playing `VideoTexture` makes this a continuous render app), XR (XR needs `setAnimationLoop`, see section 4).
 - Static scene extras: also stop shadow updates (section 6), and `scene.matrixWorldAutoUpdate = false` (see `draw-calls-and-geometry.md`) while nothing moves.
 - `preserveDrawingBuffer: false` (default) clears the canvas after compositing. In an on-demand app, take screenshots by calling `render()` right before `canvas.toBlob` (manual: Tips), not by enabling `preserveDrawingBuffer` (it can cost performance and memory on some platforms; rule of thumb).
-- Pause when hidden: browsers throttle rAF in background tabs automatically; for `setAnimationLoop` you can also stop on `document.visibilitychange`. `Timer.connect(document)` avoids a giant delta when the tab returns (see `textures-and-memory.md`).
+- Pause when hidden: browsers throttle rAF in background tabs automatically; for `setAnimationLoop` you can also stop on `document.visibilitychange`. `Timer.connect(document)` avoids a giant delta when the tab returns (see `textures-and-memory.md`). It only reacts to Page Visibility: with render-on-demand the tab stays visible while idle, so the first delta after an idle stretch is still huge. Clamp it (`Math.min(timer.getDelta(), 1 / 30)`) or call `timer.reset()` when rendering restarts.
 
 ---
 
