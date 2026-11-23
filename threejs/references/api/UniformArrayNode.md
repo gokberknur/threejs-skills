@@ -48,10 +48,6 @@ This flag can be used for type testing.
 
 Default is `true`.
 
-### .paddedType : string
-
-The padded type. Uniform buffers must conform to a certain buffer layout so a separate type is computed to ensure correct buffer size.
-
 ### .updateType : string
 
 Overwritten since uniform array nodes are updated per render.
@@ -70,7 +66,7 @@ The index node.  |
 
 ### .generateNodeType( builder : NodeBuilder ) : string
 
-This method is overwritten since the node type is inferred from the UniformArrayNode#paddedType.
+This method is overwritten since the node type is inferred from the padded type.
 
  | **builder**  |
 
@@ -84,9 +80,13 @@ The data type of the array elements.
 
 The current node builder.   | **Overrides:** BufferNode#getElementType   **Returns:** The element type.
 
-### .getPaddedType() : string
+### .getPaddedType( builder : NodeBuilder ) : string
 
-Returns the padded type based on the element type.   **Returns:** The padded type.
+Returns the padded type based on the element type.
+
+ | **builder**  |
+
+The current node builder.   | **Returns:** The padded type.
 
 ### .onUpdate( callback : function, updateType : string ) : UniformArrayNode
 

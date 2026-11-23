@@ -1,6 +1,6 @@
 AnaglyphPassNode - Three.js Docs
 
-EventDispatcher → Node → TempNode → PassNode → StereoCompositePassNode →
+EventDispatcher → Node → PassNode → StereoCompositePassNode →
 
 # AnaglyphPassNode
 

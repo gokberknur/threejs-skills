@@ -6,19 +6,19 @@ Calling `.once()` on a `Fn()` creates a **singleton function**: TSL evaluates it
 
 **Sub-Builds** solve this by creating scoped compilation layers (like `'POSITION'` or `'NORMAL'`). Passing `.once( [ 'POSITION' ] )` tells TSL to maintain a separate cache for that specific stage instead of reusing a single global value.
 
-::: api Fn().once( subBuilds: Array<string> = null ) : FunctionNode - Configures a TSL function to execute and cache its output node once per build, with optional isolated caching across specified sub-build layers.
-- **subBuilds**: `Array<string>` - (Optional) Array of sub-build layer names (e.g. `[ 'NORMAL', 'VERTEX' ]`) under which the function is cached independently.
+::: api fn.once( subBuilds? ) : FunctionNode - Configures a TSL function, `fn`, to execute and cache its output node once per build, with optional isolated caching across specified sub-build layers.
+- **subBuilds**: `Array<string>` - (Optional) Array of sub-build layer names (e.g. `[ 'NORMAL', 'VERTEX' ]`) under which the function is cached independently. Defaults to `null`.
 :::
 
-::: api subBuild( node: Node, name: string, type: string = null ) : SubBuildNode - Wraps a node to be built within an isolated sub-build scope (e.g. `'VERTEX'`, `'NORMAL'`, `'POSITION'`).
+::: api subBuild( node, name, type? ) : SubBuildNode - Wraps a node to be built within an isolated sub-build scope (e.g. `'VERTEX'`, `'NORMAL'`, `'POSITION'`).
 - **node**: `Node` - The target node to evaluate inside the sub-build layer.
 - **name**: `string` - The name of the sub-build compilation layer.
-- **type**: `string` - (Optional) The output type of the node.
+- **type**: `string` - (Optional) The output type of the node. Defaults to `null`.
 :::
 
-::: api builder.getSubBuildProperty( property: string = '', node: Node = null ) : string - Returns a sub-build prefixed property or varying identifier (e.g. `'POSITION_v_positionWorld'`).
-- **property**: `string` - The base property or varying name to prefix.
-- **node**: `Node` - (Optional) Target node used to resolve the closest sub-build scope.
+::: api builder.getSubBuildProperty( property?, node? ) : string - Returns a sub-build prefixed property or varying identifier (e.g. `'POSITION_v_positionWorld'`).
+- **property**: `string` - (Optional) The base property or varying name to prefix. Defaults to `''`.
+- **node**: `Node` - (Optional) Target node used to resolve the closest sub-build scope. Defaults to `null`.
 :::
 
 ### How `positionWorld` Works

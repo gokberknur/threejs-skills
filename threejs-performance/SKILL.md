@@ -1,9 +1,9 @@
 ---
 name: threejs-performance
-description: Diagnose and fix three.js (r186) performance problems and design scenes that stay fast: low FPS, jank, stutter on load, high draw calls, too many objects, GPU/CPU bottlenecks, memory leaks and growing `renderer.info.memory`, slow mobile, thermal throttling, large glTF files, texture memory, shadow cost, post-processing cost, rendering only when needed, OffscreenCanvas workers, InstancedMesh vs BatchedMesh vs merged geometry, LOD, frustum culling, compute-based particles. Use whenever a user mentions FPS, "laggy", "slow", "optimize", "thousands of objects", "draw calls", "memory", "dispose", "profile", "Spector", "stats.js", or asks how to scale a three.js scene, even if they do not say "performance". Pair with the `threejs` core skill (API lookup) and `threejs-tsl-webgpu` for compute/WebGPU specifics.
+description: Diagnose and fix three.js (r187) performance problems and design scenes that stay fast: low FPS, jank, stutter on load, high draw calls, too many objects, GPU/CPU bottlenecks, memory leaks and growing `renderer.info.memory`, slow mobile, thermal throttling, large glTF files, texture memory, shadow cost, post-processing cost, rendering only when needed, OffscreenCanvas workers, InstancedMesh vs BatchedMesh vs merged geometry, LOD, frustum culling, compute-based particles. Use whenever a user mentions FPS, "laggy", "slow", "optimize", "thousands of objects", "draw calls", "memory", "dispose", "profile", "Spector", "stats.js", or asks how to scale a three.js scene, even if they do not say "performance". Pair with the `threejs` core skill (API lookup) and `threejs-tsl-webgpu` for compute/WebGPU specifics.
 ---
 
-# three.js r186 performance
+# three.js r187 performance
 
 Performance work is diagnosis first, technique second. Most three.js slowness is one of five bottlenecks, each with a different fix. Measure, name the bottleneck, then pick from the table. Never apply "optimizations" blind; instancing a scene that is fill-rate bound does nothing.
 
@@ -35,7 +35,7 @@ console.log(renderer.info.memory);   // { geometries, textures }  (WebGL also: p
 
 ## 3. The ten rules of a fast three.js scene
 
-1. **One draw call per material, not per object.** `InstancedMesh` for repeated geometry (grass, trees, particles, UI), `BatchedMesh` when geometries differ but material is shared. Both support raycasting (`instanceId`/`batchId`) and per-instance color.
+1. **One draw call per material, not per object.** `InstancedMesh` for repeated geometry (grass, trees, particles, UI), `BatchedMesh` when geometries differ but material is shared. Both support raycasting (`instanceId`/`batchId`) and per-instance color. With `BatchedMesh`, decide its two per-frame CPU flags explicitly: keep `perObjectFrustumCulled` on when the camera sees only part of the batch, turn `sortObjects` off for opaque batches with little overdraw (details in `references/draw-calls-and-geometry.md`).
 2. **Static things do not update.** `object.matrixAutoUpdate = false` after placing; `scene.matrixWorldAutoUpdate = false` + manual `updateMatrixWorld()` for fully static scenes; `renderer.shadowMap.autoUpdate = false` and set `needsUpdate = true` only when a caster moves.
 3. **Render only when something changed.** Controls `change` event + `requestRenderIfNotRequested()` pattern for viewers, editors, configurators. Cuts GPU/battery to near zero.
 4. **Texture memory is width × height × 4 × 1.33.** 4096² RGBA = 89 MB. Use 1024-2048 for most maps, KTX2 (UASTC for normal maps, ETC1S for albedo) via `KTX2Loader`, `generateMipmaps` on, `anisotropy` ≤ 8 unless needed.
@@ -43,7 +43,7 @@ console.log(renderer.info.memory);   // { geometries, textures }  (WebGL also: p
 6. **Transparency = overdraw + sorting.** Prefer `alphaTest` / `alphaHash` cutouts, `depthWrite: false` for additive particles, keep transparent object count small, limit `transmission` (it renders the scene to a texture first).
 7. **Post-processing at the right resolution.** Bloom/AO/DOF at half resolution; one AA method (MSAA via `antialias: true` or TRAA/FXAA, not both); `HalfFloatType` targets only when HDR is needed.
 8. **Never allocate per frame.** Module-level `_v = new THREE.Vector3()` temps, `getWorldPosition(_v)`, reuse `Raycaster`, avoid `array.map` in the loop, avoid `traverse` per frame (cache lists).
-9. **Dispose what you remove.** `geometry.dispose()`, `material.dispose()` (and every texture on it), `renderTarget.dispose()`, `controls.dispose()`, `renderer.dispose()` on teardown. Use the traverse helper in `references/textures-and-memory.md`.
+9. **Dispose what you remove.** `geometry.dispose()`, `material.dispose()` (and every texture on it), `renderTarget.dispose()`, `controls.dispose()`, `renderer.dispose()` on teardown. Use the traverse helper in `references/textures-and-memory.md`. GLTFLoader textures are often `ImageBitmap`s: `texture.dispose()` does not free them, `texture.source.data.close?.()` does, but only close a bitmap no other page or cache still uses; a closed bitmap cannot be uploaded again, so a shared texture would break. In an SPA, make teardown available before any `await`: if the user leaves while a GLB is still loading, a cancel flag (or `AbortController` passed to the loader manager) must stop the pending load and dispose whatever arrives late, or that scene leaks.
 10. **Load smart.** Draco or meshopt compressed glTF, KTX2 textures, `ImageBitmapLoader` / `createImageBitmap` for off-thread decode, `compileAsync` before the first frame, progressive loading with `LoadingManager`; heavy sim or whole renderer in a Worker via `OffscreenCanvas`.
 
 ## Quick wins snippet

@@ -26,7 +26,7 @@ Default is `null`.
 
 The paths that have been generated for this shape.
 
-Default is `null`.
+Default is `[]`.
 
 ### .userData : Object
 

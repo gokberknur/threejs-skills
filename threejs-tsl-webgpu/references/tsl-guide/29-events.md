@@ -10,23 +10,41 @@ Events are registered directly inside a TSL function `Fn()` using event function
 
 <code name="eventsExample" default="true">Centralized Material Updates</code>
 
-::: api OnFrameUpdate( callback: Function ) : EventNode - Executes a callback once per animation frame on the CPU. :::
+::: api OnFrameUpdate( callback ) : EventNode - Executes a callback once per animation frame on the CPU.
+- **callback**: `Function`
+:::
 
-::: api OnBeforeFrameUpdate( callback: Function ) : EventNode - Executes a callback before frame node updates begin. :::
+::: api OnBeforeFrameUpdate( callback ) : EventNode - Executes a callback before frame node updates begin.
+- **callback**: `Function`
+:::
 
-::: api OnMaterialUpdate( callback: Function ) : EventNode - Executes a callback when the material is rendered. :::
+::: api OnMaterialUpdate( callback ) : EventNode - Executes a callback when the material is rendered.
+- **callback**: `Function`
+:::
 
-::: api OnBeforeMaterialUpdate( callback: Function ) : EventNode - Executes a callback before the material is updated. :::
+::: api OnBeforeMaterialUpdate( callback ) : EventNode - Executes a callback before the material is updated.
+- **callback**: `Function`
+:::
 
-::: api OnObjectUpdate( callback: Function ) : EventNode - Executes a callback each time an individual object using the material is rendered. :::
+::: api OnObjectUpdate( callback ) : EventNode - Executes a callback each time an individual object using the material is rendered.
+- **callback**: `Function`
+:::
 
-::: api OnBeforeObjectUpdate( callback: Function ) : EventNode - Executes a callback before each individual object is rendered. :::
+::: api OnBeforeObjectUpdate( callback ) : EventNode - Executes a callback before each individual object is rendered.
+- **callback**: `Function`
+:::
 
-::: api OnAfterObjectUpdate( callback: Function ) : EventNode - Executes a callback after an individual object finishes rendering. :::
+::: api OnAfterObjectUpdate( callback ) : EventNode - Executes a callback after an individual object finishes rendering.
+- **callback**: `Function`
+:::
 
-::: api OnBeforeRenderPipeline( callback: Function ) : EventNode - Executes a callback before the post-processing render pipeline starts. :::
+::: api OnBeforeRenderPipeline( callback ) : EventNode - Executes a callback before the post-processing render pipeline starts.
+- **callback**: `Function`
+:::
 
-::: api OnAfterRenderPipeline( callback: Function ) : EventNode - Executes a callback after the post-processing render pipeline completes. :::
+::: api OnAfterRenderPipeline( callback ) : EventNode - Executes a callback after the post-processing render pipeline completes.
+- **callback**: `Function`
+:::
 
 ```tsl eventsExample
 import 'scenes/shaderball';

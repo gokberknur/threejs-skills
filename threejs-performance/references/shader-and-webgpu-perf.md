@@ -1,10 +1,10 @@
-# Shader Cost, Program Churn and WebGPU / TSL Performance (three.js r186)
+# Shader Cost, Program Churn and WebGPU / TSL Performance (three.js r187)
 
 ## When to read this
 
 Read when the GPU is shader-bound (fill rate, expensive materials), when custom shaders or `onBeforeCompile` cause hitches or program counts to grow, when moving simulation / particles to the GPU, when porting from WebGLRenderer to WebGPURenderer, or when choosing between Points, InstancedMesh and compute particles, GPU picking vs raycasting, and morph/skin approaches.
 
-GLSL-level statements about GPU hardware are general graphics knowledge (rule of thumb); API statements were checked against the r186 docs and source.
+GLSL-level statements about GPU hardware are general graphics knowledge (rule of thumb); API statements were checked against the r186 docs and source; every "in r186" claim was re-checked against r187.
 
 ## Table of contents
 
@@ -112,11 +112,12 @@ material.uniformsGroups = [camData];
 
 - Each (object, material, render context, lights, ...) combination becomes a cached `RenderObject`, holding the compiled node builder output, the pipeline and the bind groups. It is reused every frame.
 - When `material.version` changes (that is, `material.needsUpdate = true`) the renderer recomputes the material cache key; if the key equals the original, the object keeps its pipeline and only the version is updated (cheap); if different, the old RenderObject is disposed and a new one is built (shader generation + pipeline creation, a hitch).
-- The key includes (from `getMaterialCacheKey`): `customProgramCacheKey()`, every material property except `is*`, `_private`, `visible`, `version`, `uuid`, `name`, `opacity`, `userData`; numeric values are reduced to on/off (0 vs nonzero) except `side`, so changing `roughness` between 0.3 and 0.8 does not alter the key, but 0 to nonzero does; texture properties contribute mapping and, on WebGPU, filter/wrap modes (they are part of the bindings); clipping state; geometry attribute layout (names, strides, itemSize, normalized, morph targets, index presence); skeleton bone count; batched mesh and instancing flags.
+- The key includes (from `getMaterialCacheKey`): `customProgramCacheKey()`, every material property except `is*`, `_private`, `visible`, `version`, `uuid`, `name`, `opacity`, `userData`; numeric values are reduced to on/off (0 vs nonzero) except `side`, so changing `roughness` between 0.3 and 0.8 does not alter the key, but 0 to nonzero does; texture properties contribute mapping, uv `channel` (added to the key in r187, #34773) and, on WebGPU, filter/wrap modes (they are part of the bindings); clipping state; geometry attribute layout (names, strides, itemSize, normalized, morph targets, index presence); skeleton bone count; batched mesh and instancing flags.
 - Consequences:
   - Swapping a texture for another texture with the same sampler settings does not rebuild the pipeline; changing `magFilter/minFilter/wrap*` does (WebGPU).
   - Geometry with a different attribute set under the same material creates a new RenderObject/pipeline. Keep attribute layouts consistent among meshes sharing a material.
   - Assigning different node graphs (`colorNode`, `positionNode`, ...) to a material and setting `needsUpdate = true` rebuilds. Prefer driving variation with uniforms (`uniform(...).value = x`) instead of swapping nodes.
+  - Many variants of one node material (colors, params): `new THREE.NodeMaterialInstance( baseMaterial )` (r187) shares the base material's single shader build and reads per-instance values through `materialReference()` (docs: "All instances created from the same node material share a single shader build").
   - `Object3D.static = true` (WebGPURenderer only, `Object3D.md`) lets the renderer skip some per-frame state checks for objects whose geometry and material no longer change (`webgpu_performance.html` toggles it for a whole model). Use for scenery. Setting it and then mutating geometry/material gives stale results.
 - Pipelines and bind groups are shared between objects whose render object data match; bind groups are updated when bound resources change. Texture and buffer resources are managed per resource, not per material. Fewer unique materials/geometry layouts means fewer pipelines and bind group switches.
 - `renderer.info.memory.programs` / `programsSize` (WebGPU `Info`) track active programs.
@@ -243,7 +244,7 @@ Reading GPU data on the CPU synchronizes the pipeline: the CPU waits for the GPU
 
 ## 9. Indirect draws, render bundles, `static`
 
-- Indirect dispatch: `renderer.compute(node, indirectStorageBufferAttribute)` takes `IndirectStorageBufferAttribute` for the dispatch size written by an earlier compute pass (GPU decides the workload). Indirect draw: `webgpu_struct_drawindirect.html` (see also `IndirectStorageBufferAttribute.md`). Together with GPU frustum culling in compute this is the high-end route for huge scenes (no CPU culling cost).
+- Indirect dispatch (node must come from `computeKernel()` since r187; count nodes throw): `renderer.compute(node, indirectStorageBufferAttribute)` takes `IndirectStorageBufferAttribute` for the dispatch size written by an earlier compute pass (GPU decides the workload). Indirect draw: `webgpu_struct_drawindirect.html` (see also `IndirectStorageBufferAttribute.md`). Together with GPU frustum culling in compute this is the high-end route for huge scenes (no CPU culling cost).
 - Render bundles: `BundleGroup` records draw commands once and replays them: reduces CPU encode time for static content (`draw-calls-and-geometry.md` section 15). `static = true` by default; set `needsUpdate = true` after changing anything inside.
 - `Object3D.static` (WebGPURenderer): see section 4.
 - `renderer.isOccluded(object)`: occlusion query for visibility feedback (`webgpu_occlusion.html`); results arrive asynchronously (one-frame-late use).
@@ -262,7 +263,7 @@ await renderer.compileAsync(scene, camera);                 // all materials/obj
 await renderer.compileComputeAsync(computeNodes);           // compute pipelines
 ```
 
-- `Renderer.compile()` is an alias for `compileAsync()` in r186 (`Renderer.md`). WebGLRenderer has both `compile` (sync, blocking) and `compileAsync` (uses `KHR_parallel_shader_compile`; "recommended whenever possible").
+- `Renderer.compile()` is an alias for `compileAsync()` in r187 (`Renderer.md`). WebGLRenderer has both `compile` (sync, blocking) and `compileAsync` (uses `KHR_parallel_shader_compile`; "recommended whenever possible").
 - Set up lights, environment, fog, shadow settings, tone mapping and render targets first (compile uses current state). The third parameter lets you compile an object for a target scene before adding it.
 - Compile progress: WebGPU `compileAsync(scene, camera, targetScene, onProgress)`.
 - Reduce the number of programs: share materials, avoid per-object node graphs, keep attribute layouts stable (section 4).

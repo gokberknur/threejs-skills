@@ -38,6 +38,22 @@ Attributes are inputs that are defined per-vertex or per-instance in the geometr
 - **instancedMesh**: `InstancedMesh` - Creates an instance node for InstancedMesh.
 :::
 
+::: api referenceAttribute( name, type?, object? ) : ReferenceAttributeNode - Binds a buffer attribute stored as a property of the rendered object, such as `instanceMatrix` or `instanceColor`. Unlike `attribute()`, the buffer isn't part of the program: each object binds its own attribute, so objects can share the same shader. Matrices are bound as columns and storage buffer attributes as storage buffers.
+- **name**: `string` - Name of the property that holds the buffer attribute.
+- **type**: `string` - (Optional) Explicit TSL type name. Inferred from the attribute if not set.
+- **object**: `Object` - (Optional) The object the property belongs to. Defaults to the rendered object.
+:::
+
+::: api morphColor( color ) : vec4 - Applies the color morph targets of the geometry to the given color. The result is computed in the vertex stage.
+- **color**: `vec4` - The color to morph. Must be available in the vertex stage.
+:::
+
+```js
+// Shared shader for all instanced meshes, each mesh binds its own buffers
+const matrix = referenceAttribute( 'instanceMatrix', 'mat4' );
+const color = referenceAttribute( 'instanceColor' );
+```
+
 ```tsl attributesExample
 import 'scenes/shaderball';
 import { uv } from 'three/tsl';

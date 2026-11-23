@@ -6,13 +6,16 @@ Rotation functions allow you to rotate 2D coordinates or 3D positions/vectors. T
 
 <code name="teapotEmitter" default="true">Teapot Emitter</code>
 
-::: api rotate( position, rotation, order='XYZ' ) : Node - Applies a rotation to the given position or vector node.
+::: api rotate( position, rotation, order? ) : Node - Applies a rotation to the given position or vector node.
 - **position**: `vec2 | vec3` - The 2D or 3D vector to rotate.
 - **rotation**: `float | vec3` - For 2D positions, a single float angle (in radians). For 3D positions, a Euler rotation vector containing rotation angles for the X, Y, and Z axes.
-- **order**: `string` - The Euler rotation order (e.g. `'XYZ'`, `'YZX'`, `'ZXY'`, `'XZY'`, `'YXZ'`, `'ZYX'`). Only used for 3D rotation. Defaults to `'XYZ'`.
+- **order**: `string` - (Optional) The Euler rotation order (e.g. `'XYZ'`, `'YZX'`, `'ZXY'`, `'XZY'`, `'YXZ'`, `'ZYX'`). Only used for 3D rotation. Defaults to `'XYZ'`.
 :::
 
-::: api .rotate( rotation, order='XYZ' ) : Node - Method chaining helper to rotate the current position or vector node. :::
+::: api .rotate( rotation, order? ) : Node - Method chaining helper to rotate the current position or vector node.
+- **rotation**: `float | vec3` - Rotation angle in radians for 2D positions, or Euler rotation angles for 3D positions.
+- **order**: `string` - (Optional) The Euler rotation order. Only used for 3D rotation. Defaults to `'XYZ'`.
+:::
 
 ```tsl teapotEmitter
 import 'scenes/empty';

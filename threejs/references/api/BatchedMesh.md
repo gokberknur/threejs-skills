@@ -6,6 +6,8 @@ EventDispatcher → Object3D → Mesh →
 
 A special version of a mesh with multi draw batch rendering support. Use this class if you have to render a large number of objects with the same material but with different geometries or world transformations. The usage of `BatchedMesh` will help you to reduce the number of draw calls and thus improve the overall rendering performance in your application.
 
+The first geometry added defines the layout of the batch. All subsequent geometries must match its index usage and provide its attributes with the same itemSize and normalized values. Additional attributes are ignored.
+
 ## Code Example
 
 ```js
@@ -135,11 +137,11 @@ The ID of a previously added geometry via BatchedMesh#addGeometry.   | **Returns
 
 ### .computeBoundingBox()
 
-Computes the bounding box, updating BatchedMesh#boundingBox. Bounding boxes aren't computed by default. They need to be explicitly computed, otherwise they are `null`.
+Computes the bounding box, updating BatchedMesh#boundingBox. Bounding boxes aren't computed by default. They need to be explicitly computed, otherwise they are `null`. Must be recomputed when instances change.
 
 ### .computeBoundingSphere()
 
-Computes the bounding sphere, updating BatchedMesh#boundingSphere. Bounding spheres aren't computed by default. They need to be explicitly computed, otherwise they are `null`.
+Computes the bounding sphere, updating BatchedMesh#boundingSphere. The engine computes the bounding sphere once when it is needed. Must be recomputed when instances change.
 
 ### .deleteGeometry( geometryId : number ) : BatchedMesh
 
@@ -204,7 +206,7 @@ The ID of an instance to get the geometry ID of.   | **Returns:** The instance's
 
 ### .getGeometryRangeAt( geometryId : number, target : Object ) : Object
 
-Get the range representing the subset of triangles related to the attached geometry, indicating the starting offset and count, or `null` if invalid.
+Get the range representing the subset of triangles related to the attached geometry, indicating the starting offset and count, or throws an error if invalid.
 
  | **geometryId**  |
 

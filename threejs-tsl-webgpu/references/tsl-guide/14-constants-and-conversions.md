@@ -6,45 +6,85 @@ Input functions can be used to create constants and do explicit conversions.
 
 > Note: Conversions are also performed automatically if the output and input are of different types.
 
-::: api float( value: Node | number ) : float - Convert or create a float node. :::
+::: api float( value ) : float - Convert or create a float node.
+- **value**: `Node | number`
+:::
 
-::: api int( value: Node | number ) : int - Convert or create an integer node. :::
+::: api int( value ) : int - Convert or create an integer node.
+- **value**: `Node | number`
+:::
 
-::: api uint( value: Node | number ) : uint - Convert or create an unsigned integer node. :::
+::: api uint( value ) : uint - Convert or create an unsigned integer node.
+- **value**: `Node | number`
+:::
 
-::: api bool( value: Node | boolean ) : bool - Convert or create a boolean node. :::
+::: api bool( value ) : bool - Convert or create a boolean node.
+- **value**: `Node | boolean`
+:::
 
-::: api color( ...value: Node | Color | string | number ) : color - Convert or create a color node. :::
+::: api color( ...value ) : color - Convert or create a color node.
+- **...value**: `Node | Color | string | number`
+:::
 
-::: api vec2( ...value: Node | Vector2 | number ) : vec2 - Convert or create a Vector2 node. :::
+::: api vec2( ...value ) : vec2 - Convert or create a Vector2 node.
+- **...value**: `Node | Vector2 | number`
+:::
 
-::: api vec3( ...value: Node | Vector3 | number ) : vec3 - Convert or create a Vector3 node. :::
+::: api vec3( ...value ) : vec3 - Convert or create a Vector3 node.
+- **...value**: `Node | Vector3 | number`
+:::
 
-::: api vec4( ...value: Node | Vector4 | number ) : vec4 - Convert or create a Vector4 node. :::
+::: api vec4( ...value ) : vec4 - Convert or create a Vector4 node.
+- **...value**: `Node | Vector4 | number`
+:::
 
-::: api mat2( ...value: Node | Matrix2 | number ) : mat2 - Convert or create a Matrix2 node. :::
+::: api mat2( ...value ) : mat2 - Convert or create a Matrix2 node.
+- **...value**: `Node | Matrix2 | number`
+:::
 
-::: api mat3( ...value: Node | Matrix3 | number ) : mat3 - Convert or create a Matrix3 node. :::
+::: api mat3( ...value ) : mat3 - Convert or create a Matrix3 node.
+- **...value**: `Node | Matrix3 | number`
+:::
 
-::: api mat4( ...value: Node | Matrix4 | number ) : mat4 - Convert or create a Matrix4 node. :::
+::: api mat4( ...value ) : mat4 - Convert or create a Matrix4 node.
+- **...value**: `Node | Matrix4 | number`
+:::
 
-::: api ivec2( ...value: Node | number ) : ivec2 - Convert or create an integer Vector2 node. :::
+::: api ivec2( ...value ) : ivec2 - Convert or create an integer Vector2 node.
+- **...value**: `Node | number`
+:::
 
-::: api ivec3( ...value: Node | number ) : ivec3 - Convert or create an integer Vector3 node. :::
+::: api ivec3( ...value ) : ivec3 - Convert or create an integer Vector3 node.
+- **...value**: `Node | number`
+:::
 
-::: api ivec4( ...value: Node | number ) : ivec4 - Convert or create an integer Vector4 node. :::
+::: api ivec4( ...value ) : ivec4 - Convert or create an integer Vector4 node.
+- **...value**: `Node | number`
+:::
 
-::: api uvec2( ...value: Node | number ) : uvec2 - Convert or create an unsigned integer Vector2 node. :::
+::: api uvec2( ...value ) : uvec2 - Convert or create an unsigned integer Vector2 node.
+- **...value**: `Node | number`
+:::
 
-::: api uvec3( ...value: Node | number ) : uvec3 - Convert or create an unsigned integer Vector3 node. :::
+::: api uvec3( ...value ) : uvec3 - Convert or create an unsigned integer Vector3 node.
+- **...value**: `Node | number`
+:::
 
-::: api uvec4( ...value: Node | number ) : uvec4 - Convert or create an unsigned integer Vector4 node. :::
+::: api uvec4( ...value ) : uvec4 - Convert or create an unsigned integer Vector4 node.
+- **...value**: `Node | number`
+:::
 
-::: api bvec2( ...value: Node | boolean ) : bvec2 - Convert or create a boolean Vector2 node. :::
+::: api bvec2( ...value ) : bvec2 - Convert or create a boolean Vector2 node.
+- **...value**: `Node | boolean`
+:::
 
-::: api bvec3( ...value: Node | boolean ) : bvec3 - Convert or create a boolean Vector3 node. :::
+::: api bvec3( ...value ) : bvec3 - Convert or create a boolean Vector3 node.
+- **...value**: `Node | boolean`
+:::
 
-::: api bvec4( ...value: Node | boolean ) : bvec4 - Convert or create a boolean Vector4 node. :::
+::: api bvec4( ...value ) : bvec4 - Convert or create a boolean Vector4 node.
+- **...value**: `Node | boolean`
+:::
 
 Example:
 
@@ -123,3 +163,5 @@ model.material.colorNode = color( 0x1e90ff );
 ```
 
 > IA: In TSL, wrapping numeric literals with `float( 1.0 )` is only necessary when using **method chaining** (e.g., `float( 1 ).div( ... )`) or when assigning directly as material node inputs (such as `material.colorNode = float( 1 )`). For function parameters like `sin( 1 )`, `cos( 0.5 )`, or `mul( uv(), 10 )`, primitive numbers are automatically converted into nodes.
+
+> AI: Since r187, explicit integer constants are truncated instead of rounded: `int( 1.5 )` is `1`, `int( - 1.5 )` is `-1` and `uint( 0.6 )` is `0u`. See the Type Promotion section of [Operators](#operators) for how plain JavaScript numbers adapt to the other operand.

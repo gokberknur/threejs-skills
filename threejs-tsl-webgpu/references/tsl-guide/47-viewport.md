@@ -39,6 +39,18 @@ Viewport nodes return values and textures representing the screen-space viewport
 - **level**: `Node` - (Optional) Mipmap level node to sample from. Defaults to `null`.
 :::
 
+::: api projectionDepth( depth, near, far ) : float - Returns the depth value as produced by the camera's projection matrix. Converts logarithmic depth when `renderer.logarithmicDepthBuffer` is enabled, otherwise returns `depth` unchanged.
+- **depth**: `float` - Depth value, e.g. sampled from a depth texture.
+- **near**: `float` - The camera's near value.
+- **far**: `float` - The camera's far value.
+:::
+
+::: api isBackgroundDepth( depth ) : bool - Returns `true` if the depth value belongs to the background (the cleared far plane). Takes the renderer's reversed depth buffer into account.
+- **depth**: `float` - Depth value, e.g. sampled from a depth texture.
+:::
+
+> AI: Prefer `isBackgroundDepth( depth )` over manual checks like `depth.greaterThanEqual( 1.0 )` or `depth.equal( 1.0 )` to detect background pixels in post-processing, since the far plane is `0` with a reversed depth buffer.
+
 ### Utils
 
 ::: api viewportSafeUV( uv? ) - Generates depth-aware safe UV coordinates for screen-space refraction. Performs depth testing to prevent foreground objects located in front of the refractive surface from leaking into the refraction sample. Returns `vec2`.

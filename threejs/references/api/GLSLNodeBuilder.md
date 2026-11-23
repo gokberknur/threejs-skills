@@ -53,6 +53,12 @@ Builds the given shader node.
 
 The shader node.   | **Overrides:** NodeBuilder#buildFunctionCode   **Returns:** The GLSL function code.
 
+### .enableDualSourceBlending()
+
+Enables dual source blending.
+
+WebGL 2 can express this through the `WEBGL_blend_func_extended` extension, but WebGLBackend does not implement it.   **Overrides:** NodeBuilder#enableDualSourceBlending
+
 ### .enableExtension( name : string, behavior : string, shaderStage : string )
 
 Enables the given extension.
@@ -80,6 +86,30 @@ The clipping plane count.  |
 ### .enableMultiview()
 
 Enables multiview.
+
+### .enableShaderF16()
+
+Enables 16 bit floats.   **Overrides:** NodeBuilder#enableShaderF16
+
+### .enableSubGroups()
+
+Enables subgroups.   **Overrides:** NodeBuilder#enableSubGroups
+
+### .generateConstStatement( type : string, name : string, count : number ) : string
+
+Returns a single const variable statement as a GLSL string for the given variable type and name.
+
+ | **type**  |
+
+The variable's type.  |
+ | **name**  |
+
+The variable's name.  |
+ | **count**  |
+
+The array length.
+
+Default is `null`.   | **Overrides:** NodeBuilder#generateConstStatement   **Returns:** The GLSL snippet that defines a const variable.
 
 ### .generatePBO( storageArrayElementNode : StorageArrayElementNode ) : string
 
@@ -295,6 +325,22 @@ The name of the texture uniform in the shader.  |
 
 A GLSL snippet that represents the mip level.   | **Overrides:** NodeBuilder#generateTextureSize   **Returns:** The GLSL snippet.
 
+### .generateVarStatement( type : string, name : string, count : number ) : string
+
+Returns a single variable statement as a GLSL string for the given variable type and name.
+
+ | **type**  |
+
+The variable's type.  |
+ | **name**  |
+
+The variable's name.  |
+ | **count**  |
+
+The array length.
+
+Default is `null`.   | **Overrides:** NodeBuilder#generateVarStatement   **Returns:** The GLSL snippet that defines a variable.
+
 ### .getAttributes( shaderStage : string ) : string
 
 Returns the shader attributes of the given shader stage as a GLSL string.
@@ -378,7 +424,7 @@ Returns a builtin representing the index of an invocation within its workgroup. 
 
 ### .getInvocationSubgroupIndex()
 
-Returns a builtin representing the index of an invocation within its subgroup.
+Returns a builtin representing the index of an invocation within its subgroup.   **Overrides:** NodeBuilder#getInvocationSubgroupIndex
 
 ### .getMethod( method : string ) : string
 
@@ -423,11 +469,11 @@ The shader stage.   | **Returns:** The GLSL snippet that defines the structs.
 
 ### .getSubgroupIndex()
 
-Returns a builtin representing the index of the current invocation's subgroup within its workgroup.
+Returns a builtin representing the index of the current invocation's subgroup within its workgroup.   **Overrides:** NodeBuilder#getSubgroupIndex
 
 ### .getSubgroupSize()
 
-Returns a builtin representing the size of a subgroup within the current shader.
+Returns a builtin representing the size of a subgroup within the current shader.   **Overrides:** NodeBuilder#getSubgroupSize
 
 ### .getTernary( condSnippet : string, ifSnippet : string, elseSnippet : string ) : string
 
@@ -458,6 +504,17 @@ Returns the type for a given buffer attribute.
  | **attribute**  |
 
 The buffer attribute.   | **Overrides:** NodeBuilder#getTypeFromAttribute   **Returns:** The type.
+
+### .getUniformBufferName( uniform : NodeUniform, shaderStage : string ) : string
+
+Returns the uniform block name of the given buffer uniform.
+
+ | **uniform**  |
+
+The buffer uniform.  |
+ | **shaderStage**  |
+
+The shader stage.   | **Returns:** The uniform block name.
 
 ### .getUniformFromNode( node : UniformNode, type : string, shaderStage : string, name : string ) : NodeUniform
 
@@ -495,6 +552,23 @@ Returns the varyings of the given shader stage as a GLSL string.
  | **shaderStage**  |
 
 The shader stage.   | **Overrides:** NodeBuilder#getVaryings   **Returns:** The GLSL snippet that defines the varyings.
+
+### .getVectorSelect( condSnippet : string, ifSnippet : string, elseSnippet : string, type : string ) : string
+
+Returns the native snippet for a genuinely per-component vector select. GLSL has no vector ternary, so `float` types use `mix()`'s `bvecN`-selector overload; `int`/`uint`/`bool` types use an arithmetic select instead, since that overload doesn't exist for them.
+
+ | **condSnippet**  |
+
+The per-component boolean (`bvecN`) condition.  |
+ | **ifSnippet**  |
+
+The vector expression selected where `condSnippet` is `true`.  |
+ | **elseSnippet**  |
+
+The vector expression selected where `condSnippet` is `false`.  |
+ | **type**  |
+
+The (vector) type of `ifSnippet`/`elseSnippet`.   | **Overrides:** NodeBuilder#getVectorSelect   **Returns:** The resolved method name.
 
 ### .getVertexIndex() : string
 

@@ -1,6 +1,6 @@
 MathNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # MathNode
 
@@ -68,7 +68,7 @@ The selected method as well as the input type determine the node type of this no
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generateNodeType   **Returns:** The node type.
+The current node builder.   | **Overrides:** Node#generateNodeType   **Returns:** The node type.
 
 ### .getInputType( builder : NodeBuilder ) : string
 

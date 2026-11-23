@@ -1,6 +1,6 @@
 OperatorNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # OperatorNode
 
@@ -58,7 +58,7 @@ The current node builder.  |
 
 The output type.
 
-Default is `null`.   | **Overrides:** TempNode#generateNodeType   **Returns:** The node type.
+Default is `null`.   | **Overrides:** Node#generateNodeType   **Returns:** The node type.
 
 ### .getOperatorMethod( builder : NodeBuilder, output : string ) : string
 

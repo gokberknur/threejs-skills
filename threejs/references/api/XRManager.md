@@ -140,7 +140,9 @@ Creates a new binding if needed and the browser is capable of doing so.   **Retu
 
 ### .getCamera() : ArrayCamera
 
-Returns the XR camera.   **Returns:** The XR camera.
+Returns the XR camera.
+
+The camera's transformation and projection matrix are derived from the first sub camera (e.g. the left eye in a stereo setup).   **Returns:** The XR camera.
 
 ### .getController( index : number ) : Group
 

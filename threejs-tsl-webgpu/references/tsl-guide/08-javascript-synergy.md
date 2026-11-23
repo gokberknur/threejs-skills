@@ -129,3 +129,5 @@ model.material.colorNode = caustics( {
 	seed: 0
 } );
 ```
+
+> AI: When writing custom node classes, extend `Node` directly. `TempNode` is deprecated since r187, since temporary variable caching is now handled by `Node` itself.

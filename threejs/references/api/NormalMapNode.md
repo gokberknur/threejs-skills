@@ -1,6 +1,6 @@
 NormalMapNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # NormalMapNode
 

@@ -56,6 +56,12 @@ Effects are encapsulated into reusable nodes from `three/addons/tsl/display/` th
 - **params**: `Object` - (Optional) Lensflare parameters.
 :::
 
+::: api lensDirt( node, dirtTextureNode, intensity? ) : Node - Reveals a lens dirt texture wherever the scene is bright. The input is typically a blurred luminance of the scene, such as a bloom pass; a wider blur reveals the dirt over a larger area. Import from `three/addons/tsl/display/lensDirt.js`.
+- **node**: `Node` - Blurred scene luminance, e.g. the result of `bloom()`.
+- **dirtTextureNode**: `TextureNode` - The lens dirt texture.
+- **intensity**: `float` - (Optional) Intensity of the lens dirt. Defaults to `1`.
+:::
+
 ::: api dof( node, viewZNode, focusDistance?, focalLength?, bokehScale? ) : DepthOfFieldNode - Creates a realistic bokeh Depth of Field lens blur.
 - **node**: `Node` - Input color texture or pass node.
 - **viewZNode**: `Node` - View-space Z depth buffer node (e.g. `pass.getViewZNode()`).

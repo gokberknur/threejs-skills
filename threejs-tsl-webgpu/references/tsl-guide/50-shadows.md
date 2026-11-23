@@ -9,12 +9,12 @@ Beyond standard shadow mapping, [Node Material](#node-material) provides dedicat
 <code name="castShadowNode" default="true">Cast Shadow Node</code>
 <code name="displacedShadowPosition">Displaced Shadow Position</code>
 
-::: api shadow( light: Light, shadow?: LightShadow ) : ShadowNode - Creates a shadow node for directional or spot lights.
+::: api shadow( light, shadow? ) : ShadowNode - Creates a shadow node for directional or spot lights.
 - **light**: `Light` - The shadow casting light.
 - **shadow**: `LightShadow` - (Optional) The light shadow instance. Defaults to `light.shadow`.
 :::
 
-::: api pointShadow( light: PointLight, shadow?: LightShadow ) : PointShadowNode - Creates an omnidirectional point shadow node.
+::: api pointShadow( light, shadow? ) : PointShadowNode - Creates an omnidirectional point shadow node.
 - **light**: `PointLight` - The shadow casting point light.
 - **shadow**: `LightShadow` - (Optional) The point light shadow instance.
 :::

@@ -18,7 +18,7 @@ material.contextNode = overrideNode( positionLocal, () => positionLocal.add( vec
 
 ## Constructor
 
-### new OverrideContextNode( overrideNodes : Map.<Node, function()>, flowNode : Node  | null )
+### new OverrideContextNode( overrideNodes : Map.<Node, function()>, flowNode : Node  | null, shaderStage : string )
 
 Constructs a new override context node.
 
@@ -30,6 +30,11 @@ A map mapping target nodes to their respective override callback functions.  |
 The node whose context should be modified.
 
 Default is `null`.  |
+ | **shaderStage**  |
+
+The shader stage the overrides apply to, all stages by default.
+
+Default is `null`.  |
 
 ## Properties
 
@@ -39,15 +44,11 @@ This flag can be used for type testing.
 
 Default is `true`.
 
+## Static Properties
+
 ### .type : string (readonly)
 
 Returns the type of the node.
-
-## Methods
-
-### .getFlowContextData() : Object
-
-Gathers the context data from all parent context nodes by traversing the hierarchy, merging the `overrideNodes` maps from all encountered `OverrideContextNode` instances.   **Overrides:** ContextNode#getFlowContextData   **Returns:** The gathered context data, containing the merged `overrideNodes` map.
 
 ## Source
 

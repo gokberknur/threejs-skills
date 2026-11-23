@@ -1,6 +1,6 @@
 OITPassNode - Three.js Docs
 
-EventDispatcher → Node → TempNode → PassNode →
+EventDispatcher → Node → PassNode →
 
 # OITPassNode
 

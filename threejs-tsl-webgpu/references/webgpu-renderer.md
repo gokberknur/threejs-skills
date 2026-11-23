@@ -1,4 +1,4 @@
-# WebGPURenderer (three.js r186)
+# WebGPURenderer (three.js r187)
 
 When to read this: setting up, configuring, debugging or profiling `THREE.WebGPURenderer` (imports, constructor options, async init, WebGL2 fallback, render targets, readback, timestamps, Inspector, clipping, OIT, XR, workers). For compute-shader/GPGPU work read `compute.md`; for TSL syntax read `tsl-reference.md`. All facts below were checked against r186 source (`src/renderers/common/Renderer.js`, `src/renderers/webgpu/*`, `src/renderers/webgl-fallback/*`) and the local docs; where docs and source disagree, source wins and it is flagged.
 
@@ -62,7 +62,7 @@ import { Inspector } from 'three/addons/inspector/Inspector.js';
 | `stencil` | `false` | both | Default framebuffer stencil buffer. |
 | `logarithmicDepthBuffer` | `false` | both | Read in `NodeMaterial` and shadow nodes; readonly after construction. |
 | `reversedDepthBuffer` | `false` | both | Reversed-Z. Readonly after construction. |
-| `outputBufferType` | `HalfFloatType` | both | Type of internal output buffers (frame buffer target). `UnsignedByteType` saves memory/bandwidth, lowers quality. **Renamed from `colorBufferType`** (`getColorBufferType()` deprecated r182, use `getOutputBufferType()`); the old option name is not read by r186. |
+| `outputBufferType` | `HalfFloatType` | both | Type of internal output buffers (frame buffer target). `UnsignedByteType` saves memory/bandwidth, lowers quality. **Renamed from `colorBufferType`** (`getColorBufferType()` deprecated r182, use `getOutputBufferType()`); the old option name is not read by r187. |
 | `outputType` | `undefined` | WebGPU | Canvas texture type. `HalfFloatType` sets `toneMapping.mode = 'extended'` on the canvas context (HDR output). Other formats than the device preferred one cost extra conversion. |
 | `forceWebGL` | `false` | both | Skip WebGPU, use the WebGL2 backend. |
 | `canvas` | auto-created | both | Existing `HTMLCanvasElement` or `OffscreenCanvas` (`Backend.getDomElement`). |
@@ -74,7 +74,7 @@ import { Inspector } from 'three/addons/inspector/Inspector.js';
 | `multiview` | `false` | both | WebXR multiview if supported. Not supported for WebGPU XR (renderer warns and disables it). |
 | `getFallback` | set by WebGPURenderer | internal | Callback providing the WebGL backend when WebGPU init fails. Do not set. |
 
-**Not options** (do not exist in r186): `requiredFeatures` (the WebGPU backend requests every feature the adapter exposes, filtered through `GPUFeatureName`), `colorBufferType` (see above), `premultipliedAlpha`, `preserveDrawingBuffer`.
+**Not options** (do not exist in r187): `requiredFeatures` (the WebGPU backend requests every feature the adapter exposes, filtered through `GPUFeatureName`), `colorBufferType` (see above), `premultipliedAlpha`, `preserveDrawingBuffer`.
 
 Adapter request uses `featureLevel: 'compatibility'` and `xrCompatible: renderer.xr.enabled`; the device may therefore be in compatibility mode (`renderer.backend.compatibilityMode === true`, set after init when the device lacks `core-features-and-limits`). In compat mode MSAA is forced to 0 and depth-texture comparison paths differ.
 
@@ -100,7 +100,7 @@ await renderer.init();              // idempotent: returns the same promise on r
 renderer.setAnimationLoop( ( t ) => renderer.render( scene, camera ) );
 ```
 
-Rules in r186 (source behavior, stricter than the manual):
+Rules in r187 (source behavior, stricter than the manual):
 
 | call | before `init()` finished |
 |---|---|
@@ -173,7 +173,7 @@ renderer.setViewport( x, y, w, h, minDepth = 0, maxDepth = 1 );   // minDepth/ma
 renderer.setScissor( x, y, w, h ); renderer.setScissorTest( true );
 ```
 
-`renderer.domElement` is a getter of the backend canvas (auto-created unless `canvas` passed). Setting `data-engine="three.js r186 webgpu"` is skipped for OffscreenCanvas.
+`renderer.domElement` is a getter of the backend canvas (auto-created unless `canvas` passed). Setting `data-engine="three.js r187 webgpu"` is skipped for OffscreenCanvas.
 
 Multiple canvases with one renderer (one GPU device) use `CanvasTarget`:
 
@@ -209,7 +209,7 @@ renderer.toneMappingExposure = 1.0;
 Shadows:
 ```js
 renderer.shadowMap.enabled = true;                 // default false
-renderer.shadowMap.type = THREE.PCFShadowMap;      // default; also PCFSoftShadowMap, VSMShadowMap, BasicShadowMap
+renderer.shadowMap.type = THREE.PCFShadowMap;      // default; also VSMShadowMap, BasicShadowMap (PCFSoftShadowMap was removed: it warns and falls back to PCF)
 renderer.shadowMap.transmitted = false;            // light transmission through non-opaque materials
 light.castShadow = true; mesh.castShadow = true; mesh.receiveShadow = true;
 ```
@@ -258,7 +258,7 @@ rt.textures[ 0 ].name = 'output';   // names show in Inspector/debuggers
 rt.setSize( w, h );                 // also rt.setSize( w, h, depth ) for 3D/array
 ```
 
-Full `RenderTarget~Options` list in r186: `generateMipmaps, magFilter, minFilter, format, type, internalFormat, wrapS, wrapT, anisotropy, colorSpace, depthBuffer, stencilBuffer, resolveColorBuffer, resolveDepthBuffer, resolveStencilBuffer, storeMultisampledColorBuffer, storeMultisampledDepthBuffer, storeMultisampledStencilBuffer, depthTexture, samples, count, depth, multiview, useArrayDepthTexture`.
+Full `RenderTarget~Options` list in r187: `generateMipmaps, magFilter, minFilter, format, type, internalFormat, wrapS, wrapT, anisotropy, colorSpace, depthBuffer, stencilBuffer, resolveColorBuffer, resolveDepthBuffer, resolveStencilBuffer, storeMultisampledColorBuffer, storeMultisampledDepthBuffer, storeMultisampledStencilBuffer, depthTexture, samples, count, depth, multiview, useArrayDepthTexture, mipmapsAutoUpdate` (`mipmapsAutoUpdate` new in r187). Since r187 `count: 0` makes a depth-only render target (WebGPURenderer).
 
 Usage:
 ```js
@@ -287,7 +287,7 @@ const pixels = await renderer.readRenderTargetPixelsAsync( rt, x, y, w, h, textu
 const buf = await renderer.getArrayBufferAsync( storageAttribute, target?: ReadbackBuffer|ArrayBuffer, offset = 0, count = -1 );
 ```
 - `readRenderTargetPixelsAsync`: `textureIndex` selects an MRT attachment, `faceIndex` the cube face / 3D slice / array layer. The returned TypedArray class is derived from the texture's GPU format (`_getTypedArrayType`: Uint8Array for 8-bit unorm, Float32Array for 32-bit float, etc.); for HalfFloat targets verify what you get before interpreting values. Stalls the pipeline; avoid per frame, size small (example reads 512x512, webgpu_multiple_rendertargets_readback.html).
-- `getArrayBufferAsync`: `offset` and `count` must be multiples of 4 (throws otherwise). Passing a `ReadbackBuffer` (`new THREE.ReadbackBuffer( maxByteLength )`, number) as `target` lets you reuse the staging buffer: the promise resolves with the ReadbackBuffer and data is in `rb.buffer`; call `.release()` to unmap (sets `rb.buffer = null`; must happen before the next use of the same ReadbackBuffer or it throws) and `.dispose()` to free it. A plain `ArrayBuffer` target receives a copy. The renderer tallies it under `renderer.info.memory.readbackBuffers`. (webgpu_compute_reduce.html passes an attribute to the `ReadbackBuffer` constructor and omits the attribute argument of `getArrayBufferAsync`; that does not match the r186 signature.)
+- `getArrayBufferAsync`: `offset` and `count` must be multiples of 4 (throws otherwise). Passing a `ReadbackBuffer` (`new THREE.ReadbackBuffer( maxByteLength )`, number) as `target` lets you reuse the staging buffer: the promise resolves with the ReadbackBuffer and data is in `rb.buffer`; call `.release()` to unmap (sets `rb.buffer = null`; must happen before the next use of the same ReadbackBuffer or it throws) and `.dispose()` to free it. A plain `ArrayBuffer` target receives a copy. The renderer tallies it under `renderer.info.memory.readbackBuffers`. (r187 `webgpu_compute_reduce.html` follows this pattern: `new THREE.ReadbackBuffer( size )`, then `getArrayBufferAsync( attr, readbackBuffer, 0, size )`.)
 - `copyFramebufferToTexture` needs a `FramebufferTexture` whose `image.width/height` define the copy size; used by refraction/backdrop-style effects. When tone mapping forces the internal frame buffer target, the copy comes from that target (linear working space).
 - Framebuffer feedback nodes: `viewportSharedTexture()`, `viewportTexture()` (see `tsl-reference.md`).
 
@@ -295,6 +295,7 @@ const buf = await renderer.getArrayBufferAsync( storageAttribute, target?: Readb
 
 ```js
 renderer.compute( node | [ nodeA, nodeB ] );                 // sync; throws if first element is not a ComputeNode
+// r187: the sized forms below only work for computeKernel() nodes; they throw for compute( count ) nodes
 renderer.compute( node, 4096 );                              // number = invocations; workgroups = ceil( n / prod( workgroupSize ) )
 renderer.compute( node, [ 8, 8, 1 ] );                       // array = WORKGROUP counts (x,y,z), not invocations
 renderer.compute( node, indirectStorageBufferAttribute );    // indirect dispatch (WebGPU only)
@@ -344,7 +345,7 @@ renderer.debug.onNodeBuilderCreated = ( builder ) => {};         // inspect/modi
 renderer.debug.diagnostics.keywords = true;  // rename identifiers that collide with WGSL/GLSL reserved words
 const { vertexShader, fragmentShader } = await renderer.debug.getShaderAsync( scene, camera, mesh );   // generated WGSL or GLSL for a mesh
 ```
-- `getShaderAsync` compiles `object` then returns the built vertex/fragment source of its `RenderObject`. For compute, log from the node builder: `renderer.debug.onNodeBuilderCreated = ( b ) => { ... }` or attach `.debug()` (`debug()` TSL utility, `tsl-guide/66-debug.md`) to an expression to print the generated code up to that point for stage `compute`. (No dedicated `getComputeShaderAsync` exists in r186.)
+- `getShaderAsync` compiles `object` then returns the built vertex/fragment source of its `RenderObject`. For compute, log from the node builder: `renderer.debug.onNodeBuilderCreated = ( b ) => { ... }` or attach `.debug()` (`debug()` TSL utility, `tsl-guide/66-debug.md`) to an expression to print the generated code up to that point for stage `compute`. (No dedicated `getComputeShaderAsync` exists in r187.)
 - Uncaptured GPU errors are routed to `renderer.onError( { api, type, message, originalEvent } )` (default logs). Device loss to `renderer.onDeviceLost( { api, message, reason, originalEvent } )`; default logs and sets an internal flag that makes `compute`, `compileAsync` no-ops. Override both for production:
 ```js
 renderer.onDeviceLost = ( info ) => { if ( info.reason !== 'destroyed' ) rebuildRenderer(); };
@@ -396,7 +397,7 @@ self.onmessage = async ( { data } ) => {
 };
 ```
 - No DOM in workers: send resize/pointer events as messages; use `ImageBitmapLoader` (not `ImageLoader`/`TextureLoader`) for textures; `Timer`/`performance.now` fine.
-- No official WebGPU worker example ships in r186 (`examples/jsm/offscreen/*` use `WebGLRenderer`); the manual page `offscreencanvas.md` documents the WebGL pattern only. Treat the snippet above as derived from the API, not from an official sample.
+- No official WebGPU worker example ships in r187 (`examples/jsm/offscreen/*` use `WebGLRenderer`); the manual page `offscreencanvas.md` documents the WebGL pattern only. Treat the snippet above as derived from the API, not from an official sample.
 - `OrbitControls` etc. need a DOM element: run them on the main thread and post camera state, or proxy events.
 
 ## 17. Lifecycle: compile, dispose
@@ -418,7 +419,7 @@ Dispose geometries/materials/textures/render targets you created (`.dispose()`);
 4. `ShaderMaterial`, `RawShaderMaterial`, `onBeforeCompile`, `EffectComposer` do not work. Use NodeMaterial/TSL/RenderPipeline.
 5. `setSize( w, h )` on an OffscreenCanvas throws (touches `.style`); pass `false`.
 6. `colorBufferType` option no longer exists; it is `outputBufferType`. `requiredFeatures` is not an option (all adapter features are requested).
-7. `renderer.compute( node, [x,y,z] )` sets **workgroup counts**, `renderer.compute( node, n )` sets **invocation count**; the bounds-check `instanceIndex >= count` baked into the shader uses `node.count` (set at `.compute( count )`), not the override.
+7. `renderer.compute( node, [x,y,z] )` sets **workgroup counts**, `renderer.compute( node, n )` sets **invocation count**. Since r187 both are only allowed for `computeKernel()` nodes (no count, no bounds check); a `compute( count )` node throws if you pass a size.
 8. Tone mapping / `outputColorSpace` only apply to screen output. Render targets hold linear working-space data.
 9. MSAA only through `antialias`/`samples` (or `RenderTarget.samples`); compat-mode devices force 0.
 10. Storage buffers read in a vertex shader may need `requiredLimits.maxStorageBuffersInVertexStage`.

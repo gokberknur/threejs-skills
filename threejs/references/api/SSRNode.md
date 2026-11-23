@@ -1,6 +1,6 @@
 SSRNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # SSRNode
 
@@ -141,9 +141,9 @@ Per-pixel metalness, used to drive the GGX reflection sampling and the non-metal
 
 ### .mirrorBias : UniformNode.<float>
 
-Mirror bias for the stochastic GGX sampling. Concentrates the reflected rays toward the lobe's narrow (near-mirror) core, trading a small amount of bias for less noise. `0` samples the full VNDF lobe; values toward `1` tighten the cone. Range `[0,1]`.
+Mirror bias for the stochastic GGX sampling. Concentrates the reflected rays toward the lobe's narrow (near-mirror) core, trading sampling bias for less noise. `0` samples the full VNDF lobe; values toward `1` tighten the cone. Range `[0,1]`.
 
-Default is `0.5`.
+Default is `0`.
 
 ### .normalNode : Node.<vec3>
 
@@ -179,6 +179,18 @@ Default is `0.2`.
 
 Whether SSR fades to black near screen borders (compile-time constant). Assigning a new value recompiles the SSR material.
 
+### .specularF90Node : Node.<float>
+
+Stochastic mode only: per-pixel grazing reflectance (F90), typically an MRT `specularF90` attachment. When `null`, the shader uses `1`.
+
+Default is `null`.
+
+### .specularNode : Node.<vec3>
+
+Stochastic mode only: per-pixel normal-incidence reflectance (F0), typically an MRT `specularColorBlended` attachment, which already includes IOR, specular intensity and metalness (raw `material.specularColor` reflects too brightly). When `null`, F0 is derived from metalness and the diffuse color.
+
+Default is `null`.
+
 ### .stepExponent : number
 
 Non-linear step distribution exponent (compile-time constant). See the backing field for details. Assigning a new value recompiles the SSR material.
@@ -195,7 +207,7 @@ Controls the cutoff between what counts as a possible reflection hit and what do
 
 The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node renders its effect once per frame in `updateBefore()`.
 
-Default is `'frame'`.   **Overrides:** TempNode#updateBeforeType
+Default is `'frame'`.   **Overrides:** Node#updateBeforeType
 
 ### .velocityTexture : Node.<vec2>
 
@@ -205,7 +217,7 @@ A node that represents the velocity texture for reprojection.
 
 ### .dispose()
 
-Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** TempNode#dispose
+Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** Node#dispose
 
 ### .getTextureNode() : PassTextureNode
 
@@ -246,7 +258,7 @@ This method is used to setup the effect's TSL code.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#setup
+The current node builder.   | **Overrides:** Node#setup
 
 ### .updateBefore( frame : NodeFrame )
 
@@ -254,7 +266,7 @@ This method is used to render the effect once per frame.
 
  | **frame**  |
 
-The current node frame.   | **Overrides:** TempNode#updateBefore
+The current node frame.   | **Overrides:** Node#updateBefore
 
 ## Source
 

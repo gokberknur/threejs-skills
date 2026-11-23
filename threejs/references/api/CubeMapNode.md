@@ -1,6 +1,6 @@
 CubeMapNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # CubeMapNode
 
@@ -26,7 +26,7 @@ The node representing the environment map.
 
 The `updateBeforeType` is set to `NodeUpdateType.RENDER` since the node updates the texture once per render in its CubeMapNode#updateBefore method.
 
-Default is `'render'`.   **Overrides:** TempNode#updateBeforeType
+Default is `'render'`.   **Overrides:** Node#updateBeforeType
 
 ## Source
 

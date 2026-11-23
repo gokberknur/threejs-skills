@@ -1,4 +1,4 @@
-# WebXR and audio (three.js r186)
+# WebXR and audio (three.js r187)
 
 When to read this: building VR/AR (WebXR) experiences with three.js (session buttons, controllers, hands, hit test, planes, lighting estimation, depth sensing, layers) or adding sound (Audio, PositionalAudio, AudioListener, AudioAnalyser). XR classes `WebXRManager` (WebGLRenderer) and `XRManager` (WebGPURenderer) are reached through `renderer.xr` and share most of the public API.
 

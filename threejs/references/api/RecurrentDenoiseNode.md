@@ -1,6 +1,6 @@
 RecurrentDenoiseNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # RecurrentDenoiseNode
 

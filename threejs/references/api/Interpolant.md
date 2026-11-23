@@ -100,7 +100,7 @@ The current interpolation factor.  |
 
 The next interpolation factor.   | **Returns:** The result buffer.
 
-### .intervalChanged_( i1 : number, t0 : number, t : number )
+### .intervalChanged_( i1 : number, t0 : number, t1 : number )
 
 Optional method that is executed when the interval has changed.
 
@@ -110,9 +110,9 @@ An index into the sample value buffer.  |
  | **t0**  |
 
 The previous interpolation factor.  |
- | **t**  |
+ | **t1**  |
 
-The current interpolation factor.  |
+The next interpolation factor.  |
 
 ## Source
 

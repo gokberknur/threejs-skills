@@ -4,28 +4,45 @@
     {
       "id": 1,
       "prompt": "Write a single self-contained index.html (no bundler) that loads a glTF model from ./assets/robot.glb with Draco compression, shows it on a ground plane with a shadow, lets me orbit with the mouse, and plays the model's first animation clip. Use the current three.js version from a CDN import map.",
-      "expected_output": "One HTML file using an import map pinned to three@0.186.x, three/addons imports (GLTFLoader, DRACOLoader with decoder path, OrbitControls with damping + update), renderer with shadows enabled, DirectionalLight with castShadow and a sized shadow camera, ground receiveShadow, AnimationMixer updated with a Timer/Clock delta in setAnimationLoop, resize handler, sRGB/tone mapping correct, no deprecated APIs (outputEncoding, sRGBEncoding, examples/js, Geometry).",
+      "expected_output": "One HTML file using an import map pinned to three@0.187.x, three/addons imports (GLTFLoader, DRACOLoader with decoder path, OrbitControls with damping + update), renderer with shadows enabled, DirectionalLight with castShadow and a sized shadow camera, ground receiveShadow, AnimationMixer updated with a Timer/Clock delta in setAnimationLoop, resize handler, sRGB/tone mapping correct, no deprecated APIs (outputEncoding, sRGBEncoding, examples/js, Geometry).",
       "files": [],
       "assertions": [
-        "Import map pins three@0.186.x and uses three/addons/ paths",
-        "Uses DRACOLoader with an explicit setDecoderPath",
+        "Import map pins three@0.187.x and uses three/addons/ paths",
+        "Draco decoding works from the CDN: the default decoder path, or setDecoderPath with the same three version as the import map",
         "Shadows: shadowMap.enabled, light castShadow, ground receiveShadow, meshes castShadow",
         "AnimationMixer plays gltf.animations[0] and is updated with a frame delta in the loop",
         "OrbitControls with enableDamping and controls.update() per frame",
         "Resize handler updates camera aspect, projection matrix and renderer size",
-        "No deprecated APIs (outputEncoding, sRGBEncoding, Clock without note, PCFSoftShadowMap, examples/js)",
-        "Environment lighting or correct tone mapping so glTF PBR is not dark"
+        "No deprecated or removed APIs (outputEncoding, sRGBEncoding, Clock, PCFSoftShadowMap, examples/js)",
+        "Sets scene.environment from an environment map (PMREM of RoomEnvironment or an HDR) so glTF PBR is not dark; tone mapping alone does not count"
       ]
     },
     {
       "id": 2,
       "prompt": "My three.js scene: I load a texture with TextureLoader and put it on a MeshStandardMaterial but it looks washed out and way too bright compared to the PNG. Also when I later change `mesh.material.map = otherTexture` nothing updates. What's wrong and how do I fix it? I'm on the latest three.",
-      "expected_output": "Explains texture.colorSpace = THREE.SRGBColorSpace for color maps (ColorManagement on by default, outputColorSpace default sRGB), mentions tone mapping/exposure as second suspect, and explains material.needsUpdate = true is required when adding a map after first compile (define change), not texture.needsUpdate. No mention of the removed `encoding` API as a fix."
+      "expected_output": "Explains texture.colorSpace = THREE.SRGBColorSpace for color maps (ColorManagement on by default, outputColorSpace default sRGB), mentions tone mapping/exposure as second suspect, and explains material.needsUpdate = true is required when adding a map after first compile (define change), not texture.needsUpdate. No mention of the removed `encoding` API as a fix.",
+      "assertions": [
+        "Sets texture.colorSpace = THREE.SRGBColorSpace for the color map",
+        "Explains the mechanism: the untagged sRGB PNG is read as linear and sRGB-encoded again on output (double encoding), not just that output is sRGB",
+        "Mentions tone mapping / exposure as a secondary cause of brightness",
+        "Explains material.needsUpdate = true is needed when a map is added after the first render (shader define changes)",
+        "Does not suggest the removed texture.encoding / sRGBEncoding API",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
+      ]
     },
     {
       "id": 3,
       "prompt": "I have a three.js app where the user can click on any of ~50 boxes to select it (highlight it) and drag it around on the ground plane. Show me how to implement picking and dragging with the current three.js API, including touch.",
-      "expected_output": "Raycaster.setFromCamera with NDC from pointer events (pointerdown/move/up, works for touch), intersectObjects, highlighting via material/emissive change, dragging by intersecting a ground Plane (THREE.Plane or ray.intersectPlane) or using DragControls from three/addons, disabling OrbitControls while dragging; uses current API names only."
+      "expected_output": "Raycaster.setFromCamera with NDC from pointer events (pointerdown/move/up, works for touch), intersectObjects, highlighting via material/emissive change, dragging by intersecting a ground Plane (THREE.Plane or ray.intersectPlane) or using DragControls from three/addons, disabling OrbitControls while dragging; uses current API names only.",
+      "assertions": [
+        "Uses Raycaster.setFromCamera with normalized device coordinates computed from the canvas rect",
+        "Uses pointer events (pointerdown/move/up) so mouse and touch share one path, with touch-action: none on the canvas",
+        "Highlights only the selected box (per-box material or clone, so the other boxes stay unlit) and restores it on deselect",
+        "Drags on the ground plane via ray.intersectPlane(THREE.Plane) or DragControls",
+        "Disables OrbitControls during the drag (or explains the conflict)",
+        "Uses setPointerCapture or equivalent so drags continue outside the box",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
+      ]
     }
   ]
 }

@@ -176,7 +176,9 @@ The render target to copy.   | **Returns:** A reference to this instance.
 
 ### .dispose()
 
-Frees the GPU-related resources allocated by this instance. Call this method whenever this instance is no longer used in your app.  Fires:
+Frees the GPU-related resources allocated by this instance. Call this method whenever this instance is no longer used in your app.
+
+This also frees the resources of the render target's textures. There is no need to dispose them separately.  Fires:
 - RenderTarget#event:dispose
 
 ### .setSize( width : number, height : number, depth : number )
@@ -207,6 +209,12 @@ Render target options.
 Whether to generate mipmaps or not.
 
 Default is `false`.  |
+ | **mipmapsAutoUpdate**
+ boolean  |
+
+Whether to regenerate mipmaps automatically after rendering or not.
+
+Default is `true`.  |
  | **magFilter**
  number  |
 
@@ -324,7 +332,7 @@ Default is `0`.  |
  | **count**
  number  |
 
-Defines the number of color attachments . Must be at least `1`.
+Defines the number of color attachments. Use `0` for a depth-only render target (WebGPURenderer).
 
 Default is `1`.  |
  | **depth**

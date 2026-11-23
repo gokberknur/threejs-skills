@@ -14,11 +14,17 @@ Uniforms are useful to update values of variables like colors, lighting, or tran
 
 It is also possible to create update events on `uniforms`, which can be defined by the user:
 
-::: api .onObjectUpdate( callback: Function ) - It will be updated every time an object like `Mesh` is rendered with this `Node` in `Material`. :::
+::: api .onObjectUpdate( callback ) - It will be updated every time an object like `Mesh` is rendered with this `Node` in `Material`.
+- **callback**: `Function`
+:::
 
-::: api .onRenderUpdate( callback: Function ) - It will be updated once per render, common and shared materials, fog, tone mapping, etc. :::
+::: api .onRenderUpdate( callback ) - It will be updated once per render, common and shared materials, fog, tone mapping, etc.
+- **callback**: `Function`
+:::
 
-::: api .onFrameUpdate( callback: Function ) - It will be updated only once per frame, regardless of when `render-pass` the frame has, cases like `time` for example. :::
+::: api .onFrameUpdate( callback ) - It will be updated only once per frame, regardless of when `render-pass` the frame has, cases like `time` for example.
+- **callback**: `Function`
+:::
 
 ```tsl uniformEventUpdate
 import 'scenes/shaderball';

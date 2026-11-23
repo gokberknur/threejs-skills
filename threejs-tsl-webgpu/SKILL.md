@@ -1,11 +1,11 @@
 ---
 name: threejs-tsl-webgpu
-description: Three.js r186 WebGPURenderer, TSL (Three.js Shading Language), node materials, compute shaders and node-based post-processing (`RenderPipeline`, formerly `PostProcessing`), with the complete official TSL guide (82 sections) and the full TSL function reference (every exported function) bundled offline. Use this skill whenever a task mentions TSL, `three/tsl`, `three/webgpu`, WebGPURenderer, WGSL, NodeMaterial / MeshStandardNodeMaterial, colorNode / positionNode, Fn(), uniform(), storage buffers, compute shaders, GPGPU particles, instancedArray, RenderPipeline / PostProcessing / pass() / mrt(), bloom/gtao/ssr/traa nodes, or asks to port GLSL / ShaderMaterial / onBeforeCompile / Shadertoy code to the new renderer, write a custom shader "without GLSL", or make three.js use WebGPU. Also load it when a user on WebGPURenderer reports that ShaderMaterial, EffectComposer or onBeforeCompile "does nothing". Use together with the `threejs` core skill.
+description: Three.js r187 WebGPURenderer, TSL (Three.js Shading Language), node materials, compute shaders and node-based post-processing (`RenderPipeline`, formerly `PostProcessing`), with the complete official TSL guide (82 sections) and the full TSL function reference (every exported function) bundled offline. Use this skill whenever a task mentions TSL, `three/tsl`, `three/webgpu`, WebGPURenderer, WGSL, NodeMaterial / MeshStandardNodeMaterial, colorNode / positionNode, Fn(), uniform(), storage buffers, compute shaders, GPGPU particles, instancedArray, RenderPipeline / PostProcessing / pass() / mrt(), bloom/gtao/ssr/traa nodes, or asks to port GLSL / ShaderMaterial / onBeforeCompile / Shadertoy code to the new renderer, write a custom shader "without GLSL", or make three.js use WebGPU. Also load it when a user on WebGPURenderer reports that ShaderMaterial, EffectComposer or onBeforeCompile "does nothing". Use together with the `threejs` core skill.
 ---
 
-# three.js r186: TSL, node materials, WebGPURenderer, compute
+# three.js r187: TSL, node materials, WebGPURenderer, compute
 
-TSL is three.js's JavaScript shading language. You write shader graphs as chained JS node expressions; the `NodeBuilder` compiles them once per material to WGSL (WebGPU backend) or GLSL (WebGL 2 fallback backend). This skill makes you fluent in it and in the renderer built around it. Everything below is r186 (`three@0.186.1`); the TSL API moved fast between r160 and r175, so verify names in the bundled reference instead of relying on memory.
+TSL is three.js's JavaScript shading language. You write shader graphs as chained JS node expressions; the `NodeBuilder` compiles them once per material to WGSL (WebGPU backend) or GLSL (WebGL 2 fallback backend). This skill makes you fluent in it and in the renderer built around it. Everything below is r187 (`three@0.187.0`); the TSL API moved fast between r160 and r175, so verify names in the bundled reference instead of relying on memory.
 
 ## Setup that is always the same
 
@@ -20,7 +20,7 @@ document.body.append(renderer.domElement);
 renderer.setAnimationLoop(animate);              // waits for async init; `renderer.render()` before init throws, so `await renderer.init()` for manual loops
 ```
 
-Import map: `"three": ".../three.webgpu.js"`, `"three/webgpu": ".../three.webgpu.js"`, `"three/tsl": ".../three.tsl.js"`, `"three/addons/": ".../examples/jsm/"` (pin `three@0.186.1`). With `three/webgpu`, the plain material classes (`MeshStandardMaterial` etc.) are the node versions, so `material.colorNode = ...` works on them; explicit `MeshStandardNodeMaterial` is equivalent. The WebGL 2 fallback kicks in automatically when WebGPU is unavailable; `forceWebGL: true` to test it. Not supported on WebGPURenderer: `ShaderMaterial`, `RawShaderMaterial`, `onBeforeCompile`, `EffectComposer` and its passes.
+Import map: `"three": ".../three.webgpu.js"`, `"three/webgpu": ".../three.webgpu.js"`, `"three/tsl": ".../three.tsl.js"`, `"three/addons/": ".../examples/jsm/"` (pin `three@0.187.0`). With `three/webgpu`, the plain material classes (`MeshStandardMaterial` etc.) are the node versions, so `material.colorNode = ...` works on them; explicit `MeshStandardNodeMaterial` is equivalent. The WebGL 2 fallback kicks in automatically when WebGPU is unavailable; `forceWebGL: true` to test it. Not supported on WebGPURenderer: `ShaderMaterial`, `RawShaderMaterial`, `onBeforeCompile`, `EffectComposer` and its passes.
 
 ## TSL mental model (read before writing any node code)
 
@@ -63,7 +63,8 @@ const velocities = instancedArray(COUNT, 'vec3');
 
 const init = Fn(() => {
   const p = positions.element(instanceIndex);
-  p.assign(vec3(hash(instanceIndex), hash(instanceIndex.add(1)), hash(instanceIndex.add(2))).sub(0.5).mul(10));
+  const i = instanceIndex.toFloat();   // hash() takes a float seed; convert the uint index first
+  p.assign(vec3(hash(i), hash(i.add(1)), hash(i.add(2))).sub(0.5).mul(10));
   velocities.element(instanceIndex).assign(vec3(0));
 })().compute(COUNT);
 
@@ -82,7 +83,7 @@ const sprites = new THREE.Sprite(mat); sprites.count = COUNT; scene.add(sprites)
 renderer.setAnimationLoop(() => { renderer.compute(update); renderer.render(scene, camera); });
 ```
 
-Workgroup size defaults to 64; pass `[size]` as second arg of `.compute()`. `renderer.compute(node, [x, y, z])` takes workgroup counts, not invocations. Read back with `await renderer.getArrayBufferAsync(positions.value)` (rarely, never per frame). `Fn.once()` is build-time memoization, not a run-once dispatch: dispatch init explicitly once. The WebGL 2 fallback runs compute as transform feedback: 1D numeric counts only, no storage textures, atomics, barriers or indirect dispatch; see `references/compute.md`.
+Workgroup size defaults to 64; pass `[size]` as second arg of `.compute()`. `renderer.compute(node, [x, y, z])` takes workgroup counts, not invocations, and since r187 only for nodes built with `.computeKernel(workgroupSize)`: passing any dispatch size for a `.compute(count)` node throws. Read back with `await renderer.getArrayBufferAsync(positions.value)` (rarely, never per frame). `Fn.once()` is build-time memoization, not a run-once dispatch: dispatch init explicitly once. The WebGL 2 fallback runs compute as transform feedback: 1D numeric counts only, no storage textures, atomics, barriers or indirect dispatch; see `references/compute.md`.
 
 ## Post-processing in one screen
 
@@ -106,21 +107,21 @@ renderer.setAnimationLoop(() => pipeline.render());   // replaces renderer.rende
 | Need | Read |
 |---|---|
 | Syntax and every function grouped by purpose, type rules, top mistakes | `references/tsl-cheatsheet.md` |
-| Exact signature/description of any TSL export (alphabetical, 640 entries; grep it: `grep -n "^### \.gtao\|^### \.mx_noise" tsl-reference.md`) | `references/tsl-reference.md` |
+| Exact signature/description of any TSL export (alphabetical, 658 entries; grep it: `grep -n "^### \.gtao\|^### \.mx_noise" tsl-reference.md`) | `references/tsl-reference.md` |
 | Official TSL guide, 82 sections (intro, syntax, control flow, stages, lifecycle, inputs, accessors, lighting, scene, render pipeline, utilities, display, materialX, context, raymarching, native WGSL/GLSL, transpiler) | `references/tsl-guide/INDEX.md` then the section file |
 | NodeMaterial family, every slot, lighting models, instancing/batching with nodes, porting GLSL/onBeforeCompile to TSL, 10 material recipes | `references/node-materials.md` |
 | WebGPURenderer constructor options, init, backends, render targets/MRT, readback, timestamps, clipping, XR, limitations vs WebGLRenderer | `references/webgpu-renderer.md` |
 | Compute: storage buffers/textures, atomics, barriers, indirect draw, ping-pong, sorting, 6 worked examples, perf | `references/compute.md` |
 | RenderPipeline (ex PostProcessing) class, pass/mrt/renderOutput, every effect node with params and cost, cinematic and mobile stacks | `references/post-processing-webgpu.md` |
-| All 230 WebGPU examples annotated with the technique each shows | `references/examples-webgpu.md` |
+| All 243 WebGPU examples annotated with the technique each shows | `references/examples-webgpu.md` |
 | Class docs for `Renderer`, `*Node`, `*NodeMaterial`, `StorageBufferAttribute` etc. | `../threejs/references/api/<Name>.md` or `python3 ../threejs/scripts/api.py <Name>` |
 
 ## Porting checklist (GLSL / ShaderMaterial / Shadertoy → TSL)
 
-1. Uniforms → `uniform()`; `iTime` → `time`; `iResolution` → `screenSize`; `gl_FragCoord.xy / iResolution` → `screenUV` (normalized [0,1], origin per backend handled for you; use `uv()` for mesh UVs, `screenCoordinate` for pixels).
+1. Uniforms → `uniform()`; `iTime` / `uTime` → the built-in `time` node (no CPU timer needed). If the time must be driven from JS, use `uniform(0)` updated from the `setAnimationLoop` timestamp or `THREE.Timer`; never `THREE.Clock`, deprecated since r183; `iResolution` → `screenSize`; `gl_FragCoord.xy / iResolution` → `screenUV` (normalized [0,1], origin per backend handled for you; use `uv()` for mesh UVs, `screenCoordinate` for pixels).
 2. Varyings → compute in a `Fn` and wrap in `varying()`/`vertexStage()`.
 3. `gl_Position` override → `material.vertexNode`; normally just set `positionNode` (local space) instead.
 4. Fragment output → `colorNode` (lit) or `fragmentNode` (unlit raw vec4) or `outputNode`.
 5. GLSL control flow → `If/ElseIf/Else`, `Loop({ start, end }, ({ i }) => ...)`, `Break()`, `Continue()`, `Discard()`.
 6. Keep native code only when needed: `wgslFn` / `glslFn` with explicit types, or the `Transpiler` addon (GLSL → TSL source).
-7. Verify every function name in `tsl-reference.md`; several were renamed in the r160-r180 window (pre-r170 tutorials use `tslFn`, `timerLocal`, `cond`, `storageObject`; r186 names are `Fn`, `time`, `select`, `storage().setPBO(true)`). The reference is the only source of truth for signatures.
+7. Verify every function name in `tsl-reference.md`; several were renamed in the r160-r180 window (pre-r170 tutorials use `tslFn`, `timerLocal`, `cond`, `storageObject`; r187 names are `Fn`, `time`, `select`, `storage().setPBO(true)`). The reference is the only source of truth for signatures.

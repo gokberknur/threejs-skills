@@ -23,6 +23,10 @@ It allows materials, render passes, and individual sub-graphs to inject configur
 
 ::: api getAO : Function - Callback `( inputNode, { material } ) => Node` to customize or modulate ambient occlusion evaluation across the sub-tree. :::
 
+::: api getAttribute : Function - Callback `( name, builder ) => Node | null` that provides the values of geometry attributes (e.g. `'uv'`, `'normal'`) in the sub-tree, like an override. Useful when vertices are pulled from storage buffers or the surface is reconstructed per fragment. Return the same node for the same attribute, or `null` to keep the geometry attribute. :::
+
+::: api getTextureGradient : Function - Callback `( textureNode, builder ) => [ dUVdx, dUVdy ] | null` that provides analytic UV gradients for textures sampled with the default UV, without an explicit `level`, `bias` or `grad`. The texture matrix is applied to the gradients automatically. :::
+
 ### Context Hierarchy Cascade
 
 Context configuration flows downward from the highest level of the rendering engine down to individual node expressions:

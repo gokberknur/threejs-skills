@@ -4,25 +4,45 @@
     {
       "id": 1,
       "prompt": "Using three.js WebGPURenderer and TSL, make a MeshStandardMaterial whose color is a procedural animated gradient (based on world position and time) and whose vertices are displaced along the normal with a sine wave. Also show a bloom post-processing effect on it. Latest three.js.",
-      "expected_output": "Imports from 'three/webgpu' and 'three/tsl' only; uses colorNode with positionWorld/time/mix, positionNode = positionLocal.add(normalLocal.mul(sin(...))), RenderPipeline (not EffectComposer; PostProcessing acceptable only as noted deprecated alias) with pass(scene,camera), bloom from three/addons/tsl/display/BloomNode.js, setAnimationLoop and no ShaderMaterial/GLSL strings; function names exist in r186 (Fn, uniform, time, positionLocal, normalLocal, sin, mix).",
+      "expected_output": "Imports from 'three/webgpu' and 'three/tsl' only; uses colorNode with positionWorld/time/mix, positionNode = positionLocal.add(normalLocal.mul(sin(...))), RenderPipeline (not EffectComposer; PostProcessing acceptable only as noted deprecated alias) with pass(scene,camera), bloom from three/addons/tsl/display/BloomNode.js, setAnimationLoop and no ShaderMaterial/GLSL strings; function names exist in r187 (Fn, uniform, time, positionLocal, normalLocal, sin, mix).",
       "assertions": [
         "Imports only from three/webgpu, three/tsl and three/addons (never bare three)",
         "Sets positionNode = positionLocal + normalLocal * sine of time (vertex displacement)",
         "Sets colorNode from positionWorld and time via TSL nodes (no GLSL strings, no ShaderMaterial)",
         "Post-processing uses RenderPipeline (or PostProcessing noted as deprecated alias) with pass() and bloom from three/addons/tsl/display/BloomNode.js, not EffectComposer",
-        "Every TSL function used exists in r186 (Fn, uniform, time, sin, mix, positionLocal, normalLocal, positionWorld, pass, bloom)",
-        "Uses renderer.setAnimationLoop or awaits renderer.init() before rendering"
+        "Every TSL function used exists in r187 (Fn, uniform, time, sin, mix, positionLocal, normalLocal, positionWorld, pass, bloom)",
+        "Uses renderer.setAnimationLoop or awaits renderer.init() before rendering",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
       "id": 2,
       "prompt": "I want 200k particles simulated on the GPU with three.js: each has a position and velocity, gravity pulls them down, and they respawn at the top when they fall below y=-5. Render them as points. Please use compute shaders.",
-      "expected_output": "WebGPURenderer, instancedArray/storage buffers for position and velocity, Fn(...)().compute(COUNT) kernels for init and update using instanceIndex, deltaTime, If() for respawn, renderer.compute/computeAsync in the loop, Points/Sprite with SpriteNodeMaterial or PointsNodeMaterial and positionNode = buffer.element(instanceIndex), count set; mentions workgroup size and no CPU readback per frame."
+      "expected_output": "WebGPURenderer, instancedArray/storage buffers for position and velocity, Fn(...)().compute(COUNT) kernels for init and update using instanceIndex, deltaTime, If() for respawn, renderer.compute/computeAsync in the loop, Points/Sprite with SpriteNodeMaterial or PointsNodeMaterial and positionNode = buffer.element(instanceIndex), count set; mentions workgroup size and no CPU readback per frame.",
+      "assertions": [
+        "Imports from three/webgpu and three/tsl only (no ShaderMaterial / GLSL)",
+        "Stores position and velocity in GPU storage buffers (instancedArray or storage) with one element per particle",
+        "Compute kernel written with Fn and instanceIndex, applying gravity and respawning below y=-5 with If/select",
+        "r187 dispatch rule: a .compute(count) node is dispatched with renderer.compute(node) and no size (a size is passed only to computeKernel nodes)",
+        "Wherever instanceIndex feeds float math (spreading positions, random seeds, hashes), it is converted to float first (toFloat() / float()), and no integer node is multiplied by a fractional literal",
+        "Renders the particles as points reading the storage buffer in positionNode (or toAttribute)",
+        "Initializes the renderer before compute (await renderer.init() or setAnimationLoop)",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
+      ]
     },
     {
       "id": 3,
       "prompt": "Port this GLSL fragment shader to TSL so it works on WebGPURenderer: uniform float uTime; varying vec2 vUv; void main(){ float d = distance(vUv, vec2(0.5)); float ring = smoothstep(0.02, 0.0, abs(sin(d*20.0 - uTime*3.0))); gl_FragColor = vec4(vec3(ring)*vec3(0.2,0.6,1.0), 1.0); }",
-      "expected_output": "A NodeMaterial (MeshBasicNodeMaterial) with colorNode or fragmentNode built from uv(), distance, smoothstep, abs, sin, uniform(time) or time; correct TSL method/function names (smoothstep(edge0, edge1, x) argument order preserved), no GLSL strings, imports from three/tsl."
+      "expected_output": "A NodeMaterial (MeshBasicNodeMaterial) with colorNode or fragmentNode built from uv(), distance, smoothstep, abs, sin, uniform(time) or time; correct TSL method/function names (smoothstep(edge0, edge1, x) argument order preserved), no GLSL strings, imports from three/tsl.",
+      "assertions": [
+        "Uses a NodeMaterial (e.g. MeshBasicNodeMaterial) with colorNode, not ShaderMaterial",
+        "Replaces vUv with uv() and uTime with time or a uniform()",
+        "Computes distance(uv(), vec2(0.5)) and the sin(d*20 - t*3) ring",
+        "Handles smoothstep with edge0 > edge1 (undefined in WGSL), e.g. via oneMinus(smoothstep(0, 0.02, x)) or swapped edges with a note",
+        "Outputs vec3(ring) * vec3(0.2, 0.6, 1.0) and addresses color space: colorNode output is converted to the output color space, unlike a raw gl_FragColor write, so the result is matched explicitly or the difference is explained",
+        "Imports from three/webgpu and three/tsl",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
+      ]
     }
   ]
 }

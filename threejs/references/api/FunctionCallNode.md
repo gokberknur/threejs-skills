@@ -1,6 +1,6 @@
 FunctionCallNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # FunctionCallNode
 
@@ -45,7 +45,7 @@ Returns the type of this function call node.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generateNodeType   **Returns:** The type of this node.
+The current node builder.   | **Overrides:** Node#generateNodeType   **Returns:** The type of this node.
 
 ### .getMemberType( builder : NodeBuilder, name : string ) : string
 
@@ -56,7 +56,7 @@ Returns the function node of this function call node.
 The current node builder.  |
  | **name**  |
 
-The name of the member.   | **Overrides:** TempNode#getMemberType   **Returns:** The type of the member.
+The name of the member.   | **Overrides:** Node#getMemberType   **Returns:** The type of the member.
 
 ### .getParameters() : Object.<string, Node>
 

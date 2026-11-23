@@ -4,25 +4,46 @@
     {
       "id": 1,
       "prompt": "I built a three.js product viewer for a watch (glTF with metal and glass parts). It looks flat and plasticky with a black background. I want it to look like a premium e-commerce render. What should I change? Give me the code for the lighting/rendering setup.",
-      "expected_output": "Environment lighting (RoomEnvironment via PMREMGenerator or HDRI with HDRLoader + EquirectangularReflectionMapping as scene.environment), tone mapping (Neutral or ACES/AgX) with exposure, sRGB output, soft shadows (VSM or contact shadow / ShadowMaterial ground), glass via MeshPhysicalMaterial transmission/ior/thickness, metal with metalness 1 and roughness map, blurred background (backgroundBlurriness) or gradient, optional bloom on highlights and GTAO; AA via antialias:true. Uses r186 names (HDRLoader, outputColorSpace, no PCFSoftShadowMap).",
+      "expected_output": "Environment lighting (RoomEnvironment via PMREMGenerator or HDRI with HDRLoader + EquirectangularReflectionMapping as scene.environment), tone mapping (Neutral or ACES/AgX) with exposure, sRGB output, soft shadows (VSM or contact shadow / ShadowMaterial ground), glass via MeshPhysicalMaterial transmission/ior/thickness, metal with metalness 1 and roughness map, blurred background (backgroundBlurriness) or gradient, optional bloom on highlights and GTAO; AA via antialias:true. Uses r187 names (HDRLoader, outputColorSpace, no PCFSoftShadowMap).",
       "assertions": [
         "Adds environment lighting: PMREMGenerator + RoomEnvironment or HDRI via HDRLoader with EquirectangularReflectionMapping set as scene.environment",
         "Sets tone mapping (ACES/AgX/Neutral) with exposure and keeps outputColorSpace sRGB",
         "Glass via MeshPhysicalMaterial transmission/ior/thickness; metal via metalness 1 + roughness, not opacity hacks",
-        "Replaces black background: blurred environment (backgroundBlurriness), gradient or studio color",
+        "Replaces the black background with a studio look (a light neutral seamless backdrop, a gradient or a blurred environment) and grounds the watch with a soft or contact shadow",
         "Soft shadow or contact shadow on a ground catcher (ShadowMaterial / VSM / radius)",
-        "Anti-aliasing enabled (antialias: true or AA pass) and no deprecated names (RGBELoader, outputEncoding, PCFSoftShadowMap, GammaCorrectionShader)"
+        "Anti-aliasing that survives the pipeline: antialias: true without a composer, or with EffectComposer a multisampled render target (samples > 0) or an SMAA/FXAA pass",
+        "No pre-r187 names (RGBELoader, outputEncoding, GammaCorrectionShader)",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
       ]
     },
     {
       "id": 2,
       "prompt": "Add a cinematic post-processing stack to my three.js WebGLRenderer scene: bloom only on emissive neon signs, ambient occlusion, slight film grain and vignette, and depth of field focused on the character. Keep tone mapping correct.",
-      "expected_output": "EffectComposer with RenderPass, GTAOPass, UnrealBloomPass (selective via layers/emissive strategy with threshold near 1 or material trick), BokehPass, FilmPass, vignette via ShaderPass or VignetteShader, OutputPass last (tone mapping + sRGB), HalfFloatType render target, composer.setSize on resize and MSAA samples; correct ordering and no GammaCorrectionShader."
+      "expected_output": "EffectComposer with RenderPass, GTAOPass, UnrealBloomPass (selective via layers/emissive strategy with threshold near 1 or material trick), BokehPass, FilmPass, vignette via ShaderPass or VignetteShader, OutputPass last (tone mapping + sRGB), HalfFloatType render target, composer.setSize on resize and MSAA samples; correct ordering and no GammaCorrectionShader.",
+      "assertions": [
+        "Tone mapping applied exactly once: one OutputPass with only display-space passes (grain, vignette, FXAA) after it, or renderer.setEffects with no OutputPass",
+        "Bloom is truly selective: neon meshes isolated via layers / a second composer or an emissive MRT target, not only a global luminance threshold",
+        "Adds ambient occlusion (GTAOPass, SAOPass or SSAOPass)",
+        "Adds depth of field (BokehPass or equivalent) focused on the character distance",
+        "Adds film grain and vignette (FilmPass plus a vignette pass/shader)",
+        "Uses an HDR (HalfFloatType) render target or explains why it matters for bloom",
+        "Anti-aliasing survives the composer: multisampled render target (samples > 0) or an SMAA/FXAA pass; antialias: true alone does not count",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
+      ]
     },
     {
       "id": 3,
       "prompt": "My outdoor three.js scene (terrain 2km wide, trees, a house) has shadows that are blurry blobs near the camera and disappear far away, and the edges of everything shimmer when the camera moves. How do I get crisp stable shadows and clean edges?",
-      "expected_output": "Cascaded shadow maps (CSM from three/addons/csm/CSM.js or CSMShadowNode on WebGPU) with cascades/maxFar, tight shadow camera, normalBias, mapSize, shadow map type choice; for shimmering: anti-aliasing options (MSAA antialias:true, TAA/TRAA, SMAA/FXAA), texture anisotropy and mipmaps for terrain, specular aliasing mitigation; mentions the cost tradeoffs."
+      "expected_output": "Cascaded shadow maps (CSM from three/addons/csm/CSM.js or CSMShadowNode on WebGPU) with cascades/maxFar, tight shadow camera, normalBias, mapSize, shadow map type choice; for shimmering: anti-aliasing options (MSAA antialias:true, TAA/TRAA, SMAA/FXAA), texture anisotropy and mipmaps for terrain, specular aliasing mitigation; mentions the cost tradeoffs.",
+      "assertions": [
+        "Uses cascaded shadow maps (CSM addon) or SunLight for a 2km terrain instead of one huge shadow camera",
+        "Tunes shadow.bias / normalBias and mapSize with concrete values",
+        "Addresses shimmering from shadow texels (stabilized cascades / texel snapping) separately from geometry aliasing",
+        "Enables anti-aliasing (antialias: true MSAA, or SMAA/TAA/FXAA pass) for edge shimmer",
+        "No PCFSoftShadowMap; uses PCFShadowMap/VSMShadowMap",
+        "If WebGPU SunLight is shown, registers it with SunLight.registerNode(SunLightNode), not renderer.library.addLight",
+        "Targets r187: any pinned or stated version is three@0.187.x / r187, and no API that r187 deprecates or removed (Clock, renderer.library.addLight, iridescenceThicknessRange, PCFSoftShadowMap, ColorManagement.fromWorkingColorSpace, transformedNormalView, renderAsync)"
+      ]
     }
   ]
 }

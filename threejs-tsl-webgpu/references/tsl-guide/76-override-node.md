@@ -13,8 +13,10 @@ This acts as dynamic dependency injection for shaders, allowing you to replace f
 - **callbackOrNode**: `Function | Node` - A callback `(builder) => Node` returning the replacement, or the replacement `Node` directly.
 :::
 
-::: api overrideNodes( overrides ) : OverrideContextNode - Overrides multiple target nodes simultaneously during compilation.
+::: api overrideNodes( overrides, flowNode?, shaderStage? ) : OverrideContextNode - Overrides multiple target nodes simultaneously during compilation.
 - **overrides**: `Array<[Node, Function | Node]> | Map<Node, Function | Node>` - Map or array of pairs mapping target nodes to their respective replacement callbacks or nodes.
+- **flowNode**: `Node` - (Optional) The node whose context should be modified. Defaults to `null`.
+- **shaderStage**: `string` - (Optional) The shader stage the overrides apply to (`'vertex'` or `'fragment'`). Defaults to `null` (all stages). With `'fragment'`, all varyings of the context are evaluated in the fragment stage, e.g. if the surface is reconstructed per fragment.
 :::
 
 ```js
@@ -30,7 +32,7 @@ material.contextNode = overrideNodes( [
 
 ::: api .overrideNode( targetNode, callbackOrNode ) : OverrideContextNode - Method chaining helper to override a single target node for a specific node expression. :::
 
-::: api .overrideNodes( overrides ) : OverrideContextNode - Method chaining helper to override multiple target nodes for a specific node expression. :::
+::: api .overrideNodes( overrides, shaderStage? ) : OverrideContextNode - Method chaining helper to override multiple target nodes for a specific node expression. :::
 
 ### Compilation Flow
 
@@ -56,6 +58,16 @@ resolveMaterial.contextNode = overrideNodes( [
 	[ positionViewDirection, gBufferPositionView.negate().normalize() ],
 	[ normalView, gBufferNormalView ]
 ] );
+```
+
+If the overrides only make sense per fragment, pass the shader stage so the vertex stage keeps the original nodes:
+
+```js
+// Overrides only apply in the fragment stage, varyings of the context are evaluated per fragment
+resolveMaterial.contextNode = overrideNodes( [
+	[ positionView, gBufferPositionView ],
+	[ normalView, gBufferNormalView ]
+], null, 'fragment' );
 ```
 
 #### 3. Scoped Sub-Graph Substitution

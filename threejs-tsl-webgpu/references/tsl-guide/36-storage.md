@@ -21,7 +21,9 @@ Unlike standard uniforms, storage buffers can be modified directly on the GPU â€
 
 ### Methods
 
-::: api .element( index: int ) : Node - Accesses an element in the storage buffer at the specified index. :::
+::: api .element( index ) : Node - Accesses an element in the storage buffer at the specified index.
+- **index**: `int`
+:::
 
 ::: api .toAttribute() : Node - Converts the storage buffer into an attribute node for vertex or instance rendering. :::
 

@@ -1,6 +1,6 @@
 FSR1Node - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # FSR1Node
 
@@ -60,13 +60,13 @@ The texture node that represents the input of the effect.
 
 The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node renders its effect once per frame in `updateBefore()`.
 
-Default is `'frame'`.   **Overrides:** TempNode#updateBeforeType
+Default is `'frame'`.   **Overrides:** Node#updateBeforeType
 
 ## Methods
 
 ### .dispose()
 
-Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** TempNode#dispose
+Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** Node#dispose
 
 ### .getTextureNode() : PassTextureNode
 
@@ -89,7 +89,7 @@ This method is used to setup the effect's TSL code.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#setup
+The current node builder.   | **Overrides:** Node#setup
 
 ### .updateBefore( frame : NodeFrame )
 
@@ -97,7 +97,7 @@ This method is used to render the effect once per frame.
 
  | **frame**  |
 
-The current node frame.   | **Overrides:** TempNode#updateBefore
+The current node frame.   | **Overrides:** Node#updateBefore
 
 ## Source
 

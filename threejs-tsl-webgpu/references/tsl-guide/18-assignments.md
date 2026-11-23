@@ -3,27 +3,49 @@
 (TSL Guide section: Syntax > Assignments)
 
 TSL variables and parameters inside a custom function `Fn` can be updated dynamically using assignment methods:
-::: api .assign( value: Node | number ) : Node - Assigns a value and returns the node. :::
+::: api .assign( value ) : Node - Assigns a value and returns the node.
+- **value**: `Node | number`
+:::
 
-::: api .addAssign( value: Node | number ) : Node - Adds a value and assigns the result. :::
+::: api .addAssign( value ) : Node - Adds a value and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .subAssign( value: Node | number ) : Node - Subtracts a value and assigns the result. :::
+::: api .subAssign( value ) : Node - Subtracts a value and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .mulAssign( value: Node | number ) : Node - Multiplies a value and assigns the result. :::
+::: api .mulAssign( value ) : Node - Multiplies a value and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .divAssign( value: Node | number ) : Node - Divides a value and assigns the result. :::
+::: api .divAssign( value ) : Node - Divides a value and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .modAssign( value: Node | number ) : Node - Computes the remainder and assigns the result. :::
+::: api .modAssign( value ) : Node - Computes the remainder and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .bitAndAssign( value: Node | number ) : Node - Performs bitwise AND and assigns the result. :::
+::: api .bitAndAssign( value ) : Node - Performs bitwise AND and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .bitOrAssign( value: Node | number ) : Node - Performs bitwise OR and assigns the result. :::
+::: api .bitOrAssign( value ) : Node - Performs bitwise OR and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .bitXorAssign( value: Node | number ) : Node - Performs bitwise XOR and assigns the result. :::
+::: api .bitXorAssign( value ) : Node - Performs bitwise XOR and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .shiftLeftAssign( value: Node | number ) : Node - Shifts left and assigns the result. :::
+::: api .shiftLeftAssign( value ) : Node - Shifts left and assigns the result.
+- **value**: `Node | number`
+:::
 
-::: api .shiftRightAssign( value: Node | number ) : Node - Shifts right and assigns the result. :::
+::: api .shiftRightAssign( value ) : Node - Shifts right and assigns the result.
+- **value**: `Node | number`
+:::
 
 ```tsl
 import 'scenes/shaderball';

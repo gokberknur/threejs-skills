@@ -1,6 +1,6 @@
 BumpMapNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # BumpMapNode
 
@@ -15,7 +15,7 @@ material.normalNode = bumpMap( texture( bumpTex ) );
 
 ## Constructor
 
-### new BumpMapNode( textureNode : Node.<float>, scaleNode : Node.<float> )
+### new BumpMapNode( textureNode : Node.<float>, scaleNode : Node.<float>, normalNode : Node.<vec3> )
 
 Constructs a new bump map node.
 
@@ -27,8 +27,19 @@ Represents the bump map data.  |
 Controls the intensity of the bump effect.
 
 Default is `null`.  |
+ | **normalNode**  |
+
+The view-space normal to perturb.
+
+Default is `normalView`.  |
 
 ## Properties
+
+### .normalNode : Node.<vec3>
+
+The view-space normal to perturb.
+
+Default is `normalView`.
 
 ### .scaleNode : Node.<float>
 

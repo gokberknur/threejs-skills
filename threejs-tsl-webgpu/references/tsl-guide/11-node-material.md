@@ -109,7 +109,9 @@ material.metalness = 0.8;
 
 ::: api .iridescenceIORNode : float - Index of refraction for the thin-film iridescence layer. :::
 
-::: api .iridescenceThicknessNode : float - Physical thickness of the thin-film layer in nanometers. :::
+::: api .iridescenceThicknessNode : float - Physical thickness of the thin-film layer in nanometers. Overrides `iridescenceThicknessMinimum`, `iridescenceThicknessMaximum` and `iridescenceThicknessMap`. :::
+
+::: api .diffuseRoughnessNode : float - Diffuse roughness for the Energy-Preserving Oren-Nayar (EON) diffuse BRDF. Overrides `diffuseRoughness` and `diffuseRoughnessMap`. :::
 
 ::: api .specularColorNode : vec3 - Specular highlight tint color. :::
 
@@ -152,6 +154,8 @@ material.metalness = 0.8;
 ::: api .sizeNode : float - Point size in pixels or world units. :::
 
 :::
+
+> AI: `MeshPhysicalMaterial.iridescenceThicknessRange` is deprecated since r187. Use `iridescenceThicknessMinimum` and `iridescenceThicknessMaximum` instead, or override the value with `iridescenceThicknessNode`. `emissiveNode` is also available on `MeshLambertNodeMaterial`, `MeshPhongNodeMaterial` and `MeshToonNodeMaterial`.
 
 ### Modifying vs Overriding Inputs
 

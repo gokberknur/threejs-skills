@@ -1,6 +1,6 @@
-# TSL Cheat Sheet (three.js r186)
+# TSL Cheat Sheet (three.js r187)
 
-When to read this: any time you write or review TSL (Three.js Shading Language) code. It is the dense syntax and semantics reference: the mental model, every type/operator/math/control-flow/stage/input/accessor family, and the gotchas. For material slots (`colorNode`, `positionNode`, ...) read `node-materials.md`; for the full alphabetical function list read `tsl-reference.md`. Every name below was checked against `tsl-reference.md` or `src/nodes` (r186). Deprecated names are marked **[deprecated]**.
+When to read this: any time you write or review TSL (Three.js Shading Language) code. It is the dense syntax and semantics reference: the mental model, every type/operator/math/control-flow/stage/input/accessor family, and the gotchas. For material slots (`colorNode`, `positionNode`, ...) read `node-materials.md`; for the full alphabetical function list read `tsl-reference.md`. Every name below was checked against `tsl-reference.md` or `src/nodes` (r187). Deprecated names are marked **[deprecated]**.
 
 Setup used by all snippets:
 
@@ -54,7 +54,7 @@ material.needsUpdate=true  -> forces graph rebuild
 - **JS values vs shader values.** `5`, `Math.sin(x)`, `Color`, `Vector3` are JS. `float(5)`, `sin(x)`, `uniform(new Color())` are shader values. `Math.sin(time)` is a bug (`time` is a Node); use `time.sin()`. A JS `if` on a Node is always truthy (objects) -> use `If(...)`, `select(...)`, or `.select()`.
 - **Constants are baked, uniforms are live.** `float(0.5)` is literal in shader source: changing it means rebuilding. `uniform(0.5)` is a GPU uniform: change `u.value` at runtime, no recompile. Put anything that animates or is tweaked into a `uniform`.
 - **Evaluation stage is inferred.** Slots `positionNode`, `vertexNode`, `geometryNode` (and `castShadowPositionNode`) run in the vertex stage. Everything else runs in the fragment stage. Attribute-derived values (`uv()`, `positionWorld`, `normalView`) are computed per-vertex and interpolated automatically via varyings; derived math on them (`uv().mul(2)`) is recomputed per-fragment unless you force vertex stage with `.toVertexStage()` / `varying()` / `vertexStage()`.
-- **Type promotion.** Binary operators pick the wider type: `float op vec3 -> vec3`; `mat4 * vec4 -> vec4`; `mat * float -> mat`; comparisons return `bool` (or `bvecN` for vectors, so `If(a.equal(b))` on a vec needs `.all()`); bitwise ops return integer types; `%` returns the left operand type. JS numbers are auto-wrapped as nodes in function args (`sin(1)`, `mul(uv(), 10)`), but you must wrap to start a chain: `float(1).div(x)`, not `1.div(x)`. Mixing `int` and `float` is converted by the builder, but be explicit (`.toFloat()`, `.toInt()`) around integer division/indices.
+- **Type promotion.** Binary operators pick the wider type: `float op vec3 -> vec3`; `mat4 * vec4 -> vec4`; `mat * float -> mat`; comparisons return `bool` (or `bvecN` for vectors, so `If(a.equal(b))` on a vec needs `.all()`); bitwise ops return integer types; `%` returns the left operand type. JS numbers are auto-wrapped as nodes in function args (`sin(1)`, `mul(uv(), 10)`), but you must wrap to start a chain: `float(1).div(x)`, not `1.div(x)`. **r187 change:** plain JS numbers now adopt the other operand's type, so with integer nodes fractional literals are TRUNCATED: `instanceIndex.mul( 0.5 )` is `instanceIndex * 0u`, and `int( 1.5 )` is `1` (truncated, not rounded). Write `instanceIndex.toFloat().mul( 0.5 )` or `instanceIndex.mul( float( 0.5 ) )` for float math. Float-only functions (`sin`, `pow`) still promote ints to float; `max`/`clamp` keep ints.
 - **Auto-dedup.** Using the same Node instance twice builds it once and reuses the generated variable. Two separately created but identical expressions are two nodes (still often merged by the cache hash). `positionWorld`, `normalWorld`, `modelViewMatrix` are singletons: cheap to reference everywhere.
 - **`Fn` vs plain JS function.** A plain JS function (`(t = time) => t.sin()`) is an inline macro: pure expression building, no statements, can be called anywhere, even outside `Fn`. `Fn()` creates a *stack* (statement list) so `.assign`, `If`, `Switch`, `Loop`, `.toVar()`, `Return`, `Discard`, `OnFrameUpdate` work **only inside an Fn body** (error: "No stack defined for assign operation"). An `Fn` must be **invoked**: `Fn(() => ...)()`; an un-invoked Fn logs an error at build.
 - **Caching keys.** Program cache key = material type + hash of every `*Node` slot's node cache key + render state. Same node graph on two meshes = same program. Node graphs that differ only in uniform values share one program.
@@ -312,6 +312,7 @@ bb.get('min');                                // member node (MemberNode)
 bb.get('min').assign(vec3(-1));
 const Cell = struct({ x: { type: 'int', atomic: true }, mass: { type: 'int', atomic: true } });
 storage(attr, Cell, count);                   // buffer of structs; storage(...).element(i).get('mass')
+// r187: struct storage buffers are always arrays, even with one element: storage(attr, Cell).element(0).get('mass'), never storage(...).get('mass')
 outputStruct(a, b, c)                         // multi-output (MRT) node
 ```
 
@@ -423,9 +424,9 @@ material.colorNode = texture(tex);                    // sample; storageTexture(
 // storageTexture3D / THREE.Storage3DTexture ; .toReadOnly() .toReadWrite() .setMipLevel(n) on storage texture nodes
 ```
 
-Caveats: `storage().toWriteOnly()/.toReadWrite()` are documented in the guide but `StorageBufferNode` in r186 only implements `.toReadOnly()`, `.toAtomic()`, `.setAccess(NodeAccess.*)` (see Doc gaps). On the WebGL2 backend storage buffers fall back to attribute/transform feedback (limited), storage textures and atomics are unsupported.
+Caveats: `storage().toWriteOnly()/.toReadWrite()` are documented in the guide but `StorageBufferNode` in r187 only implements `.toReadOnly()`, `.toAtomic()`, `.setAccess(NodeAccess.*)` (see Doc gaps). On the WebGL2 backend storage buffers fall back to attribute/transform feedback (limited), storage textures and atomics are unsupported.
 
-Dispatch: `renderer.compute(node, dispatchSize)` where `dispatchSize` = number | `[x,y,z]` | `IndirectStorageBufferAttribute`. Workgroup size must match what the shader assumes (`localId` math).
+Dispatch: `renderer.compute(node)` for `.compute(count)` nodes. `renderer.compute(node, dispatchSize)` (`dispatchSize` = number | `[x,y,z]` workgroups | `IndirectStorageBufferAttribute`) only for `.computeKernel(wg)` nodes; since r187 it throws for count nodes. Workgroup size must match what the shader assumes (`localId` math).
 
 ---
 
@@ -457,7 +458,7 @@ textureLoad(map, uvec2/ivec2, level)  textureSize(tex, level)
 tex.setSampler(false)                // sample without sampler (texelFetch-like use)  ;  sampler(tex)  samplerComparison(tex)
 texture3D(data3DTexture, vec3)  texture3DLoad  texture3DLevel
 cubeTexture(cubeTex, dirVec3, level?, bias?)           // default direction reflectVector
-pmremTexture(tex, dirVec3, level?)                     // prefiltered env (PMREM), level = roughness-like blur
+pmremTexture(tex, dirVec3, roughness?)                     // prefiltered env (PMREM); 3rd arg is roughness 0..1, mapped to mip via roughnessToMip()
 uniformTexture(tex)  uniformCubeTexture(tex)           // texture swapped via .value without recompile
 textureBicubic(tex, strength)  textureBicubicLevel(tex, lod)  maxMipLevel(tex)
 tex.rgb  tex.r  tex.a ...            // swizzle like any vec4
@@ -526,7 +527,7 @@ Coordinate pipeline: `positionGeometry` (raw attribute) -> `positionLocal` (afte
 | Family | Names |
 |---|---|
 | Position | `positionGeometry positionLocal positionPrevious positionWorld positionWorldDirection positionView positionViewDirection` (`positionViewDirection` = normalized surface-to-camera vector, the `V` for fresnel; `positionWorldDirection` = normalized world-space direction of the local vertex position, used for skyboxes/`scene.backgroundNode`) |
-| Normal | `normalGeometry normalLocal normalView normalViewGeometry normalWorld normalWorldGeometry normalFlat`; `transformedNormalView/World` **[deprecated since r178 -> use `normalView`/`normalWorld`]**, `transformedClearcoatNormalView` **[deprecated -> `clearcoatNormalView`]**; `negateOnBackSide(v)`, `faceDirection` (+1/-1), `frontFacing` (bool) |
+| Normal | `normalGeometry normalLocal normalView normalViewGeometry normalWorld normalWorldGeometry normalFlat`; `transformedNormalView/World` **[removed in r187 (deprecated r177) -> use `normalView`/`normalWorld`]**, `transformedClearcoatNormalView` **[removed in r187 -> `clearcoatNormalView`]**; `negateOnBackSide(v)`, `faceDirection` (+1/-1), `frontFacing` (bool) |
 | Tangent | `tangentGeometry (vec4) tangentLocal tangentView tangentWorld tangentViewFrame` |
 | Bitangent | `bitangentGeometry bitangentLocal bitangentView bitangentWorld bitangentViewFrame`; `TBNViewMatrix`, `parallaxDirection`, `parallaxUV(uv, scale)`, `bentNormalView()` |
 | Camera (uniforms) | `cameraPosition cameraNear cameraFar cameraProjectionMatrix cameraProjectionMatrixInverse cameraViewMatrix cameraWorldMatrix cameraNormalMatrix cameraViewport cameraIndex` |
@@ -599,7 +600,7 @@ Fog applies to the lit result via `material.fog` (default true); `outputNode` re
 
 **Blend modes** (vec3 unless noted): `blendBurn blendDodge blendScreen blendOverlay` (base, blend), `blendColor(base: vec4, blend: vec4)` (normal alpha blend).
 
-**Color adjustment:** `grayscale(c) luminance(c, coeffs?) saturation(c, k=1) vibrance(c, k=0) hue(c, radians) posterize(src, steps) cdl(color, slope, offset, power, saturation, lumCoeffs) sepia bleach vignette(color, intensity, smoothness, coord) scanlines(...) colorBleeding`. Alpha: `premultiplyAlpha(c) unpremultiplyAlpha(c)`.
+**Color adjustment:** `grayscale(c, lumCoeffs?)` (returns float since r187; wrap in `vec3()` for a color) `luminance(c, coeffs?) saturation(c, k=1) vibrance(c, k=0) hue(c, radians) posterize(src, steps) cdl(color, slope, offset, power, saturation, lumCoeffs) sepia bleach vignette(color, intensity, smoothness, coord) scanlines(...) colorBleeding`. Alpha: `premultiplyAlpha(c) unpremultiplyAlpha(c)`.
 
 **Tone mapping** (node forms; exposure second): `linearToneMapping reinhardToneMapping cineonToneMapping acesFilmicToneMapping agxToneMapping neutralToneMapping`; generic `toneMapping(THREE.ACESFilmicToneMapping, exposure, color)` / `color.toneMapping(...)`; `toneMappingExposure` (renderer reference). The renderer applies tone mapping at output (`renderer.toneMapping`); materials are rendered in linear HDR and converted in the final output pass.
 
@@ -626,8 +627,8 @@ Environment-related: `reflectView` / `refractView` (for matcap-like or fake refr
 **Random / hash:** `hash(seed)` (PCG, input converted to uint, output [0,1)); `rand(uv)` (fract-sin, vec2 -> float); `interleavedGradientNoise(pos)`; `range(min, max)` per-instance random attribute; `vogelDiskSample(i, n, phi)`.
 
 ```js
-hash(instanceIndex)                               // per-instance randomness (stable)
-hash(instanceIndex.add(7))                        // decorrelated second value
+hash(instanceIndex.toFloat())                               // per-instance randomness (stable); hash() takes a float seed
+hash(instanceIndex.toFloat().add(7))                        // decorrelated second value
 range(vec3(-1), vec3(1))                          // per-instance vec3, e.g. on InstancedMesh/Mesh.count
 ```
 

@@ -18,7 +18,7 @@ Constructs a temp node.
 
 The node type.
 
-Default is `null`.  |
+Default is `null`.   | **Deprecated:** Extend Node instead.
 
 ## Properties
 

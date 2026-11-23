@@ -13,6 +13,7 @@ glTF (https://www.khronos.org/gltf/) (GL Transmission Format) is an open format 
 - KHR_lights_punctual
 - KHR_materials_anisotropy
 - KHR_materials_clearcoat
+- KHR_materials_diffuse_roughness
 - KHR_materials_dispersion
 - KHR_materials_emissive_strength
 - KHR_materials_ior

@@ -198,6 +198,10 @@ Interpolated normal vector at point of intersection.  |
  number  |
 
 The index number of the instance where the ray intersects the InstancedMesh.  |
+ | **batchId**
+ number  |
+
+The index number of the instance where the ray intersects the BatchedMesh.  |
 
 ## Source
 

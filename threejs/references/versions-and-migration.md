@@ -1,8 +1,8 @@
-# three.js versions and migration (target: r186, three@0.186.1)
+# three.js versions and migration (target: r187, three@0.187.0)
 
 ## When to read this
 
-Read this before writing or reviewing any three.js code, before suggesting install or CDN snippets, and whenever existing code or a tutorial uses an API you do not recognise. It tells you which release is current, how the package is laid out, which patterns are outdated (with the revision that changed them), and what is coming in r187. Sources: the official Migration Guide wiki, `docs/llms.txt`, and the r186 checkout (`package.json`, `src/`, `build/`, `examples/jsm/`). Where the migration guide and `src/` disagree, `src/` is stated explicitly.
+Read this before writing or reviewing any three.js code, before suggesting install or CDN snippets, and whenever existing code or a tutorial uses an API you do not recognise. It tells you which release is current, how the package is laid out, which patterns are outdated (with the revision that changed them), and what is coming in r188. Sources: the official Migration Guide wiki, `docs/llms.txt`, and the r186 checkout, re-checked for r187 (`package.json` exports identical; `src/Three.Legacy.js` still empty; `package.json`, `src/`, `build/`, `examples/jsm/`). Where the migration guide and `src/` disagree, `src/` is stated explicitly.
 
 ## Contents
 
@@ -10,36 +10,36 @@ Read this before writing or reviewing any three.js code, before suggesting insta
 2. Package layout: exports map, build files, bundlers, types
 3. CDN import maps
 4. Outdated patterns to never emit (old -> modern)
-5. Still-deprecated names in r186 (warn vs gone)
-6. Per-revision changelog r186 -> r150
+5. Still-deprecated names in r187 (warn vs gone)
+6. Per-revision changelog r187 -> r150
 7. Notable changes before r150
-8. r186 -> r187 upcoming changes (in development)
-9. Release highlights r185 and r186
+8. r187 -> r188 upcoming changes (in development)
+9. Release highlights r185 to r187
 10. See also
 
 ---
 
 ## 1. Version facts
 
-- Current stable: r186, npm `three@0.186.1` (`package.json` "version": "0.186.1"). Always write "0.186.x" when speaking generally; pin `0.186.1` in snippets.
-- In development: r187 (the Migration Guide already has a "186 -> 187" section).
-- Release cadence: roughly one release per month; revision numbers are integers (r185, r186, r187), npm versions are `0.<rev>.<patch>`.
+- Current stable: r187, npm `three@0.187.0` (`package.json` "version": "0.187.0", released 2026-10-30). Always write "0.187.x" when speaking generally; pin `0.187.0` in snippets.
+- In development: r188 (the Migration Guide already has a "187 -> 188" section).
+- Release cadence: roughly one release per month; revision numbers are integers (r186, r187, r188), npm versions are `0.<rev>.<patch>`.
 - Deprecation window: "deprecation warnings last for 10 releases" (top of the Migration Guide). Update old projects in increments of 10 revisions. Since r141 "Legacy code is going to be removed from the core after ten releases".
-- Revision string: `export const REVISION = '186';` in `src/constants.js`. Available as `THREE.REVISION` or `import { REVISION } from 'three'`.
+- Revision string: `export const REVISION = '187';` in `src/constants.js`. Available as `THREE.REVISION` or `import { REVISION } from 'three'`.
 - Check installed version:
   - `npm ls three`
   - `node -e "import('three').then(m => console.log(m.REVISION))"`
   - in the browser: `console.log(THREE.REVISION)` or `import { REVISION } from 'three'`.
-- Rule: write r186 code. When the user's project pins an older version, read section 6 for the revision where each API changed and match their version.
+- Rule: write r187 code. When the user's project pins an older version, read section 6 for the revision where each API changed and match their version.
 
 ## 2. Package layout
 
-### package.json facts (r186)
+### package.json facts (r186, unchanged in r187)
 
 - `"type": "module"`, `"main": "./build/three.cjs"`, `"module": "./build/three.module.js"`.
 - `"sideEffects": ["./src/nodes/**/*"]` (everything else is tree-shakeable).
 - `"files"`: `build`, `examples/jsm`, `LICENSE`, `package.json`, `README.md`, `src`.
-- No `types` field and no `@types` dependency: types are NOT bundled. Install `@types/three` (maintained at https://github.com/three-types/three-ts-types; the Migration Guide r125 -> r126 entry says declaration files moved there). Match `@types/three` minor to the three revision (e.g. `@types/three@0.186.x`) - this matching convention is not stated in the sources, verify on npm.
+- No `types` field and no `@types` dependency: types are NOT bundled. Install `@types/three` (maintained at https://github.com/three-types/three-ts-types; the Migration Guide r125 -> r126 entry says declaration files moved there). Match `@types/three` minor to the three revision (e.g. `@types/three@0.187.x`) - this matching convention is not stated in the sources, verify on npm.
 
 ### exports map (complete)
 
@@ -86,7 +86,7 @@ Absent in r186: `three.js`, `three.min.js`, `three.module.min.js` (the UMD build
 
 ## 3. CDN import maps
 
-The official `llms.txt` pattern (note: it pins `0.186.0`; npm latest is `0.186.1`). Pin an exact version; never use unversioned `three` URLs.
+The official `llms.txt` pattern (it pins `0.187.0`, the current npm latest). Pin an exact version; never use unversioned `three` URLs.
 
 ### WebGL (default)
 
@@ -94,8 +94,8 @@ The official `llms.txt` pattern (note: it pins `0.186.0`; npm latest is `0.186.1
 <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+    "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"
   }
 }
 </script>
@@ -111,8 +111,8 @@ unpkg equivalent:
 <script type="importmap">
 {
   "imports": {
-    "three": "https://unpkg.com/three@0.186.1/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.186.1/examples/jsm/"
+    "three": "https://unpkg.com/three@0.187.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.187.0/examples/jsm/"
   }
 }
 </script>
@@ -126,10 +126,10 @@ Important: `three.module.js` imports `./three.core.js` by relative path, so the 
 <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.webgpu.js",
-    "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.webgpu.js",
-    "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.tsl.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+    "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.webgpu.js",
+    "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.webgpu.js",
+    "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.tsl.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"
   }
 }
 </script>
@@ -152,7 +152,7 @@ Notes:
 
 Format: Old -> Modern (revision of change, per Migration Guide unless noted).
 
-| Old (never emit) | Modern (r186) | Rev |
+| Old (never emit) | Modern (r187) | Rev |
 |---|---|---|
 | `<script src=".../three.min.js">` / `build/three.js` / cdnjs `r128` | Import map + `<script type="module">` | deprecated r150, removed r161 |
 | `examples/js/...` scripts, `THREE.OrbitControls` globals | `import { OrbitControls } from 'three/addons/controls/OrbitControls.js'` | removed r148 |
@@ -212,7 +212,7 @@ Format: Old -> Modern (revision of change, per Migration Guide unless noted).
 | `MeshStandardMaterial.vertexTangents` | removed; `BufferGeometry.computeTangents()` is in core | r131, r125 |
 | `uv2` attribute for `aoMap`/`lightMap` | `texture.channel` (0 = `uv`, 1 = second set); attributes renamed `uv, uv2, uv3, uv4` -> `uv, uv1, uv2, uv3` | r151 / r152 |
 | `MeshPhysicalMaterial.transparency` | `.transmission` | r119 |
-| `MeshPhysicalMaterial.iridescenceThicknessRange` | `iridescenceThicknessMinimum` / `iridescenceThicknessMaximum` | r187 (dev) |
+| `MeshPhysicalMaterial.iridescenceThicknessRange` | `iridescenceThicknessMinimum` / `iridescenceThicknessMaximum` | r187 |
 | `material.envMapIntensity` to dim whole-scene env | `scene.environmentIntensity` (`envMapIntensity` only for material `envMap`) | r163 |
 | `TwoPassDoubleSide` | removed; transparent double-sided materials render in two draw calls by default; `material.forceSinglePass = true` to disable | r149 |
 | `PCFSoftShadowMap` | `PCFShadowMap` (now soft); removed from WebGPURenderer r186 | deprecated r182 (WebGL), removed r186 (WebGPU); marked `@deprecated since r186` in `src/constants.js` |
@@ -220,7 +220,7 @@ Format: Old -> Modern (revision of change, per Migration Guide unless noted).
 | `ShaderMaterial` custom GLSL on `WebGPURenderer` | use `NodeMaterial` + TSL (`MeshStandardNodeMaterial`, `colorNode`, `positionNode`...). `ShaderMaterial`/`onBeforeCompile` only work with `WebGLRenderer` | node materials WebGPU-only since r164 |
 | `WebGLNodeBuilder` / node materials with `WebGLRenderer` | NodeMaterials require `WebGPURenderer` | r164 |
 | TSL `import { ... } from 'three/examples/jsm/nodes/Nodes.js'` | `import { ... } from 'three/tsl'`; materials from `three/webgpu` | r166/r167, r171 |
-| `renderer.library.addLight( CustomLightNode, CustomLight )` | `CustomLight.registerNode( CustomLightNode )` | r187 (dev) |
+| `renderer.library.addLight( CustomLightNode, CustomLight )` | `CustomLight.registerNode( CustomLightNode )` (e.g. `SunLight.registerNode( SunLightNode )`) | r187 |
 | `light.decay = 1` assumption | `PointLight`/`SpotLight` default `decay = 2` (physical) | r147 |
 | `Scene.autoUpdate` | `Object3D.matrixWorldAutoUpdate` | r144 |
 | `Object3D.DefaultUp`, `DefaultMatrixAutoUpdate`, `Euler.DefaultOrder` | `Object3D.DEFAULT_UP`, `DEFAULT_MATRIX_AUTO_UPDATE`, `DEFAULT_MATRIX_WORLD_AUTO_UPDATE`, `Euler.DEFAULT_ORDER` | r149 |
@@ -228,7 +228,7 @@ Format: Old -> Modern (revision of change, per Migration Guide unless noted).
 | `glslVersion` omitted with `#version 300 es` in ShaderMaterial | set `glslVersion: THREE.GLSL3`; never write the `#version` directive | r120 |
 | `object.lookAt()` | unchanged API (`lookAt( x, y, z )` / `lookAt( Vector3 )`); no migration entry. Not outdated. | - |
 | `Color` hex literal `new Color( 0xff0000 )` | unchanged; hex/CSS strings are interpreted as sRGB and converted to the working space (linear-srgb) when `ColorManagement.enabled` (default). Use `.setRGB( r, g, b, colorSpace )` for linear values | r152 |
-| `ColorManagement.fromWorkingColorSpace` / `toWorkingColorSpace` | `workingToColorSpace` / `colorSpaceToWorking` | r177 |
+| `ColorManagement.fromWorkingColorSpace` / `toWorkingColorSpace` | `workingToColorSpace` / `colorSpaceToWorking` | r177, old names removed r187 |
 | `WebGLRenderer.copyTextureToTexture( pos, src, dst )` old signature | `copyTextureToTexture( srcTexture, dstTexture, srcRegion, dstPosition, level )`; `copyTextureToTexture3D` deprecated r170 | r165 |
 | `DataTexture3D`, `DataTexture2DArray` | `Data3DTexture`, `DataArrayTexture` | r138 |
 | `RGBFormat`, `RGBIntegerFormat` | `RGBAFormat`, `RGBAIntegerFormat` | r137 |
@@ -245,11 +245,12 @@ Rules of thumb that follow:
 - Prefer `Timer` over `Clock` in new code (verified: `src/core/Clock.js` logs `'Clock: This module has been deprecated. Please use THREE.Timer instead.'`).
 - Prefer `HDRLoader` over `RGBELoader`.
 
-## 5. Legacy shims in r186
+## 5. Legacy shims in r187
 
-`src/Three.Legacy.js` exists but is EMPTY (0 bytes) in r186. Deprecated aliases from earlier revisions were removed (r185: "Deprecated code removed across the codebase", #33407, per release notes). Consequences:
+`src/Three.Legacy.js` exists but is EMPTY (0 bytes) in r186 and r187. r187 also removed code deprecated in r177 (#34517, per release notes). Deprecated aliases from earlier revisions were removed (r185: "Deprecated code removed across the codebase", #33407, per release notes). Consequences:
 
 - Anything the guide lists as "renamed" before r185 and not listed below is GONE: calling it throws `TypeError: x is not a function` or is silently `undefined` (e.g. `Matrix4.getInverse`, `BufferAttribute.updateRange`, `mergeBufferGeometries`, `Geometry`, `BoxBufferGeometry`). There is no warning.
+- Gone in r187 (deprecated r177, now throw/undefined): `ColorManagement.fromWorkingColorSpace()` / `toWorkingColorSpace()` -> `workingToColorSpace()` / `colorSpaceToWorking()`.
 - Names that still exist and only warn (found via `@deprecated` in `src/` and `examples/jsm`):
 
 | Name | Replacement | Behaviour |
@@ -258,7 +259,6 @@ Rules of thumb that follow:
 | `Source` (`src/textures/TextureSource.js`) | `TextureSource` | still exported; `warnOnce` (since r186); `isSource` flag deprecated for `isTextureSource` |
 | `PCFSoftShadowMap` (`src/constants.js`) | `PCFShadowMap` | `@deprecated since r186`; WebGLRenderer treats as PCF with warning; removed from WebGPURenderer |
 | `Matrix3.scale()`, `rotate()`, `translate()` | `makeScale()`, `makeRotation()`, `makeTranslation()` | `warnOnce` (since r185) |
-| `ColorManagement.fromWorkingColorSpace()` / `toWorkingColorSpace()` | `workingToColorSpace()` / `colorSpaceToWorking()` | `warnOnce` (since r177) |
 | GLSL `inverseTransformDirection` | `transformDirectionByInverseViewMatrix()` / `transformNormalByInverseViewMatrix()` | `#define` alias in `common.glsl.js` (since r185) |
 | `RGBELoader` | `HDRLoader` | subclass with `console.warn` (since r180) |
 | `USDZLoader` | `USDLoader` | `@deprecated, r179` |
@@ -274,11 +274,24 @@ Rules of thumb that follow:
 | `Line2NodeMaterial.lineColorNode` | `colorNode` | `warnOnce` (since r185) |
 | `SkyMesh.isSky` | `isSkyMesh` | `@deprecated, r182` |
 | `FirstPersonControls` method | no longer needed | `@deprecated, r184` |
-| `MeshPhysicalMaterial.iridescenceThicknessRange` | `iridescenceThicknessMinimum/Maximum` | listed in 186 -> 187 section (dev) |
+| `MeshPhysicalMaterial.iridescenceThicknessRange` | `iridescenceThicknessMinimum/Maximum` | `@deprecated since r187` |
 
-## 6. Per-revision changelog r186 -> r150
+## 6. Per-revision changelog r187 -> r150
 
-Exact API names from the official Migration Guide. Items in r187 are in section 8.
+Exact API names from the official Migration Guide. Items in r188 (in development) are in section 8.
+
+### 186 -> 187
+- TSL: operands and parameters of math functions are implicitly coerced to broader common types (#33695).
+- PMREMs are based on cube render targets (#34585). `CubeUVReflectionMapping` removed. Quality improved, materials look slightly different.
+- `WebGPURenderer` and `WebGLRenderer` use `WeakRef` and `FinalizationRegistry` internally (#34368).
+- XR camera transformation and projection matrix derived from the first sub camera (e.g. left eye) (#34275).
+- `WebGLRenderer.setViewport()` and `setScissor()` no longer scale by pixel ratio when a render target is bound (#34460).
+- `pixelationPass()` TSL: `pixelSize` is now just a `Number` (#34543); nodes unsupported.
+- Registering a light in `WebGPURenderer`: `CustomLight.registerNode( CustomLightNode )` replaces `renderer.library.addLight( CustomLightNode, CustomLight )` (#34622).
+- TSL struct storage buffers always arrays, even with one element: replace `storage.get( 'member' )` with `storage.element( 0 ).get( 'member' )` when using `storage( buffer, StructType )` (#34807).
+- `MeshPhysicalMaterial.iridescenceThicknessRange` deprecated -> `iridescenceThicknessMinimum` and `iridescenceThicknessMaximum` (#35039).
+- From the r187 release notes (not in the Migration Guide): code deprecated in r177 removed (#34517); TSL `getProjectionDepth()` renamed `projectionDepth()` (#35230); `ProxyNodeMaterial` renamed `NodeMaterialInstance` (#35269); examples `webgpu_compute_rasterizer(_ibl)` removed, GPU-driven rendering now in `webgpu_meshlets_*` (#35282); `webgl_renderer_pathtracer` became `webgpu_renderer_pathtracer`; `PixelationNode` no longer has its own docs page.
+- From the r187 TSL guide (not in the Migration Guide): plain numbers combined with integer nodes now stay integer and fractional literals truncate (`instanceIndex.mul( 0.5 )` is `instanceIndex * 0u`; use `.toFloat()` or `float( 0.5 )`); `int( 1.5 )` truncates to `1`; `renderer.compute( node, dispatchSize )` throws for nodes built with `compute( count )` (use `computeKernel( wg )`); `VarIntent()` / `.toVarIntent()` removed; `TempNode` deprecated (extend `Node`); `transformedNormalView/World`, `transformedClearcoatNormalView` removed; `getLightNodeClass()` deprecated (with `addLight()`, see above); `LightProbeGrid.falloff` removed (use `priority`); `PMREMGenerator` returns `WebGLCubeRenderTarget` sized from the input.
 
 ### 185 -> 186
 - `Object3D` has a `dispose()` method (#34141). Custom subclasses with `dispose()` must call `super.dispose()`.
@@ -569,25 +582,31 @@ Exact API names from the official Migration Guide. Items in r187 are in section 
 - r110: `addAttribute` -> `setAttribute`; `removeAttribute` -> `deleteAttribute`; `BufferAttribute.setUsage`; controls require `domElement`.
 - (Older revisions r47-r109 are in the Migration Guide; consult the wiki if the user is on a pre-r110 codebase. Update in increments of 10 revisions.)
 
-## 8. r186 -> r187 upcoming changes (in development)
+## 8. r187 -> r188 upcoming changes (in development)
 
-Not released as of 0.186.1. Do not use these names unless the user is on a dev build; do mention them when asked about upgrading. Source: top section "186 -> 187" of the Migration Guide.
+Not released as of 0.187.0. Do not use these names unless the user is on a dev build; do mention them when asked about upgrading. Source: top section "187 -> 188" of the Migration Guide.
 
-- TSL: operands and parameters of math functions are implicitly coerced to broader common types (#33695).
-- PMREMs are based on cube render targets (#34585). `CubeUVReflectionMapping` removed. Quality improved, materials look slightly different.
-- `WebGPURenderer` and `WebGLRenderer` use `WeakRef` and `FinalizationRegistry` internally (#34368).
-- XR camera transformation and projection matrix derived from the first sub camera (e.g. left eye) (#34275).
-- `WebGLRenderer.setViewport()` and `setScissor()` no longer scale by pixel ratio when a render target is bound (#34460).
-- `pixelationPass()` TSL: `pixelSize` is now just a `Number` (#34543); nodes unsupported.
-- Registering a light in `WebGPURenderer`: `CustomLight.registerNode( CustomLightNode )` replaces `renderer.library.addLight( CustomLightNode, CustomLight )` (#34622).
-- TSL struct storage buffers always arrays, even with one element: replace `storage.get( 'member' )` with `storage.element( 0 ).get( 'member' )` when using `storage( buffer, StructType )` (#34807).
-- `MeshPhysicalMaterial.iridescenceThicknessRange` deprecated -> `iridescenceThicknessMinimum` and `iridescenceThicknessMaximum` (#35039).
+- `Float16BufferAttribute` relies on `Float16Array` (#35507).
+- `iblIrradiance` removed; environment irradiance is added to `irradiance`, and `RE_IndirectSpecular()` lost its `irradiance` parameter (#35570). Rough materials lit by an environment map may look slightly different.
+- `AmbientLight` and `HemisphereLight` add specular reflections to `MeshStandardMaterial`/`MeshPhysicalMaterial` (#35580). Without an env map, metals no longer render black. With an env map plus one of these lights as fill, lower the fill `intensity`.
+- `MeshStandardMaterial`/`MeshPhysicalMaterial` use multi-bounce AO, weakening occlusion on bright and metallic surfaces (#35586). Compensate via `GTAONode` `scale` / `SSAONode` `intensity`, or re-bake/darken `aoMap`. Keep `aoMapIntensity` in `[0,1]`.
+- `LightProbe` deprecated and no longer contributes to lighting (#35615). Use `Scene.environment` or a `LightProbeGrid` (`LightProbeGridWebGL` with `WebGLRenderer`); a `1x1x1` grid matches the old `LightProbe` but only lights surfaces inside its bounds. `LightProbeGenerator` and `LightProbeHelper` deprecated too.
+- `XREstimatedLight.lightProbe` is a `1x1x1` `LightProbeGridWebGL` instead of a `LightProbe`; no `sh` property (#35619).
 
 ## 9. Release highlights r185 and r186
 
 Fetched from https://github.com/mrdoob/three.js/releases (page truncated at 100 000 of 182 641 characters; only the top of the page, r186 and r185, was read; year not shown on the page).
 
-### r186 (marked "Latest")
+### r187 (released 2026-10-30, from the GitHub release notes)
+- `PMREMGenerator` replaces the CubeUV atlas with cube render targets (#34585); roughness ramp improved (#34645).
+- `MeshPhysicalMaterial`: EON rough diffuse BRDF (#34379); iridescence thickness min/max properties (#35039).
+- `Texture.mipmapsAutoUpdate` (#34630); `StorageBufferAttribute` can be disposed (#34664).
+- `WebGLRenderer.getProgramVariant()` (#34739).
+- Node materials: `emissiveNode` on lambert, phong and toon (#35059); `BumpMapNode` `normalNode` parameter (#35101); TSL type promotion in operators/math (#33695), color morphing (#35141).
+- New addons: `JXLLoader` (native HDR JPEG XL), `LightMapper` (bake GI into light maps, WebGPU), meshlet drawing pipelines (`MeshletDrawingPipeline`, `VisibilityBufferDrawingPipeline`, `StandardDrawingPipeline`), lens dirt TSL function (#34715).
+- Removals: code deprecated in r177 (#34517).
+
+### r186
 - Playground Projects and Templates (#34437).
 - Retroreflectivity for `MeshPhysicalMaterial` (#33949), environment lighting added later (#33995).
 - Spiral blur replaces separable blur in `PMREMGenerator` on both renderers (#32367).

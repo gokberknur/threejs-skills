@@ -16,6 +16,12 @@ The loading manager.  |
 
 ## Properties
 
+### .cache : 'default'  | 'no-store'  | 'reload'  | 'no-cache'  | 'force-cache'
+
+The HTTP cache mode passed to `fetch()`. This does not affect Cache or loaders using `HTMLImageElement`.
+
+Default is `'default'`.
+
 ### .crossOrigin : string
 
 The crossOrigin string to implement CORS for loading the url from a different domain that allows CORS.
@@ -32,6 +38,12 @@ Default is `DefaultLoadingManager`.
 
 The base path from which the asset will be loaded.
 
+### .priority : 'high'  | 'low'  | 'auto'
+
+The request priority hint. Image loaders use `HTMLImageElement.fetchPriority`.
+
+Default is `'auto'`.
+
 ### .requestHeader : Object.<string, any>
 
 The request header (https://developer.mozilla.org/en-US/docs/Glossary/Request_header) used in HTTP request.
@@ -45,6 +57,8 @@ The base path from which additional resources like textures will be loaded.
 Whether the XMLHttpRequest uses credentials.
 
 Default is `false`.
+
+## Static Properties
 
 ### .DEFAULT_MATERIAL_NAME : string
 
@@ -96,6 +110,14 @@ This method needs to be implemented by all concrete loaders. It holds the logic 
 
 The data to parse.  |
 
+### .setCache( value : 'default'  | 'no-store'  | 'reload'  | 'no-cache'  | 'force-cache' ) : Loader
+
+Sets the HTTP cache mode for fetch requests. `no-cache` revalidates cached responses; `no-store` bypasses the HTTP cache. This does not affect Cache or image element requests.
+
+ | **value**  |
+
+The HTTP cache mode.   | **Returns:** A reference to this instance.
+
 ### .setCrossOrigin( crossOrigin : string ) : Loader
 
 Sets the `crossOrigin` String to implement CORS for loading the URL from a different domain that allows CORS.
@@ -111,6 +133,14 @@ Sets the base path for the asset.
  | **path**  |
 
 The base path.   | **Returns:** A reference to this instance.
+
+### .setPriority( value : 'high'  | 'low'  | 'auto' ) : Loader
+
+Sets a browser scheduling hint. Browsers may ignore this hint. Internally created loaders inherit it. Loaders supplied by the application (for example decoder loaders or loading manager handlers) retain their own settings.
+
+ | **value**  |
+
+The request priority hint.   | **Returns:** A reference to this instance.
 
 ### .setRequestHeader( requestHeader : Object ) : Loader
 

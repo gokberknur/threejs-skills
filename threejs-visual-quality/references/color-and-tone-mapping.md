@@ -1,4 +1,4 @@
-# Color pipeline and tone mapping (three.js r186)
+# Color pipeline and tone mapping (three.js r187)
 
 ## When to read this
 Scene looks washed out, too dark, too saturated, "plastic", clips to white, or you add post-processing / LUTs / HDR output and need to know where tone mapping and sRGB conversion happen. Read before touching `toneMapping`, `colorSpace`, `OutputPass`, `renderOutput`.
@@ -39,7 +39,7 @@ c.convertSRGBToLinear(); c.convertLinearToSRGB(); // explicit manual conversion
 - `Color.r/g/b`, `.setRGB()` without a space, `.lerp`, `.multiplyScalar` never convert implicitly. Values > 1 are legal (emissive, light colors).
 - Vertex colors (`BufferAttribute` `color`) are read as linear working-space. If you author them as sRGB bytes, convert once on the CPU (`new Color().setRGB(r,g,b,SRGBColorSpace)` then write `.r,.g,.b`).
 - Lights, `material.color`, `emissive`, `sheenColor`, `specularColor`, `attenuationColor`, `scene.background` (Color), `fog.color` are all working-space linear after `Color.set(hex)`.
-- Convert between spaces: `ColorManagement.workingToColorSpace(color, space)` and `ColorManagement.colorSpaceToWorking(color, space)`; `ColorManagement.convert(color, from, to)`; `ColorManagement.getLuminanceCoefficients(target, space)`. `fromWorkingColorSpace` / `toWorkingColorSpace` are deprecated since r177 (renamed to the two above).
+- Convert between spaces: `ColorManagement.workingToColorSpace(color, space)` and `ColorManagement.colorSpaceToWorking(color, space)`; `ColorManagement.convert(color, from, to)`; `ColorManagement.getLuminanceCoefficients(target, space)`. `fromWorkingColorSpace` / `toWorkingColorSpace` were renamed to the two above in r177 and removed in r187.
 - Never set `ColorManagement.enabled = false` to "fix" brightness; it only hides a wrong texture annotation and breaks every Color setter.
 
 ## 3. Texture colorSpace rules
@@ -162,7 +162,7 @@ composer.addPass(lutPass);            // LUT after OutputPass
 ```
 Omitting `OutputPass` = dark, linear, un-tone-mapped image. Two `OutputPass`es or `GammaCorrectionShader` + OutputPass = double-gamma washed-out image.
 
-WebGLRenderer built-in effect chain (r186, lighter than EffectComposer; OutputPass NOT needed, it warns):
+WebGLRenderer built-in effect chain (new in r186, lighter than EffectComposer; OutputPass NOT needed, it warns):
 ```js
 const renderer = new THREE.WebGLRenderer({ antialias: true, outputBufferType: THREE.HalfFloatType }); // required
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -233,7 +233,7 @@ Example `webgpu_postprocessing_3dlut`. Keep intensity 0.5-1.0; strong LUTs on to
 |---|---|---|
 | Everything dark, high contrast, colors too saturated | Output stage missing (composer without `OutputPass`, or ShaderMaterial without `colorspace_fragment`) | Add `OutputPass` / include chunk |
 | Everything pale, low contrast | sRGB applied twice (OutputPass + GammaCorrectionShader, or `renderOutput` + default transform) | Remove one; set `rp.outputColorTransform = false` when using `renderOutput` manually |
-| One object too dark | albedo texture missing `SRGBColorSpace` | set `colorSpace` before first render |
+| One object washed out / too bright | albedo texture missing `SRGBColorSpace` (sRGB values read as linear, encoded again on output) | set `colorSpace` before first render |
 | One object too bright/pale | normal/roughness map tagged sRGB, or albedo double-decoded | `NoColorSpace` for data maps |
 | Hex color looks different from CSS | Passed through `setRGB` without space, or `ColorManagement.enabled=false` | `new Color(hex)` / `setRGB(...,SRGBColorSpace)` |
 | Highlights clip to flat white | no tone mapping, lights too strong | `NeutralToneMapping`/`AgX` + lower exposure |

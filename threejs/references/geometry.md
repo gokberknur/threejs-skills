@@ -1,4 +1,4 @@
-# three.js r186 Geometry
+# three.js r187 Geometry
 
 ## When to read this
 Read when you build, modify, merge, or optimize geometry: custom `BufferGeometry`, attributes and typed arrays, indexed vs non-indexed, groups/multi-material, dynamic updates, lines/points (incl. fat lines), shapes/curves/extrusion, text, procedural voxel meshes, morph targets, and geometry utilities/modifiers. For the built-in primitive constructors table see `fundamentals.md` section 8; this file adds the shape-based ones and everything else.
@@ -155,7 +155,7 @@ geometry.addGroup(0, 6, 0);            // start, count (indices if indexed else 
 geometry.addGroup(6, 6, 1);
 const mesh = new THREE.Mesh(geometry, [matA, matB]);   // array order = materialIndex
 ```
-- r186 docs: every vertex/index must belong to exactly one group (no overlaps, no gaps) when groups are used.
+- r187 docs: every vertex/index must belong to exactly one group (no overlaps, no gaps) when groups are used.
 - Built-in groups: `BoxGeometry` 6, `CylinderGeometry` 3 (side, top, bottom), `ConeGeometry` 2; `mergeGeometries(list, true)` creates one group per input geometry.
 - Each group = one draw call; prefer texture atlas + UVs, vertex colors, or `BatchedMesh` for many looks.
 - An out-of-range `materialIndex` renders nothing for that group (no error).
@@ -352,7 +352,7 @@ new THREE.ExtrudeGeometry(shape, {
   depth: 2,                // extrusion depth
   steps: 1,                // subdivisions along depth
   curveSegments: 12,       // points per curve
-  bevelEnabled: true,      // default true in r186 (bevelThickness 0.2, bevelSize bevelThickness-0.1, bevelOffset 0, bevelSegments 3)
+  bevelEnabled: true,      // default true in r187 (bevelThickness 0.2, bevelSize bevelThickness-0.1, bevelOffset 0, bevelSegments 3)
   bevelThickness: 0.2, bevelSize: 0.1, bevelOffset: 0, bevelSegments: 3,
   extrudePath: curve3,     // extrude along a 3D curve; bevels NOT supported then
   UVGenerator: customUV,   // object with generateTopUV / generateSideWallUV

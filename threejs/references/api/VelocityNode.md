@@ -1,6 +1,6 @@
 VelocityNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # VelocityNode
 
@@ -15,6 +15,10 @@ The node keeps track of the model, view and projection matrices of the previous 
 Constructs a new vertex color node.
 
 ## Properties
+
+### .currentProjectionMatrix : UniformNode.<mat4>
+
+The projection matrix of the current frame.
 
 ### .previousCameraViewMatrix : UniformNode.<mat4>
 
@@ -36,7 +40,7 @@ Default is `null`.
 
 ### .projectionMatrix : Matrix4
 
-The current projection matrix.
+An optional projection matrix that overrides the camera's projection matrix.
 
 Default is `null`.
 
@@ -44,13 +48,13 @@ Default is `null`.
 
 Overwritten since velocity nodes save data after the update.
 
-Default is `'object'`.   **Overrides:** TempNode#updateAfterType
+Default is `'object'`.   **Overrides:** Node#updateAfterType
 
 ### .updateType : string
 
 Overwritten since velocity nodes are updated per object.
 
-Default is `'object'`.   **Overrides:** TempNode#updateType
+Default is `'object'`.   **Overrides:** Node#updateType
 
 ## Methods
 
@@ -68,7 +72,7 @@ Implements the velocity computation based on the previous and current vertex dat
 
  | **builder**  |
 
-A reference to the current node builder.   | **Overrides:** TempNode#setup   **Returns:** The motion vector.
+A reference to the current node builder.   | **Overrides:** Node#setup   **Returns:** The motion vector.
 
 ### .update( frame : NodeFrame )
 
@@ -76,7 +80,7 @@ Updates velocity specific uniforms.
 
  | **frame**  |
 
-A reference to the current node frame.   | **Overrides:** TempNode#update
+A reference to the current node frame.   | **Overrides:** Node#update
 
 ### .updateAfter( frame : NodeFrame )
 
@@ -84,7 +88,7 @@ Overwritten to updated velocity specific uniforms.
 
  | **frame**  |
 
-A reference to the current node frame.   | **Overrides:** TempNode#updateAfter
+A reference to the current node frame.   | **Overrides:** Node#updateAfter
 
 ## Source
 

@@ -1,4 +1,4 @@
-# three.js r186 WebGPU Example Catalog (230 examples)
+# three.js r187 WebGPU Example Catalog (243 examples)
 
 ## When to read this
 
@@ -8,9 +8,9 @@ Read to find a working reference for a technique (compute, MRT, post effect, vol
 
 - Live: `https://threejs.org/examples/#<name>` (e.g. `https://threejs.org/examples/#webgpu_postprocessing_ao`).
 - Source: `examples/<name>.html` in the three.js GitHub repo (not in the npm package); addons ship in the package as `three/addons/*` (= `examples/jsm/*`).
-- List source of truth: `examples/files.json`, key `"webgpu"` (230 entries). Names below omit nothing; each is `webgpu_<name>`.
+- List source of truth: `examples/files.json`, key `"webgpu"` (243 entries). Names below omit nothing; each is `webgpu_<name>`.
 - Standard imports: `import * as THREE from 'three/webgpu'; import { ... } from 'three/tsl';` Post effects: `three/addons/tsl/display/<Name>.js`. Many examples use `renderer.inspector = new Inspector()` and `node.toInspector('label')` for debugging; ignore these when copying.
-- Note: in r186 the post-processing class is `THREE.RenderPipeline` (`PostProcessing` is the deprecated alias since r183).
+- Note: in r187 the post-processing class is `THREE.RenderPipeline` (`PostProcessing` is the deprecated alias since r183).
 
 ## Table of contents
 
@@ -83,6 +83,7 @@ Node-based pipeline. Guide: `post-processing-webgpu.md`. All use `new THREE.Rend
 - `webgpu_test_memory`: stress test of MRT + OutlineNode + GTAONode (resource leak test). API: mrt, outline, ao, context.
 - ★ `webgpu_vxgi`: voxel cone-traced GI and AO. API: vxgi, builtinGIContext, traa. Why read: voxel GI with vxgi() + builtinGIContext + TRAA.
 - `webgpu_vxgi_sponza`: VXGI on Sponza with sky and first-person controls. API: vxgi, SkyMesh, FirstPersonControls.
+- `webgpu_color_grading` (r187): color grading node stack.
 
 ## 2. Compute and GPGPU
 
@@ -102,8 +103,7 @@ Node-based pipeline. Guide: `post-processing-webgpu.md`. All use `new THREE.Rend
 - ★ `webgpu_compute_texture_pingpong`: two storage textures swapped each frame. API: storageTexture, NodeAccess, textureStore. Why read: storageTexture + textureStore with NodeAccess read/write ping-pong.
 - ★ `webgpu_compute_reduce`: parallel reduction variants. API: workgroup memory, subgroupAdd, wgsl. Why read: workgroup/subgroup parallel reduction kernels (subgroupAdd, workgroup memory).
 - `webgpu_compute_sort_bitonic`: bitonic sort step-by-step, with storage reads. API: BitonicSort (addons), StorageInstancedBufferAttribute, workgroup.
-- `webgpu_compute_rasterizer`: GPU-driven software rasterizer with atomics. API: atomicMax, IndirectStorageBufferAttribute, Loop.
-- `webgpu_compute_rasterizer_ibl`: compute rasterizer with IBL and meshopt clusters. API: atomic, meshopt_clusterizer, uvec2/uvec4 packing.
+- `webgpu_meshlets`, `webgpu_meshlets_ibl`, `webgpu_meshlets_city`, `webgpu_meshlets_instanced`, `webgpu_meshlets_materials`, `webgpu_meshlets_meshes` (r187; replace `webgpu_compute_rasterizer(_ibl)`, removed in r187): GPU-driven meshlet rendering. API: `MeshletDrawingPipeline`, `VisibilityBufferDrawingPipeline`, `MeshletGeometryUtils`, renderer `drawingPipeline`.
 - `webgpu_compute_audio`: audio synthesis/processing in compute, readback to AudioContext. API: compute, getArrayBufferAsync, AudioContext.
 - `webgpu_storage_buffer`: fetching an external element from a StorageBuffer (PBO path) vs. storage node. API: storage().setPBO, workgroupBarrier.
 - ★ `webgpu_struct_drawindirect`: indirect draw args written by compute. API: struct, IndirectStorageBufferAttribute, geometry.setIndirect, atomicStore. Why read: struct() + IndirectStorageBufferAttribute + geometry.setIndirect: GPU-driven draw counts.
@@ -152,6 +152,9 @@ Node materials, TSL material slots (colorNode, positionNode, normalNode...), env
 - `webgpu_furnace_test`: white furnace test for energy conservation. API: PMREMGenerator.
 - `webgpu_centroid_sampling`: centroid interpolation on varyings. API: varying(), centroid.
 - `webgpu_compile_async`: compileAsync of node materials to avoid hitching. API: renderer.compileAsync.
+- `webgpu_materials_node_instance` (r187): `NodeMaterialInstance`, many variants sharing one shader.
+- `webgpu_loader_gltf_diffuse_roughness` (r187): glTF with EON `diffuseRoughness`.
+- `webgpu_tsl_occlusion_dither` (r187): dither objects that occlude the view.
 
 ## 4. Lighting and shadows
 
@@ -187,6 +190,9 @@ Node materials, TSL material slots (colorNode, positionNode, normalNode...), env
 - `webgpu_occlusion`: occlusion queries driving a custom node. API: mesh.occlusionTest, custom Node.
 - `webgpu_clipping`: clipping planes via ClippingGroup. API: ClippingGroup.
 - `webgpu_clipping_stencil`: capped clipping with stencil. API: ClippingGroup, stencilWrite.
+- `webgpu_lightmap_baking` (r187): bake GI into light maps with `LightMapper`.
+- `webgpu_unwrap` (r187): generate `uv1` light-map UVs.
+- `webgpu_lights_clustered_city` (r187): clustered lighting at city scale.
 
 ## 5. Instancing, batching and performance
 
@@ -219,6 +225,7 @@ Node materials, TSL material slots (colorNode, positionNode, normalNode...), env
 - `webgpu_morphtargets_face`: face blendshapes (ARKit) with KTX2. API: morphTargetInfluences.
 - `webgpu_gaussian_splat`: Gaussian splat rendering (SPLAT, SPZ). API: GaussianSplat, SPLATLoader, SPZLoader.
 - `webgpu_sculpt`: GPU sculpting + glTF export. API: Sculptor, GLTFExporter.
+- `webgpu_loader_jpegxl` (r187): HDR JPEG XL via `JXLLoader`.
 
 ## 7. Textures and render targets
 
@@ -312,6 +319,7 @@ Use `renderer.xr`; fallback uses `WebGLXRFallback` where WebGPU XR is unavailabl
 - `webgpu_multiple_canvas`: several renderers/canvases. API: WebGPU.isAvailable.
 - `webgpu_multiple_elements`: one renderer, several DOM elements scissor/viewport.
 - `webgpu_sandbox`: mixed materials sandbox. API: NodeMaterial variants, KTX2Loader.
+- `webgpu_renderer_pathtracer` (r187; was `webgl_renderer_pathtracer`): three-gpu-pathtracer on WebGPU.
 
 ## Top 25 index
 

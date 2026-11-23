@@ -1,4 +1,4 @@
-# Materials and Textures (three.js r186)
+# Materials and Textures (three.js r187)
 
 When to read this: choosing a material, setting up PBR maps, fixing transparency/sorting problems, color-space (too dark / washed out) issues, writing ShaderMaterial or patching built-in shaders, or configuring Texture objects (transforms, UV channels, data/video/canvas/compressed/3D textures). For loading files into textures see `loaders-assets.md`. For TSL/node authoring depth see the `threejs-tsl-webgpu` skill.
 
@@ -25,7 +25,7 @@ Cost order (cheapest first): Basic < Lambert < Phong < Standard < Physical. Use 
 | Material | Lit | Model | Key props | Use for |
 |---|---|---|---|---|
 | `MeshBasicMaterial` | no | flat color/map | `color map alphaMap aoMap lightMap envMap combine reflectivity` | UI, unlit, baked textures, debug, backgrounds |
-| `MeshLambertMaterial` | yes | diffuse only, no specular (per-fragment in r186) | `color emissive map normalMap bumpMap envMap` | matte, mobile, many objects |
+| `MeshLambertMaterial` | yes | diffuse only, no specular (per-fragment in r187) | `color emissive map normalMap bumpMap envMap` | matte, mobile, many objects |
 | `MeshPhongMaterial` | yes | Blinn-Phong specular | `shininess(30) specular(0x111111) ...` | cheap shiny, legacy content |
 | `MeshToonMaterial` | yes | banded by `gradientMap` | `gradientMap` (Nearest filters!) | cel shading |
 | `MeshStandardMaterial` | yes | PBR metal/rough | `roughness(1) metalness(0) maps...` | default choice for realistic |
@@ -42,7 +42,7 @@ Cost order (cheapest first): Basic < Lambert < Phong < Standard < Physical. Use 
 | `*NodeMaterial` | per class | TSL node graph | `colorNode positionNode ...` | WebGPURenderer-first; custom without GLSL |
 
 Notes:
-- Manual says Lambert is per-vertex; the r186 API page says Lambert uses per-fragment shading. Trust the API page (doc gap in the manual).
+- Manual says Lambert is per-vertex; the r187 API page says Lambert uses per-fragment shading. Trust the API page (doc gap in the manual).
 - Phong/Basic `reflectivity` + `combine` (`MultiplyOperation | MixOperation | AddOperation`) control envMap blending; Standard uses `envMapIntensity` instead.
 - Material properties can be set in the constructor (`new MeshStandardMaterial({ color: 0xff0000 })`), via `setValues({...})`, or directly. `color` accepts hex, CSS string, `Color`.
 - `material.color.set('#ff8800')` / `setHex` / `setStyle` treat input as sRGB and convert to linear (ColorManagement enabled by default). `color.r/g/b` and `setRGB(r,g,b)` are raw linear working-space values.
@@ -107,7 +107,7 @@ const masked = new THREE.MeshStandardMaterial({
 // give mask a lower renderOrder than masked
 ```
 
-WebGLRenderer ctor option `stencil` defaults to false in r186 source: pass `stencil: true` to get a stencil buffer.
+WebGLRenderer ctor option `stencil` defaults to false in r187 source: pass `stencil: true` to get a stencil buffer.
 
 ---
 
@@ -176,7 +176,7 @@ const glow = new THREE.MeshBasicMaterial({
 
 Per-channel packing: glTF ORM texture = AO in R, roughness in G, metalness in B, so assign the same texture to `aoMap`, `roughnessMap`, `metalnessMap`.
 
-Environment: `scene.environment = envTex` supplies IBL to all Standard/Physical materials lacking `envMap`. `material.envMap` wins. `envMapIntensity` applies only to material envMap on r186-style materials; for `scene.environment` use `scene.environmentIntensity` and `scene.environmentRotation`.
+Environment: `scene.environment = envTex` supplies IBL to all Standard/Physical materials lacking `envMap`. `material.envMap` wins. `envMapIntensity` applies only to material envMap on r187-style materials; for `scene.environment` use `scene.environmentIntensity` and `scene.environmentRotation`.
 
 ```js
 const mat = new THREE.MeshStandardMaterial({
@@ -205,7 +205,8 @@ Defaults in parentheses. All `*Map`s except color ones are NoColorSpace.
 | Clearcoat | `clearcoat`(0), `clearcoatRoughness`(0), `clearcoatMap` (R), `clearcoatRoughnessMap` (G), `clearcoatNormalMap`, `clearcoatNormalScale`(1,1) |
 | Sheen (fabric) | `sheen`(0), `sheenColor`(black), `sheenRoughness`(1), `sheenColorMap` (sRGB), `sheenRoughnessMap` (A) |
 | Transmission (glass) | `transmission`(0), `transmissionMap` (R), `thickness`(0, mesh-local units), `thicknessMap` (G), `attenuationColor`(white), `attenuationDistance`(Infinity, world units, >0), `ior`(1.5, range 1..2.333), `dispersion`(0, needs transmission) |
-| Iridescence | `iridescence`(0), `iridescenceIOR`(1.3), `iridescenceMap` (R), `iridescenceThicknessRange`([100,400]), `iridescenceThicknessMap` (G) |
+| Iridescence | `iridescence`(0), `iridescenceIOR`(1.3), `iridescenceMap` (R), `iridescenceThicknessMinimum`(100), `iridescenceThicknessMaximum`(400) (r187; replaces deprecated `iridescenceThicknessRange`), `iridescenceThicknessMap` (G) |
+| Diffuse roughness (r187) | `diffuseRoughness`(0 = Lambert; >0 = EON energy-preserving rough diffuse), `diffuseRoughnessMap` (R, NoColorSpace) |
 | Anisotropy | `anisotropy`(0..1), `anisotropyRotation`(radians), `anisotropyMap` (RG direction, B strength) |
 | Specular (non-metal F0) | `specularIntensity`(1), `specularColor`(white), `specularIntensityMap` (A), `specularColorMap` (sRGB), `reflectivity`(0.5 == ior 1.5, linked to `ior`) |
 | Retroreflection (new) | `retroreflectivity`(0..1) |
@@ -275,7 +276,7 @@ line.computeLineDistances();           // required for dashes
 | `normalMap, roughnessMap, metalnessMap, aoMap, bumpMap, displacementMap, alphaMap, transmissionMap, thicknessMap, clearcoat*Map, gradientMap, anisotropyMap` | `THREE.NoColorSpace` (default) |
 | HDR/EXR env, lightMap, float data | `THREE.LinearSRGBColorSpace` (HDRLoader/EXRLoader set it) |
 
-- `Texture.colorSpace` defaults to `NoColorSpace`: a color map loaded without setting `SRGBColorSpace` renders too dark/contrasty. `TextureLoader` does NOT set it for you. GLTFLoader sets it per slot.
+- `Texture.colorSpace` defaults to `NoColorSpace`: a color map loaded without setting `SRGBColorSpace` renders washed out and too bright: its sRGB values are treated as linear, then sRGB-encoded again on output. `TextureLoader` does NOT set it for you. GLTFLoader sets it per slot.
 - Working space is linear (`LinearSRGBColorSpace`); `WebGLRenderer.outputColorSpace` defaults to `SRGBColorSpace`. `THREE.ColorManagement.enabled = true` by default: hex / CSS strings are converted from sRGB to linear automatically on set; `color.getHex()` converts back.
 - Material colors, light colors, vertex color attributes are linear working space. Use `color.setRGB(r,g,b)` for raw linear, `.setHex(0x808080, LinearSRGBColorSpace)` to override.
 - Post-processing: output conversion happens in `OutputPass`; missing it = dark, double = washed out.
@@ -325,7 +326,7 @@ aoMap.channel = 1;             // sample from geometry 'uv1'
 geometry.setAttribute('uv1', geometry.attributes.uv.clone());
 ```
 
-Gotcha: shared texture with different repeat per material -> `tex.clone()` (sets `needsUpdate` for you in r186; `source` is shared so GPU upload is not duplicated), or give each its own.
+Gotcha: shared texture with different repeat per material -> `tex.clone()` (sets `needsUpdate` for you in r187; `source` is shared so GPU upload is not duplicated), or give each its own.
 
 Animate scrolling: `tex.offset.x += dt * speed;` with `RepeatWrapping`.
 
@@ -470,7 +471,7 @@ m.positionNode = positionLocal.add(vec3(0, sin(time).mul(0.1), 0));
 | `ShadowMaterial` | `ShadowNodeMaterial` |
 | `ShaderMaterial` | none; use `NodeMaterial` with `fragmentNode`/`vertexNode`/`outputNode` |
 | (none) | `VolumeNodeMaterial` (raymarched volumes: `steps`, `scatteringNode`, `offsetNode`) |
-| (none, addon) | `WoodNodeMaterial` (`three/addons/materials/WoodNodeMaterial.js`; `fromPreset('walnut','gloss')`; genera teak, walnut, white_oak, pine, poplar, maple, red_oak, cherry, cedar, mahogany; finishes raw, matte, semigloss, gloss). In r186 source it extends `MeshPhysicalMaterial` and uses TSL internally (API page lists only an empty constructor). |
+| (none, addon) | `WoodNodeMaterial` (`three/addons/materials/WoodNodeMaterial.js`; `fromPreset('walnut','gloss')`; genera teak, walnut, white_oak, pine, poplar, maple, red_oak, cherry, cedar, mahogany; finishes raw, matte, semigloss, gloss). In r187 source it extends `MeshPhysicalMaterial` and uses TSL internally (API page lists only an empty constructor). |
 
 ### Node slots (verified on `NodeMaterial.md`)
 

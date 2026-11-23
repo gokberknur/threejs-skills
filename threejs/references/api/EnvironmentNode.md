@@ -4,7 +4,7 @@ EventDispatcher → Node → LightingNode →
 
 # EnvironmentNode
 
-Represents a physical model for Image-based lighting (IBL). The environment is defined via environment maps in the equirectangular, cube map or cubeUV (PMREM) format. `EnvironmentNode` is intended for PBR materials like MeshStandardNodeMaterial.
+Represents a physical model for Image-based lighting (IBL). The environment is defined by an equirectangular or cube texture. `EnvironmentNode` is intended for PBR materials like MeshStandardNodeMaterial.
 
 ## Constructor
 

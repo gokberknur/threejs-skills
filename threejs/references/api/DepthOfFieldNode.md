@@ -1,6 +1,6 @@
 DepthOfFieldNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # DepthOfFieldNode
 
@@ -62,7 +62,7 @@ The texture node that represents the input of the effect.
 
 The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node updates its internal uniforms once per frame in `updateBefore()`.
 
-Default is `'frame'`.   **Overrides:** TempNode#updateBeforeType
+Default is `'frame'`.   **Overrides:** Node#updateBeforeType
 
 ### .viewZNode : Node.<float>
 
@@ -72,7 +72,7 @@ Represents the viewZ depth values of the scene.
 
 ### .dispose()
 
-Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** TempNode#dispose
+Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** Node#dispose
 
 ### .getTextureNode() : PassTextureNode
 
@@ -95,7 +95,7 @@ This method is used to setup the effect's TSL code.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#setup
+The current node builder.   | **Overrides:** Node#setup
 
 ### .updateBefore( frame : NodeFrame )
 
@@ -103,7 +103,7 @@ This method is used to update the effect's uniforms once per frame.
 
  | **frame**  |
 
-The current node frame.   | **Overrides:** TempNode#updateBefore
+The current node frame.   | **Overrides:** Node#updateBefore
 
 ## Source
 

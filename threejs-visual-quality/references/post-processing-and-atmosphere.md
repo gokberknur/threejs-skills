@@ -1,4 +1,4 @@
-# Post-processing and atmosphere (three.js r186)
+# Post-processing and atmosphere (three.js r187)
 
 ## When to read this
 Building the effect stack (bloom, AO, SSR/SSGI, DoF, motion blur, god rays, grain/vignette/CA, LUT, outline) on WebGLRenderer (EffectComposer / `renderer.setEffects`) or WebGPURenderer (`RenderPipeline` + TSL nodes), and the atmosphere layer (fog, sky, water, reflections, refraction, particles, volumes, clouds). Read `color-and-tone-mapping.md` first: pass ordering relative to tone mapping is the top source of bugs.
@@ -38,7 +38,7 @@ renderer.setAnimationLoop(() => composer.render());       // composer.render(del
 - MSAA: pass a `WebGLRenderTarget` with `samples: 4, type: HalfFloatType` to the composer constructor, or use SSAA/TAA/FXAA.
 - Masking: `MaskPass`/`ClearMaskPass` (example `webgl_postprocessing_masking`); `renderPass.clearAlpha = 0` for transparent canvases.
 
-### WebGL built-in chain (r186): `setEffects`
+### WebGL built-in chain (new in r186): `setEffects`
 ```js
 const renderer = new THREE.WebGLRenderer({ antialias: true, outputBufferType: THREE.HalfFloatType }); // HalfFloat/Float required
 renderer.toneMapping = THREE.AgXToneMapping;
@@ -95,7 +95,7 @@ composer.addPass(bloom);   // after RenderPass (and after AO/DoF), before Output
 ```
 Recommended: threshold 0.85-1.0 (linear luminance; > 1 = only HDR emissives), strength 0.2-0.8 (subtle) up to 1.5 (neon), radius 0.3-0.6. Lower `toneMappingExposure` ~ bloom looks stronger: tune together.
 Selective bloom (WebGL), two options:
-1. Emissive-driven: make glowing materials `emissive` with `emissiveIntensity` 3-10 and `threshold ~1`; nothing else exceeds 1. Cheapest.
+1. Emissive-driven (approximate): make glowing materials `emissive` with `emissiveIntensity` 3-10 and `threshold ~1`. Cheapest, but not truly selective: in an HDR scene bright speculars, the sun disc or a hot sky also exceed 1 and bloom. Fine for "neon looks glowy"; when the user asks for bloom ONLY on specific objects, use option 2.
 2. Layers (`webgl_postprocessing_unreal_bloom_selective`): `bloomLayer = new THREE.Layers(); bloomLayer.set(1)`; render a `bloomComposer` (`renderToScreen=false`, HalfFloat target) with non-bloom meshes swapped to a black material (`scene.traverse(darkenNonBloomed)`), then `finalComposer` mixes `bloomComposer.renderTarget2.texture` via a `ShaderPass` (additive) before `OutputPass`. Two scene renders.
 WebGPU (`bloom(node, strength = 1, radius = 0, threshold = 0)`; uniforms `.strength/.radius/.threshold` are nodes: set `.value`):
 ```js

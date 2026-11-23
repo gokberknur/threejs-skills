@@ -1,4 +1,4 @@
-# Draw Calls and Geometry (three.js r186)
+# Draw Calls and Geometry (three.js r187)
 
 ## When to read this
 
@@ -140,7 +140,7 @@ Used in `webgpu_performance.html`, `webgpu_instance_mesh.html`. It is a dev tool
 
 | | InstancedMesh | BatchedMesh |
 |---|---|---|
-| Geometry | exactly one | many (same attribute set), added with `addGeometry` |
+| Geometry | exactly one | many (the first one sets the attribute layout; later ones must provide it, extras ignored), added with `addGeometry` |
 | Per-instance matrix | `instanceMatrix` attribute (`setMatrixAt`, then `instanceMatrix.needsUpdate`) | float `DataTexture` (`setMatrixAt` flags the texture itself) |
 | Per-instance color | `instanceColor` (`setColorAt`) | colors `DataTexture` (`setColorAt`, `Vector4` for alpha) |
 | Per-instance visibility | none (shrink to zero scale, or lower `count`) | `setVisibleAt` |
@@ -323,15 +323,15 @@ Instance management:
 
 Culling and ordering:
 
-- `perObjectFrustumCulled` (default `true`): per-instance CPU frustum test every frame in `onBeforeRender`.
-- `sortObjects` (default `true`): opaque sorted front-to-back, transparent back-to-front, per instance on CPU.
+- `perObjectFrustumCulled` (default `true`): per-instance CPU frustum test every frame in `onBeforeRender`. Keep it on when the camera sees only part of the batch (a city at street level: most buildings are culled, so the GPU draws less). Turn it off when nearly every instance is always in view (overview camera, small arena) or the CPU loop costs more than the culled geometry saves (100k+ tiny instances).
+- `sortObjects` (default `true`): opaque sorted front-to-back, transparent back-to-front, per instance on CPU. For an opaque batch, front-to-back only buys early-z rejection; turn it off when the material is opaque and overdraw is low (buildings rarely stack in view), keep it on for transparent instances, where wrong order is visible.
 - `setCustomSort(fn)` / `customSort`: `fn(list, camera)` over items with a `z` field; `addons/utils/SortUtils.js` exports `radixSort` (expects unsigned 32-bit integer keys) as a ready-made fast sort.
 - Cost model: with both flags `false` and no visibility changes, `onBeforeRender` returns early (source: `if (!this._visibilityChanged && !this.perObjectFrustumCulled && !this.sortObjects) return;`). Otherwise there is an O(instances) loop per frame, per camera, and again for each shadow pass (`onBeforeShadow`). For 100k+ instances turn off what you do not need.
 - Raycasting is supported (`BatchedMesh.raycast`).
 
 ### 5.2 Constraints
 
-- All geometries must share the same attribute set: same names, `itemSize`, `normalized`, and all indexed or all non-indexed (`_validateGeometry` throws otherwise). Normalize attributes up front (add missing `uv`, or delete extras).
+- The first geometry added defines the batch layout. Every later geometry must provide each of those attributes with the same `itemSize` and `normalized`, and match its index usage (all indexed or all non-indexed); `_validateGeometry` throws otherwise. Extra attributes on later geometries are ignored, not an error. So add the geometry with the fewest attributes first, or add missing ones (e.g. `uv`) to the rest; deleting extras is only a memory saving.
 - One material for the whole batch. Per-instance variation: color, plus whatever you derive from the instance id in a custom node/shader.
 - Needs float vertex textures (WebGL2 always has them) and multi-draw. In WebGLRenderer it uses the multi-draw path (`renderer.renderMultiDraw`); in WebGPURenderer it is handled in `RenderObject`. The first `setColorAt` creates the colors texture, and calling it after the first render triggers a program change like `InstancedMesh.instanceColor`: set colors before first render.
 - No morph targets or skinning in the public API.
@@ -360,7 +360,7 @@ import { SceneOptimizer } from 'three/addons/utils/SceneOptimizer.js';
 
 const optimizer = new SceneOptimizer(scene, { debug: false });
 optimizer.toBatchedMesh();        // replaces compatible meshes with BatchedMesh instances
-// optimizer.toInstancingMesh();  // abstract, NOT implemented in r186
+// optimizer.toInstancingMesh();  // abstract, NOT implemented in r187
 ```
 
 How it works (read from source):
@@ -509,7 +509,7 @@ Coarse broad-phase structures (when you do your own culling/collision):
 Vertex/triangle count matters for vertex shader cost, skinning/morphing cost, shadow passes (casters are drawn again per shadow light) and memory.
 
 - Build-time simplification: glTF tooling (gltf-transform / gltfpack with meshopt simplification) is the production route; not part of three.js.
-- `SimplifyModifier` (`three/addons/modifiers/SimplifyModifier.js`): meshoptimizer-based; `modify(geometry, count)` is async in r186 and returns a new geometry; `count` is the approximate number of vertices to REMOVE (not to keep).
+- `SimplifyModifier` (`three/addons/modifiers/SimplifyModifier.js`): meshoptimizer-based; `modify(geometry, count)` is async in r187 and returns a new geometry; `count` is the approximate number of vertices to REMOVE (not to keep).
   ```js
   import { SimplifyModifier } from 'three/addons/modifiers/SimplifyModifier.js';
   const modifier = new SimplifyModifier();
@@ -603,7 +603,7 @@ WebGPURenderer:
 await renderer.init();
 await renderer.compileAsync(scene, camera, null, (progress) => {});  // 4th arg: onProgress
 await renderer.compileComputeAsync(computeNode);                      // pipelines for compute
-// Renderer.compile() is an alias of compileAsync in r186
+// Renderer.compile() is an alias of compileAsync in r187
 ```
 
 Notes:
@@ -637,7 +637,7 @@ API pages (relative to the repo root of the threejs skill):
 - `../threejs/references/api/module-BufferGeometryUtils.md`, `module-GeometryCompressionUtils.md`, `SimplifyModifier.md`, `module-SortUtils.md`, `WorkerPool.md`, `BundleGroup.md`
 - `../threejs/references/api/WebGLRenderer.md` (`info`, `sortObjects`, `compile`, `compileAsync`, `setOpaqueSort`), `Renderer.md` (WebGPU: `compileAsync`, `compileComputeAsync`, `isOccluded`), `Info.md`, `InspectorBase.md`, `Material.md` (`forceSinglePass`, `needsUpdate`)
 
-Examples (three.js r186 `examples/`): `webgl_performance.html`, `webgl_instancing_performance.html`, `webgl_instancing_dynamic.html`, `webgl_instancing_raycast.html`, `webgl_instancing_morph.html`, `webgl_mesh_batch.html`, `webgpu_mesh_batch.html`, `webgl_batch_lod_bvh.html`, `webgpu_instance_mesh.html`, `webgpu_performance.html`, `webgpu_performance_renderbundle.html`, `webgl_lod.html`, `webgl_loader_gltf_progressive_lod.html`, `webgl_buffergeometry_instancing.html`.
+Examples (three.js r187 `examples/`): `webgl_performance.html`, `webgl_instancing_performance.html`, `webgl_instancing_dynamic.html`, `webgl_instancing_raycast.html`, `webgl_instancing_morph.html`, `webgl_mesh_batch.html`, `webgpu_mesh_batch.html`, `webgl_batch_lod_bvh.html`, `webgpu_instance_mesh.html`, `webgpu_performance.html`, `webgpu_performance_renderbundle.html`, `webgl_lod.html`, `webgl_loader_gltf_progressive_lod.html`, `webgl_buffergeometry_instancing.html`.
 
 Official manual: https://threejs.org/manual/en/optimize-lots-of-objects, https://threejs.org/manual/en/optimize-lots-of-objects-animated, https://threejs.org/manual/en/how-to-update-things, https://threejs.org/manual/en/how-to-dispose-of-objects
 

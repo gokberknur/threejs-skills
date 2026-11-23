@@ -1,6 +1,6 @@
 JoinNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # JoinNode
 
@@ -35,7 +35,7 @@ This method is overwritten since the node type must be inferred from the joined 
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generateNodeType   **Returns:** The node type.
+The current node builder.   | **Overrides:** Node#generateNodeType   **Returns:** The node type.
 
 ## Source
 

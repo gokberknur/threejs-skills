@@ -1,6 +1,6 @@
 SSGINode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # SSGINode
 
@@ -96,6 +96,12 @@ Effective sampling radius in world space. AO and GI can only have influence with
 
 Default is `12`.
 
+### .resolutionScale : number
+
+The resolution scale. Values towards `0.5` noticeably increase noise, so it's recommended to lower the renderer's pixel ratio first. Use this property only for fine-tuning performance.
+
+Default is `1`.
+
 ### .sliceCount : UniformNode.<uint>
 
 Number of per-pixel hemisphere slices. This has a big performance cost and should be kept as low as possible. Should be in the range `[1, 4]`.
@@ -118,7 +124,7 @@ Default is `1`.
 
 The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node renders its effect once per frame in `updateBefore()`.
 
-Default is `'frame'`.   **Overrides:** TempNode#updateBeforeType
+Default is `'frame'`.   **Overrides:** Node#updateBeforeType
 
 ### .useLinearThickness : UniformNode.<bool>
 
@@ -144,7 +150,7 @@ Default is `true`.
 
 ### .dispose()
 
-Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** TempNode#dispose
+Frees internal resources. This method should be called when the effect is no longer required.   **Overrides:** Node#dispose
 
 ### .getAONode() : PassTextureNode
 
@@ -171,7 +177,7 @@ This method is used to setup the effect's TSL code.
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#setup
+The current node builder.   | **Overrides:** Node#setup
 
 ### .updateBefore( frame : NodeFrame )
 
@@ -179,7 +185,7 @@ This method is used to render the effect once per frame.
 
  | **frame**  |
 
-The current node frame.   | **Overrides:** TempNode#updateBefore
+The current node frame.   | **Overrides:** Node#updateBefore
 
 ## Source
 

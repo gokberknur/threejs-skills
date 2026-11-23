@@ -22,7 +22,7 @@ Whether the node builder's 3D object is animated or not.
 
 ### .hasNode : boolean
 
-Whether the material uses node objects or not.
+Whether the builder's context uses node objects or not.
 
 ### .refreshUniforms : Array.<string>
 
@@ -42,11 +42,11 @@ A node material can be used by more than one render object so the monitor must m
 
 ### .containsNode( builder : NodeBuilder ) : boolean
 
-Returns `true` if the node builder's material uses node properties.
+Returns `true` if the node builder's context (e.g. material) uses node properties.
 
  | **builder**  |
 
-The current node builder.   | **Returns:** Whether the node builder's material uses node properties or not.
+The current node builder.   | **Returns:** Whether the node builder's context uses node properties or not.
 
 ### .equals( renderObject : RenderObject, lightsData : Array.<Light>, renderId : number ) : boolean
 
@@ -61,6 +61,17 @@ The current material lights.  |
  | **renderId**  |
 
 The current render ID.   | **Returns:** Whether the given render object is equal to its cached state or not.
+
+### .equalsTextureTransform( transformData : Object, texture : Texture ) : boolean
+
+Returns `true` if the uv transformation of the given texture has not changed.
+
+ | **transformData**  |
+
+The monitored uv transformation.  |
+ | **texture**  |
+
+The texture.   | **Returns:** Whether the uv transformation has not changed or not.
 
 ### .firstInitialization( renderObject : RenderObject ) : boolean
 
@@ -113,6 +124,25 @@ Returns a material data structure holding the material property values for monit
 
 The material.   | **Returns:** An object for monitoring material properties.
 
+### .getOutputTarget( renderer : Renderer ) : RenderTarget  | CanvasTarget
+
+Returns the current output target of the given renderer. That is the active render target or, if none is set, the output render target or the canvas target.
+
+ | **renderer**  |
+
+The renderer.   | **Returns:** The output target.
+
+### .getOutputTargetData( outputTarget : RenderTarget  | CanvasTarget, renderContext : RenderContext ) : Object
+
+Returns an output target data structure holding the size of the given output target for monitoring. Its version is incremented whenever a size change is observed.
+
+ | **outputTarget**  |
+
+The output target.  |
+ | **renderContext**  |
+
+The render context.   | **Returns:** An object for monitoring the output target size.
+
 ### .getRenderObjectData( renderObject : RenderObject ) : Object
 
 Returns monitoring data for the given render object.
@@ -128,6 +158,25 @@ Returns a texture data structure holding the texture state for monitoring.
  | **texture**  |
 
 The texture.   | **Returns:** An object for monitoring the texture.
+
+### .getTextureTransformData( texture : Texture ) : Object
+
+Returns a data structure holding the uv transformation of the given texture for monitoring.
+
+ | **texture**  |
+
+The texture.   | **Returns:** An object for monitoring the uv transformation.
+
+### .hasDisposedAttributes( renderObject : RenderObject, renderObjectData : Object ) : boolean
+
+Returns `true` if a vertex buffer or the index of the given render object has been disposed since the last check.
+
+ | **renderObject**  |
+
+The render object.  |
+ | **renderObjectData**  |
+
+The cached render object data.   | **Returns:** Whether attributes of the render object have been disposed or not.
 
 ### .hasDynamicInstancing( object : Object3D ) : boolean
 

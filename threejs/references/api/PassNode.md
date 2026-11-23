@@ -1,6 +1,6 @@
 PassNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # PassNode
 
@@ -72,7 +72,7 @@ An optional global context for the pass.
 
 This flag is used for global cache.
 
-Default is `true`.   **Overrides:** TempNode#global
+Default is `true`.   **Overrides:** Node#global
 
 ### .isPassNode : boolean (readonly)
 
@@ -110,13 +110,15 @@ The scope of the pass. The scope determines whether the node outputs color or de
 
 Whether the pass is transparent.
 
-Default is `false`.
+Default is `true`.
 
 ### .updateBeforeType : string
 
 The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node renders the scene once per frame in its PassNode#updateBefore method.
 
-Default is `'frame'`.   **Overrides:** TempNode#updateBeforeType
+Default is `'frame'`.   **Overrides:** Node#updateBeforeType
+
+## Static Properties
 
 ### .COLOR : 'color'
 
@@ -137,7 +139,7 @@ The renderer.   | See:
 
 ### .dispose()
 
-Frees internal resources. Should be called when the node is no longer in use.   **Overrides:** TempNode#dispose
+Frees internal resources. Should be called when the node is no longer in use.   **Overrides:** Node#dispose
 
 ### .getLayers() : Layers
 

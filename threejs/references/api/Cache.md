@@ -4,7 +4,7 @@ Cache - Three.js Docs
 
 A simple caching system, used internally by FileLoader. To enable caching across all loaders that use FileLoader, add `THREE.Cache.enabled = true.` once in your app.
 
-## Properties
+## Static Properties
 
 ### .enabled : boolean
 

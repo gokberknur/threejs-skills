@@ -12,15 +12,15 @@ You can decouple an individual material from global scene lights by assigning a 
 
 <code name="tslLightingSystem" default="true">TSL Lighting System</code>
 
-::: api lights( lights: Array<Light> = [] ) : LightsNode - Creates a lighting node that manages a specific set of lights and their shadow evaluations.
-- **lights**: `Array<Light>` - (Optional) Array of Three.js light instances to include in the lighting group.
+::: api lights( lights? ) : LightsNode - Creates a lighting node that manages a specific set of lights and their shadow evaluations.
+- **lights**: `Array<Light>` - (Optional) Array of Three.js light instances to include in the lighting group. Defaults to `[]`.
 :::
 
 ::: api material.lightsNode : LightsNode - Property on NodeMaterial to override or isolate the lights illuminating the material. :::
 
-::: api lightingContext( lightsNode: LightsNode, lightingModel: LightingModel = null ) : LightingContextNode - Wraps lighting execution within a custom lights node and optional lighting model.
+::: api lightingContext( lightsNode, lightingModel? ) : LightingContextNode - Wraps lighting execution within a custom lights node and optional lighting model.
 - **lightsNode**: `LightsNode` - The target lights node to evaluate.
-- **lightingModel**: `LightingModel` - (Optional) Custom lighting model (e.g. Lambert, Phong, Standard, Physical, Toon).
+- **lightingModel**: `LightingModel` - (Optional) Custom lighting model (e.g. Lambert, Phong, Standard, Physical, Toon). Defaults to `null`.
 :::
 
 ```tsl tslLightingSystem
@@ -60,6 +60,9 @@ export function update() {
 | `lights( lightsArray )` | Function | Creates a `LightsNode` containing a designated array of lights. |
 | `material.lightsNode` | Property | Per-material override for scene light sources. |
 | `lightingContext( lightsNode, model )` | Function | Wraps lighting computation within a custom lights node and lighting model. |
+| `CustomLight.registerNode( CustomLightNode )` | Static Method | Registers the light node class that `WebGPURenderer` uses to shade a custom light type. |
+
+> AI: `renderer.library.addLight()` and `getLightNodeClass()` are deprecated since r187. Register custom light nodes on the light class instead, e.g. `SunLight.registerNode( SunLightNode )`, where the node class extends `AnalyticLightNode`.
 
 #### Related
 - [Light Functions](#light-functions)

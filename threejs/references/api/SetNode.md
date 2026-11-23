@@ -1,6 +1,6 @@
 SetNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # SetNode
 
@@ -51,7 +51,7 @@ This method is overwritten since the node type is inferred from SetNode#sourceNo
 
  | **builder**  |
 
-The current node builder.   | **Overrides:** TempNode#generateNodeType   **Returns:** The node type.
+The current node builder.   | **Overrides:** Node#generateNodeType   **Returns:** The node type.
 
 ## Source
 

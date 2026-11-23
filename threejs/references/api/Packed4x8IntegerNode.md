@@ -1,6 +1,6 @@
 Packed4x8IntegerNode - Three.js Docs
 
-EventDispatcher → Node → TempNode →
+EventDispatcher → Node →
 
 # Packed4x8IntegerNode
 

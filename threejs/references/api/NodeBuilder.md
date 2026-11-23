@@ -110,6 +110,12 @@ Default is `null`.
 
 Current code flow. All code generated in this stack will be stored in `.flow`.
 
+### .flowBlock : Object
+
+The block of generated code the builder is in, e.g. a loop body or a conditional branch. Every generated block is a new object linked to its parent, `null` outside of any block.
+
+Default is `null`.
+
 ### .flowCode : Object.<string, string>
 
 Nodes code from `.flowNodes`.
@@ -171,6 +177,12 @@ A list of all nodes the builder is processing for this 3D object.
 ### .object : Object3D
 
 The 3D object.
+
+### .objectSpecific : boolean
+
+Whether the build embeds data of the 3D object it is built for, like its buffers, instead of binding the data of the rendered object. Such builds can't be shared with other objects, so the renderer doesn't cache them.
+
+Default is `false`.
 
 ### .observer : NodeMaterialObserver
 
@@ -309,17 +321,6 @@ Adds a code to the current code flow.
 
 Shader code.   | **Returns:** A reference to this node builder.
 
-### .addFlowCodeHierarchy( node : Node, nodeBlock : Node )
-
-Adds a code flow based on the code-block hierarchy. This is used so that code-blocks like If,Else create their variables locally if the Node is only used inside one of these conditionals in the current shader stage.
-
- | **node**  |
-
-The node to add.  |
- | **nodeBlock**  |
-
-Node-based code-block. Usually 'ConditionalNode'.  |
-
 ### .addFlowTab() : NodeBuilder
 
 Add tab in the code that will be generated so that other snippets respect the current tabulation. Typically used in codes with If,Else.   **Returns:** A reference to this node builder.
@@ -341,23 +342,9 @@ Add a inline-code to the current flow.
 The code to add.  |
  | **node**  |
 
-Optional Node, can help the system understand if the Node is part of a code-block.
+The node that generated the code.
 
 Default is `null`.   | **Returns:** A reference to this node builder.
-
-### .addLineFlowCodeBlock( node : Node, code : string, nodeBlock : Node )
-
-Add a inline-code to the current flow code-block.
-
- | **node**  |
-
-The node to add.  |
- | **code**  |
-
-The code to add.  |
- | **nodeBlock**  |
-
-Current ConditionalNode  |
 
 ### .addNode( node : Node )
 
@@ -391,9 +378,15 @@ The sub-build layer to add.  |
 
 Central build method which controls the build for the given object.   **Returns:** A reference to this node builder.
 
-### .buildAsync() : Promise.<NodeBuilder> (async)
+### .buildAsync( yieldFn : function ) : Promise.<NodeBuilder> (async)
 
-Async version of build() that yields to main thread between shader stages. Use this in compileAsync() to prevent blocking the main thread.   **Returns:** A promise that resolves to this node builder.
+Async version of build() that yields to main thread between shader stages. Use this in compileAsync() to prevent blocking the main thread.
+
+ | **yieldFn**  |
+
+The function used to yield to the main thread.
+
+Default is `yieldToMain`.   | **Returns:** A promise that resolves to this node builder.
 
 ### .buildCode() (abstract)
 
@@ -430,6 +423,10 @@ The type.  |
 
 The new component type.   | **Returns:** The new type.
 
+### .createBlock() : Object
+
+Creates a block that repeats its code, e.g. a loop body, used in the current context. The block keeps its parent block, the context and its position in the active stack.   **Returns:** The code block.
+
 ### .createCubeRenderTarget( size : number, options : Object ) : CubeRenderTarget
 
 Factory method for creating an instance of CubeRenderTarget with the given dimensions and options.
@@ -454,6 +451,26 @@ The height of the render target.  |
  | **options**  |
 
 The options of the render target.   | **Returns:** The render target.
+
+### .declareBeforeBlock( node : Node ) : StackNode  | undefined
+
+Declares a node outside of the stacks of this build, e.g. created outside of a function, before the outermost block that would repeat it, e.g. a loop body. Blocks set up in another build or with context overrides of the current one are kept, since the node could have another value in them.
+
+ | **node**  |
+
+The node to declare.   | **Returns:** The stack where the node was declared.
+
+### .enableDualSourceBlending() (abstract)
+
+Enables dual source blending.
+
+### .enableShaderF16() (abstract)
+
+Enables 16 bit floats.
+
+### .enableSubGroups() (abstract)
+
+Enables subgroups.
 
 ### .flowBuildStage( node : Node, buildStage : string, output : Node  | string ) : Node  | string
 
@@ -592,6 +609,38 @@ The value.
 
 Default is `null`.   | **Returns:** The generated value as a shader string.
 
+### .generateConstStatement( type : string, name : string, count : number ) : string
+
+Returns a single const variable statement as a shader string for the given variable type and name.
+
+ | **type**  |
+
+The variable's type.  |
+ | **name**  |
+
+The variable's name.  |
+ | **count**  |
+
+The array length.
+
+Default is `null`.   | **Returns:** The shader string.
+
+### .generateLetStatement( type : string, name : string, count : number ) : string
+
+Returns a runtime read-only variable statement as a shader string. Backends without a let declaration use a regular variable declaration.
+
+ | **type**  |
+
+The variable's type.  |
+ | **name**  |
+
+The variable's name.  |
+ | **count**  |
+
+The array length.
+
+Default is `null`.   | **Returns:** The shader string.
+
 ### .generateStruct( type : string, membersLayout : Array.<Object>, values : Array.<Node> ) : string
 
 Generates the struct shader string.
@@ -655,6 +704,22 @@ The texture property name.  |
  | **levelSnippet**  |
 
 Snippet defining the mip level.   | **Returns:** The generated shader string.
+
+### .generateVarStatement( type : string, name : string, count : number ) : string
+
+Returns a single variable statement as a shader string for the given variable type and name.
+
+ | **type**  |
+
+The variable's type.  |
+ | **name**  |
+
+The variable's name.  |
+ | **count**  |
+
+The array length.
+
+Default is `null`.   | **Returns:** The shader string.
 
 ### .getActiveStack() : StackNode
 
@@ -809,6 +874,14 @@ An optional cache.
 
 Default is `null`.   | **Returns:** The node data.
 
+### .getDeclarationName( node : Object ) : string
+
+Returns the identifier the given node declares in the shader. It is used by NodeBuilder#registerDeclaration to detect name collisions.
+
+ | **node**  |
+
+The node.   | **Returns:** The declaration name.
+
 ### .getDrawIndex() : string (abstract)
 
 Returns the drawIndex input variable as a native shader string. Only relevant for WebGL and its `WEBGL_multi_draw` extension.   **Returns:** The drawIndex shader string.
@@ -863,6 +936,10 @@ Returns the integer type pendant for the given type.
  | **type**  |
 
 The type.   | **Returns:** The integer type.
+
+### .getInvocationSubgroupIndex() : string (abstract)
+
+Returns a builtin representing the index of an invocation within its subgroup.   **Returns:** The invocation subgroup index shader string.
 
 ### .getMethod( method : string ) : string (abstract)
 
@@ -931,6 +1008,14 @@ The index of the render target texture.
 
 Default is `0`.   | **Returns:** The type.
 
+### .getPromotedComponentType( …nodes : Node ) : string
+
+Returns the common component type of the input nodes. Explicit types are promoted first, then weak constants adopt that type, being truncated like other integer constants. Only weak constants out of the integer range promote it. Inputs consisting only of weak constants default to float.
+
+ | **nodes**  |
+
+The input nodes.   | **Returns:** The promoted component type.
+
 ### .getPropertyName( node : Node, shaderStage : 'vertex'  | 'fragment'  | 'compute'  | 'any' ) : string
 
 Returns for the given node and shader stage the property name for the shader.
@@ -949,14 +1034,6 @@ Returns the current shader stage.   **Returns:** The current shader stage.
 ### .getSharedContext() : Object
 
 Gets a context used in shader construction that can be shared across different materials. This is necessary since the renderer cache can reuse shaders generated in one material and use them in another.   **Returns:** The builder's current context without material.
-
-### .getSharedDataFromNode( node : Node ) : Object
-
-Returns shared data object for the given node.
-
- | **node**  |
-
-The node to get shared data from.   | **Returns:** The shared data.
 
 ### .getSignature() : string
 
@@ -1018,6 +1095,14 @@ Default is `''`.  |
 The node to get the sub-build from.
 
 Default is `null`.   | **Returns:** The sub-build property name.
+
+### .getSubgroupIndex() : string (abstract)
+
+Returns a builtin representing the index of the current invocation's subgroup within its workgroup.   **Returns:** The subgroup index shader string.
+
+### .getSubgroupSize() : string (abstract)
+
+Returns a builtin representing the size of a subgroup within the current shader.   **Returns:** The subgroup size shader string.
 
 ### .getTernary( condSnippet : string, ifSnippet : string, elseSnippet : string ) : string (abstract)
 
@@ -1127,7 +1212,7 @@ The array length.
 
 Default is `null`.   | **Returns:** The shader string.
 
-### .getVarFromNode( node : VarNode, name : string, type : string, shaderStage : 'vertex'  | 'fragment'  | 'compute'  | 'any', readOnly : boolean ) : NodeVar
+### .getVarFromNode( node : VarNode, name : string, type : string, shaderStage : 'vertex'  | 'fragment'  | 'compute'  | 'any', readOnly : boolean, local : boolean, property : string ) : NodeVar
 
 Returns an instance of NodeVar for the given variable node.
 
@@ -1153,7 +1238,17 @@ Default is `this.shaderStage`.  |
 
 Whether the variable is read-only or not.
 
-Default is `false`.   | **Returns:** The node variable.
+Default is `false`.  |
+ | **local**  |
+
+Whether the variable is declared locally in the flow instead of the variable section.
+
+Default is `false`.  |
+ | **property**  |
+
+The node data property that holds the variable. Allows a node to own more than one variable.
+
+Default is `'variable'`.   | **Returns:** The node variable.
 
 ### .getVars( shaderStage : 'vertex'  | 'fragment'  | 'compute'  | 'any', global : boolean ) : string
 
@@ -1211,6 +1306,23 @@ Returns the vector type for a given matrix type.
  | **type**  |
 
 The matrix type.   | **Returns:** The vector type.
+
+### .getVectorSelect( condSnippet : string, ifSnippet : string, elseSnippet : string, type : string ) : string
+
+Returns the native snippet for a per-component vector select. The default implementation uses NodeBuilder#getTernary; renderers can override this when their ternary operation does not accept vectors.
+
+ | **condSnippet**  |
+
+The per-component boolean (`bvecN`) condition.  |
+ | **ifSnippet**  |
+
+The vector expression selected where `condSnippet` is `true`.  |
+ | **elseSnippet**  |
+
+The vector expression selected where `condSnippet` is `false`.  |
+ | **type**  |
+
+The (vector) type of `ifSnippet`/`elseSnippet`.   | **Returns:** The resolved method name.
 
 ### .getVectorType( type : string ) : string
 
@@ -1327,6 +1439,14 @@ Returns whether the given name is a reserved keyword of the backend's shading la
  | **name**  |
 
 The name to test.   | **Returns:** Whether the name is a reserved keyword or not.
+
+### .isScalar( type : string ) : boolean
+
+Whether the given type is a scalar type or not.
+
+ | **type**  |
+
+The type to check.   | **Returns:** Whether the given type is a scalar type or not.
 
 ### .isVector( type : string ) : boolean
 

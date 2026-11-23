@@ -1,6 +1,6 @@
 ToonOutlinePassNode - Three.js Docs
 
-EventDispatcher → Node → TempNode → PassNode →
+EventDispatcher → Node → PassNode →
 
 # ToonOutlinePassNode
 
@@ -56,6 +56,12 @@ Default is `'Outline Pass'`.   **Overrides:** PassNode#name
 ### .thicknessNode : Node
 
 Defines the outline's thickness.
+
+## Methods
+
+### .dispose()
+
+Frees internal resources. Should be called when the node is no longer in use.   **Overrides:** PassNode#dispose
 
 ## Source
 

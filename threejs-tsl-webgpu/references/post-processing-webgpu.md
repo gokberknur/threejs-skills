@@ -1,4 +1,4 @@
-# Post-Processing with WebGPURenderer (three.js r186, node-based)
+# Post-Processing with WebGPURenderer (three.js r187, node-based)
 
 ## When to read this
 
@@ -26,7 +26,7 @@ Conventions: `import * as THREE from 'three/webgpu'`, core TSL from `'three/tsl'
 
 - Post-processing is a node graph. `pass(scene, camera)` renders the scene to an internal render target (HalfFloat by default); effect functions (`bloom`, `ao`, `fxaa`, ...) take nodes and return nodes; the final node is assigned to `renderPipeline.outputNode`, which is drawn with a fullscreen quad.
 - Effects are combined into as few GPU passes as possible; many effects (`dotScreen`, `rgbShift`, `film`, `lut3D`) are just inline shader code in the final quad. Heavier ones (`bloom`, `ao`, `ssr`, `dof`, `gaussianBlur`, `smaa`, `traa`) own internal render targets and render in `updateBefore` once per frame.
-- **Naming (r186):** `THREE.RenderPipeline` is the class. `THREE.PostProcessing` is **deprecated since r183** (wrapper, will be removed). The official TSL examples and some older docs/snippets (`PassNode.md` code example still says `postProcessing = new RenderPipeline(...)`) mix names. Always write `new THREE.RenderPipeline( renderer )`.
+- **Naming (r187):** `THREE.RenderPipeline` is the class. `THREE.PostProcessing` is **deprecated since r183** (wrapper, will be removed). The official TSL examples and some older docs/snippets (`PassNode.md` code example still says `postProcessing = new RenderPipeline(...)`) mix names. Always write `new THREE.RenderPipeline( renderer )`.
 - `WebGPURenderer` only (works with the WebGL2 fallback backend of `WebGPURenderer` too, except where noted: VXGI needs the WebGPU backend). Replaces `EffectComposer`.
 - There is also `THREE.DirectRenderPipeline` (section 2).
 
@@ -106,7 +106,7 @@ A PassNode is itself a node (its color output); `scenePass.rgb`, `.a`, `.mul()`,
 | `getPreviousTexture( name )`, `toggleTexture( name )` | | manual ping-pong |
 | `getMRT()` | `MRTNode` | |
 
-`getDepthNode()` appears in the TSL Guide `54-pass.md` but is **not in the PassNode API or source r186**; use `getTextureNode( 'depth' )`. Likewise there is no `getTextureDepthNode`.
+`getDepthNode()` appears in the TSL Guide `54-pass.md` but is **not in the PassNode API or source r187**; use `getTextureNode( 'depth' )`. Likewise there is no `getTextureDepthNode`.
 
 ### Configuration
 
@@ -344,6 +344,8 @@ renderPipeline.outputNode = traa( composite, depth, velocity, camera );
 
 `import { sss } from '.../SSSNode.js'; sss( depthNode, camera, directionalLight )`; props `maxDistance` (0.1), `quality` (0.5), `thickness`, `shadowIntensity`, `resolutionScale`, `useTemporalFiltering`. Contact shadows; complement shadow maps. Official pre-pass renders only `velocity` as output (`mrt({ output: velocity })`), then composites with scene pass and `traa`. Soften with box/gaussian/hash blur. Single main `DirectionalLight` only; max shadow length ~1 m (cost); only on-screen casters. `builtinShadowContext` is used in the example.
 
+- Background test (r187): use `isBackgroundDepth( depth )` instead of `depth.greaterThanEqual( 1.0 )`; with a reversed depth buffer the far plane is `0`, so the manual check silently fails.
+
 ### 6.6 Depth of field
 
 **`dof()` (physical bokeh, `DepthOfFieldNode.js`) L**
@@ -405,7 +407,7 @@ FXAA chain: `outputColorTransform = false; outputNode = fxaa( renderOutput( scen
 | Chromatic aberration | `chromaticAberration( input, strength = 1.0, center = null, scale = 1.1 )` (`ChromaticAberrationNode.js`) | radial lens fringing; do after `renderOutput` |
 | Sobel | `sobel( renderOutput( scenePass ) )` | edges on display-referred color |
 | Bayer dither | `bayerDither( color, steps = 32 )`, `bayer16( uv )` from `three/addons/tsl/math/Bayer.js` | |
-| Pixelation | `pixelationPass( scene, camera, pixelSize = 6, normalEdgeStrength = 0.3, depthEdgeStrength = 0.4 )` | replaces `pass()`; example uses an orthographic camera; `pixelSize` is a node (pass `uniform()` to animate) |
+| Pixelation | `pixelationPass( scene, camera, pixelSize = 6, normalEdgeStrength = 0.3, depthEdgeStrength = 0.4 )` | replaces `pass()`; example uses an orthographic camera; `pixelSize` is a plain number since r187 (nodes no longer accepted); set `pass.pixelSize = n` to change it at runtime |
 | After image | `afterImage( input, damp = 0.96 )` | trails; `damp` uniform; keeps its own history RT |
 | Transition | `transition( passA, passB, mixTextureNode, mixRatio, threshold, useTexture )` | two `pass()` of two scenes; `mixRatio` uniform 0..1 |
 | Radial blur | `radialBlur( tex, { center, weight=0.9, decay=0.95, count=32, exposure=5 } )` | god-ray style zoom |
@@ -657,12 +659,12 @@ Cost control: AO `resolutionScale 0.5`; SSR `quality 0.25`, `maxDistance` small,
 - `bloom()` returns glow only; add it. Bloom of whole beauty also blooms `scene.background`.
 - `lensflare( ... )()` is called once more in the example; copy the example's usage.
 - Cleanup: dispose effects (`node.dispose()`), `renderPipeline.dispose()`, and the pass (`scenePass.dispose()`) when tearing down; effect swapping leaks RTs otherwise.
-- Deprecated in r186: `PostProcessing` (use `RenderPipeline`), `renderAsync()`, `PassNode.setResolution/getResolution`, `GaussianBlurNode.resolution`, `GTAONode.distanceExponent/distanceFallOff`.
+- Still deprecated in r187 (checked in source): `PostProcessing` (use `RenderPipeline`), `renderAsync()`, `PassNode.setResolution/getResolution`, `GaussianBlurNode.resolution`, `GTAONode.distanceExponent/distanceFallOff`.
 - `getViewZNode`/`getLinearDepthNode` are built with perspective-depth formulas (source has a TODO for ortho); assume perspective cameras.
 
 ## 11. Doc gaps found
 
-- TSL Guide `54-pass.md` lists `pass.getDepthNode()` which does not exist in r186 PassNode.
+- TSL Guide `54-pass.md` lists `pass.getDepthNode()` which does not exist in r187 PassNode.
 - TSL Guide `56-post-processing.md` shows `sharpen` default 0.5 vs API/source 0.2; `smaa(node)` documented with an `options` param that the source does not have; `afterImage` damp shown default 0.96 (consistent), `film( node, intensity, uvNode )` OK.
 - `vxgi()` factory exists in source (`examples/jsm/lighting/vxgi/VXGINode.js`) but is absent from the VXGINode API page.
 - No example for `film`, `bleach`, `sepia`, `denoise` (non-temporal), `depthAwareBlur`, `bilateralBlur` standalone, `ImportanceSampledEnvironment`.

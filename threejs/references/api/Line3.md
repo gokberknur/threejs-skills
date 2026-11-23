@@ -50,7 +50,7 @@ Returns a vector at a certain position along the line segment.
 A value between `[0,1]` to represent a position along the line segment.  |
  | **target**  |
 
-The target vector that is used to store the method's result.   | **Returns:** The delta vector.
+The target vector that is used to store the method's result.   | **Returns:** The point along the line segment.
 
 ### .clone() : Line3
 

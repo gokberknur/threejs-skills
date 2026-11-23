@@ -97,17 +97,18 @@ Addons / Interactive | HTMLMesh (extends Mesh) | This class can be used to rende
 Addons / Interactive | InteractiveGroup (extends Group) | This class can be used to group 3D objects in an interactive group. The group itself can listen to Pointer, Mouse or XR controller events to detect selections of descendant 3D objects. If a 3D object is selected, the res
 Addons / Interactive | SelectionBox | This class can be used to select 3D objects in a scene with a selection box. It is recommended to visualize the selected area with the help of SelectionHelper.
 Addons / Interactive | SelectionHelper | A helper for SelectionBox.
-Addons / Lighting | ClusteredLighting (extends Lighting) | A custom lighting implementation based on Forward+ Clustered Shading that overwrites the default lighting system in WebGPURenderer. Suitable for 3D scenes with many point lights and real depth complexity — the view frust
+Addons / Lighting | ClusteredLighting (extends Lighting) | A custom lighting implementation based on Forward+ Clustered Shading that overwrites the default lighting system in WebGPURenderer. Suitable for 3D scenes with many point and spot lights and real depth complexity — the v
 Addons / Lighting | DynamicLighting (extends Lighting) | A custom lighting implementation that batches supported analytic lights into uniform arrays so light count changes do not recompile materials.
+Addons / Lighting | LightMapper | Bakes indirect diffuse irradiance into a light map. The irradiance is defined by a function that returns a TSL node for a world-space position and normal, so any global illumination technique can be baked, e.g. a LightPr
 Addons / Lighting | LightProbeGrid (extends Light) | A 3D grid of L2 Spherical Harmonic irradiance probes that provides position-dependent diffuse global illumination.
 Addons / Lighting | LightProbeGridWebGL | A 3D grid of L2 Spherical Harmonic irradiance probes that provides position-dependent diffuse global illumination.
-Addons / Lighting | VXGINode (extends TempNode) | Post processing node for voxel based global illumination. The scene is voxelized into a VXGIVolume and indirect diffuse light and ambient occlusion are gathered per pixel with approximate voxel cone tracing.
+Addons / Lighting | VXGINode (extends Node) | Post processing node for voxel based global illumination. The scene is voxelized into a VXGIVolume and indirect diffuse light and ambient occlusion are gathered per pixel with approximate voxel cone tracing.
 Addons / Lighting | VXGIVolume | Holds the voxel representation of a scene for VXGINode: an anisotropic opacity mip chain, a direct radiance volume and a radiance volume with cached bounces.
 Addons / Lights | LightProbeGenerator | Utility class for creating instances of LightProbe.
 Addons / Lights | RectAreaLightTexturesLib | Texture library for RectAreaLight. This class holds the LTC BRDF data in data textures for further use in the renderer.
 Addons / Lights | RectAreaLightUniformsLib | This class is only relevant when using RectAreaLight with WebGLRenderer.
-Addons / Lights | SunLight (extends Light) | A sun-like light that gets emitted in a specific direction, with rays that are all parallel, and casts cascaded shadow maps via SunLightShadow, suited for lighting large scenes.
-Addons / Lights | SunLightNode (extends AnalyticLightNode) | Module for representing sun lights as nodes. Register it with the renderer's node library to use SunLight with `WebGPURenderer`:
+Addons / Lights | SunLight (extends Light) | A sun-like light that gets emitted in a specific direction, with rays that are all parallel, and casts Cascaded Shadow Maps (CSM) via SunLightShadow, suited for lighting large scenes.
+Addons / Lights | SunLightNode (extends AnalyticLightNode) | Module for representing sun lights as nodes. Register it with SunLight to use the light with `WebGPURenderer`:
 Addons / Lights | SunLightShadow (extends LightShadow) | Represents the shadow configuration of SunLight, using two cascaded shadow maps (CSM).
 Addons / Lights | SunShadowNode (extends ShadowNode) | Represents the cascaded shadow map of a SunLight.
 Addons / Lines | Line2 (extends LineSegments2) | A polyline drawn between vertices.
@@ -135,6 +136,7 @@ Addons / Loaders | GaussianSplatPLYLoader (extends Loader) | A loader for Gaussi
 Addons / Loaders | HDRCubeTextureLoader (extends Loader) | A loader for loading HDR cube textures.
 Addons / Loaders | HDRLoader (extends DataTextureLoader) | A loader for the RGBE HDR texture format.
 Addons / Loaders | IESLoader (extends Loader) | A loader for the IES format.
+Addons / Loaders | JXLLoader (extends Loader) | Loads HDR JPEG XL images using the browser's native decoder. Produces half-float textures in linear sRGB. Requires float16 Canvas2D, the srgb-linear canvas color space and globalHDRHeadroom.
 Addons / Loaders | KMZLoader (extends Loader) | A loader for the KMZ format.
 Addons / Loaders | KSPLATLoader (extends Loader) | A loader for GaussianSplats3D `.ksplat` files.
 Addons / Loaders | KTX2Loader (extends Loader) | A loader for KTX 2.0 GPU Texture containers.
@@ -223,6 +225,8 @@ Addons / Objects | WaterMesh (extends Mesh) | A basic flat, reflective water eff
 Addons / Physics | AmmoPhysics | Can be used to include Ammo.js as a Physics engine into `three.js` apps. The API can be initialized via:
 Addons / Physics | JoltPhysics | Can be used to include Jolt as a Physics engine into `three.js` apps. The API can be initialized via:
 Addons / Physics | RapierPhysics | Can be used to include Rapier as a Physics engine into `three.js` apps. The API can be initialized via:
+Addons / Pipelines | MeshletDrawingPipeline (extends StandardDrawingPipeline) | A GPU-driven drawing pipeline that renders compatible meshes as meshlets. Geometries are processed once into clusters (meshlets) of 64 triangles with a chain of simplified levels of detail. Every frame, compute shaders s
+Addons / Pipelines | VisibilityBufferDrawingPipeline (extends MeshletDrawingPipeline) | A meshlet drawing pipeline with a hybrid rasterizer. Like MeshletDrawingPipeline, compute shaders select the level of detail and cull objects and clusters, but the visible clusters are rasterized into a visibility buffer
 Addons / Postprocessing | AfterimagePass (extends Pass) | Pass for a basic after image effect.
 Addons / Postprocessing | BloomPass (extends Pass) | A pass for a basic Bloom effect.
 Addons / Postprocessing | BokehPass (extends Pass) | Pass for creating depth of field (DOF) effect.
@@ -313,55 +317,54 @@ Addons / Shaders | module-VerticalTiltShiftShader |
 Addons / Shaders | module-VignetteShader | 
 Addons / Shaders | module-VolumeShader | 
 Addons / Shaders | module-WaterRefractionShader | 
-Addons / TSL | AfterImageNode (extends TempNode) | Post processing node for creating an after image effect.
+Addons / TSL | AfterImageNode (extends Node) | Post processing node for creating an after image effect.
 Addons / TSL | AmbientLightDataNode (extends Node) | Batched data node for ambient lights in dynamic lighting mode.
 Addons / TSL | AnaglyphPassNode (extends StereoCompositePassNode) | A render pass node that creates an anaglyph effect using physically-correct off-axis stereo projection.
-Addons / TSL | BilateralBlurNode (extends TempNode) | Post processing node for creating a bilateral blur effect.
-Addons / TSL | BloomNode (extends TempNode) | Post processing node for creating a bloom effect.
-Addons / TSL | ChromaticAberrationNode (extends TempNode) | Post processing node for applying chromatic aberration effect. This effect simulates the color fringing that occurs in real camera lenses by separating and offsetting the red, green, and blue channels.
+Addons / TSL | BilateralBlurNode (extends Node) | Post processing node for creating a bilateral blur effect.
+Addons / TSL | BloomNode (extends Node) | Post processing node for creating a bloom effect.
+Addons / TSL | ChromaticAberrationNode (extends Node) | Post processing node for applying chromatic aberration effect. This effect simulates the color fringing that occurs in real camera lenses by separating and offsetting the red, green, and blue channels.
 Addons / TSL | ClusteredLightsNode (extends LightsNode) | A custom version of `LightsNode` implementing Forward+ clustered shading: the view frustum is subdivided into a 3D grid of clusters (X × Y screen tiles times an exponentially-spaced set of Z depth slices), and each clust
-Addons / TSL | DenoiseNode (extends TempNode) | Post processing node for denoising data like raw screen-space ambient occlusion output. Denoise can noticeably improve the quality of ambient occlusion but also add quite some overhead to the post processing setup. It's 
-Addons / TSL | DepthOfFieldNode (extends TempNode) | Post processing node for creating depth of field (DOF) effect.
+Addons / TSL | DenoiseNode (extends Node) | Post processing node for denoising data like raw screen-space ambient occlusion output. Denoise can noticeably improve the quality of ambient occlusion but also add quite some overhead to the post processing setup. It's 
+Addons / TSL | DepthOfFieldNode (extends Node) | Post processing node for creating depth of field (DOF) effect.
 Addons / TSL | DirectionalLightDataNode (extends Node) | Batched data node for directional lights in dynamic lighting mode.
-Addons / TSL | DotScreenNode (extends TempNode) | Post processing node for creating dot-screen effect.
+Addons / TSL | DotScreenNode (extends Node) | Post processing node for creating dot-screen effect.
 Addons / TSL | DynamicLightsNode (extends LightsNode) | A custom version of `LightsNode` that batches supported analytic lights into uniform arrays and loops.
 Addons / TSL | EnvMapCDFGenerator | Precomputes marginal and conditional CDF textures from an equirectangular HDR environment map for luminance importance sampling.
-Addons / TSL | FSR1Node (extends TempNode) | Post processing node for applying AMD FidelityFX Super Resolution 1 (FSR 1).
-Addons / TSL | FXAANode (extends TempNode) | Post processing node for applying FXAA. This node requires sRGB input so tone mapping and color space conversion must happen before the anti-aliasing.
-Addons / TSL | FilmNode (extends TempNode) | Post processing node for creating a film grain effect.
-Addons / TSL | GTAONode (extends TempNode) | Post processing node for applying Ground Truth Ambient Occlusion (GTAO) to a scene.
-Addons / TSL | GaussianBlurNode (extends TempNode) | Post processing node for creating a gaussian blur effect.
-Addons / TSL | GodraysNode (extends TempNode) | Post-Processing node for apply Screen-space raymarched godrays to a scene.
+Addons / TSL | FSR1Node (extends Node) | Post processing node for applying AMD FidelityFX Super Resolution 1 (FSR 1).
+Addons / TSL | FXAANode (extends Node) | Post processing node for applying FXAA. This node requires sRGB input so tone mapping and color space conversion must happen before the anti-aliasing.
+Addons / TSL | FilmNode (extends Node) | Post processing node for creating a film grain effect.
+Addons / TSL | GTAONode (extends Node) | Post processing node for applying Ground Truth Ambient Occlusion (GTAO) to a scene.
+Addons / TSL | GaussianBlurNode (extends Node) | Post processing node for creating a gaussian blur effect.
+Addons / TSL | GodraysNode (extends Node) | Post-Processing node for apply Screen-space raymarched godrays to a scene.
 Addons / TSL | HemisphereLightDataNode (extends Node) | Batched data node for hemisphere lights in dynamic lighting mode.
 Addons / TSL | ImportanceSampledEnvironment | Manages a preprocessed HDR environment map (CDF textures, uniforms) and exposes TSL helpers for BRDF-direction lookups and MIS importance sampling.
-Addons / TSL | LensflareNode (extends TempNode) | Post processing node for adding a bloom-based lens flare effect. This effect requires that you extract the bloom of the scene via a bloom pass first.
-Addons / TSL | Lut3DNode (extends TempNode) | A post processing node for color grading via lookup tables.
+Addons / TSL | LensflareNode (extends Node) | Post processing node for adding a bloom-based lens flare effect. This effect requires that you extract the bloom of the scene via a bloom pass first.
+Addons / TSL | Lut3DNode (extends Node) | A post processing node for color grading via lookup tables.
 Addons / TSL | OITPassNode (extends PassNode) | A render pass node that renders the scene with Order-Independent Transparency based on the Weighted Blended OIT technique by McGuire and Bavoil.
-Addons / TSL | OutlineNode (extends TempNode) | Post processing node for rendering outlines around selected objects. The node gives you great flexibility in composing the final outline look depending on your requirements.
+Addons / TSL | OutlineNode (extends Node) | Post processing node for rendering outlines around selected objects. The node gives you great flexibility in composing the final outline look depending on your requirements.
 Addons / TSL | ParallaxBarrierPassNode (extends StereoCompositePassNode) | A render pass node that creates a parallax barrier effect.
-Addons / TSL | PixelationNode (extends TempNode) | A inner node definition that implements the actual pixelation TSL code.
-Addons / TSL | PixelationPassNode (extends PassNode) | A special render pass node that renders the scene with a pixelation effect.
+Addons / TSL | PixelationPassNode (extends PassNode) | A special render pass node that renders the scene with a pixelation effect, creating a visual presentation similar to that of a 2D pixel art game.
 Addons / TSL | PointLightDataNode (extends Node) | Batched data node for point lights in dynamic lighting mode.
-Addons / TSL | RGBShiftNode (extends TempNode) | Post processing node for shifting/splitting RGB color channels. The effect separates color channels and offsets them from each other.
-Addons / TSL | RecurrentDenoiseNode (extends TempNode) | Post processing node for denoising temporally-accumulated screen-space effects such as SSGI (ambient occlusion / indirect diffuse) and SSR (specular reflections).
+Addons / TSL | RGBShiftNode (extends Node) | Post processing node for shifting/splitting RGB color channels. The effect separates color channels and offsets them from each other.
+Addons / TSL | RecurrentDenoiseNode (extends Node) | Post processing node for denoising temporally-accumulated screen-space effects such as SSGI (ambient occlusion / indirect diffuse) and SSR (specular reflections).
 Addons / TSL | RetroPassNode (extends PassNode) | A post-processing pass that applies a retro PS1-style effect to the scene.
-Addons / TSL | SMAANode (extends TempNode) | Post processing node for applying SMAA. Unlike FXAA, this node should be applied before converting colors to sRGB. SMAA should produce better results than FXAA but is also more expensive to execute.
+Addons / TSL | SMAANode (extends Node) | Post processing node for applying SMAA. Unlike FXAA, this node should be applied before converting colors to sRGB. SMAA should produce better results than FXAA but is also more expensive to execute.
 Addons / TSL | SSAAPassNode (extends PassNode) | A special render pass node that renders the scene with SSAA (Supersampling Anti-Aliasing). This manual SSAA approach re-renders the scene ones for each sample with camera jitter and accumulates the results.
-Addons / TSL | SSAONode (extends TempNode) | Post processing node for a fast, screen-space ambient occlusion (SSAO).
-Addons / TSL | SSGINode (extends TempNode) | Post processing node for applying Screen Space Global Illumination (SSGI) to a scene.
-Addons / TSL | SSRNode (extends TempNode) | Post processing node for computing screen space reflections (SSR).
-Addons / TSL | SSSNode (extends TempNode) | Post processing node for applying Screen-Space Shadows (SSS) to a scene.
-Addons / TSL | SharpenNode (extends TempNode) | Post processing node for contrast-adaptive sharpening (RCAS).
-Addons / TSL | SobelOperatorNode (extends TempNode) | Post processing node for detecting edges with a sobel filter. A sobel filter should be applied after tone mapping and output color space conversion.
+Addons / TSL | SSAONode (extends Node) | Post processing node for a fast, screen-space ambient occlusion (SSAO).
+Addons / TSL | SSGINode (extends Node) | Post processing node for applying Screen Space Global Illumination (SSGI) to a scene.
+Addons / TSL | SSRNode (extends Node) | Post processing node for computing screen space reflections (SSR).
+Addons / TSL | SSSNode (extends Node) | Post processing node for applying Screen-Space Shadows (SSS) to a scene.
+Addons / TSL | SharpenNode (extends Node) | Post processing node for contrast-adaptive sharpening (RCAS).
+Addons / TSL | SobelOperatorNode (extends Node) | Post processing node for detecting edges with a sobel filter. A sobel filter should be applied after tone mapping and output color space conversion.
 Addons / TSL | SpotLightDataNode (extends Node) | Batched data node for simple spot lights in dynamic lighting mode.
 Addons / TSL | StereoCompositePassNode (extends PassNode) | A special (abstract) render pass node that renders the scene as a stereoscopic image. Unlike StereoPassNode, this node merges the image for the left and right eye into a single one. That is required for effects like anag
 Addons / TSL | StereoPassNode (extends PassNode) | A special render pass node that renders the scene as a stereoscopic image.
-Addons / TSL | TAAUNode (extends TempNode) | A special node that performs Temporal Anti-Aliasing Upscaling (TAAU).
-Addons / TSL | TRAANode (extends TempNode) | A special node that applies TRAA (Temporal Reprojection Anti-Aliasing).
-Addons / TSL | TemporalReprojectNode (extends TempNode) | Temporal reprojection pass for denoising screen-space effects (SSGI, SSR, etc.).
+Addons / TSL | TAAUNode (extends Node) | A special node that performs Temporal Anti-Aliasing Upscaling (TAAU).
+Addons / TSL | TRAANode (extends Node) | A special node that applies TRAA (Temporal Reprojection Anti-Aliasing).
+Addons / TSL | TemporalReprojectNode (extends Node) | Temporal reprojection pass for denoising screen-space effects (SSGI, SSR, etc.).
 Addons / TSL | TileShadowNode (extends ShadowBaseNode) | A class that extends `ShadowBaseNode` to implement tiled shadow mapping. This allows splitting a shadow map into multiple tiles, each with its own light and camera, to improve shadow quality and performance for large sce
 Addons / TSL | TileShadowNodeHelper (extends Group) | Helper class to manage and display debug visuals for TileShadowNode.
-Addons / TSL | TransitionNode (extends TempNode) | Post processing node for creating a transition effect between scenes.
+Addons / TSL | TransitionNode (extends Node) | Post processing node for creating a transition effect between scenes.
 Addons / TSL | WebGLNodesHandler | Compatibility loader and builder for TSL Node materials in WebGLRenderer.
 Addons / TSL | module-Bayer | 
 Addons / TSL | module-GroundedSkybox | 
@@ -379,6 +382,7 @@ Addons / Utils | module-CameraUtils |
 Addons / Utils | module-ColorUtils | 
 Addons / Utils | module-GeometryCompressionUtils | 
 Addons / Utils | module-GeometryUtils | 
+Addons / Utils | module-MeshletGeometryUtils | 
 Addons / Utils | module-SceneUtils | 
 Addons / Utils | module-SkeletonUtils | 
 Addons / Utils | module-SortUtils | 
@@ -464,7 +468,7 @@ Core / Extras | EllipseCurve (extends Curve) | A curve representing an ellipse.
 Core / Extras | ImageUtils | A class containing utility functions for images.
 Core / Extras | LineCurve (extends Curve) | A curve representing a 2D line segment.
 Core / Extras | LineCurve3 (extends Curve) | A curve representing a 3D line segment.
-Core / Extras | PMREMGenerator | This class generates a Prefiltered, Mipmapped Radiance Environment Map (PMREM) from a cubeMap environment texture. This allows different levels of blur to be quickly accessed based on material roughness. It is packed int
+Core / Extras | PMREMGenerator | Generates a Prefiltered, Mipmapped Radiance Environment Map (PMREM) for image-based lighting. The result is a cube render target whose mip levels store GGX-filtered radiance at increasing roughness, from a mirror at leve
 Core / Extras | Path (extends CurvePath) | A 2D path representation. The class provides methods for creating paths and contours of 2D shapes similar to the 2D Canvas API.
 Core / Extras | QuadraticBezierCurve (extends Curve) | A curve representing a 2D Quadratic Bezier curve.
 Core / Extras | QuadraticBezierCurve3 (extends Curve) | A curve representing a 3D Quadratic Bezier curve.
@@ -567,6 +571,7 @@ Core / Materials | MeshStandardNodeMaterial (extends NodeMaterial) | Node materi
 Core / Materials | MeshToonMaterial (extends Material) | A material implementing toon shading.
 Core / Materials | MeshToonNodeMaterial (extends NodeMaterial) | Node material version of MeshToonMaterial.
 Core / Materials | NodeMaterial (extends Material) | Base class for all node materials.
+Core / Materials | NodeMaterialInstance (extends Material) | A material instance that reuses the shader of a node material with its own properties. All instances created from the same node material share a single shader build, so configure the node material before creating instanc
 Core / Materials | NodeMaterialObserver | This class is used by WebGPURenderer as management component. It's primary purpose is to determine whether render objects require a refresh right before they are going to be rendered or not.
 Core / Materials | PointsMaterial (extends Material) | A material for rendering point primitives.
 Core / Materials | PointsNodeMaterial (extends SpriteNodeMaterial) | Node material version of PointsMaterial.
@@ -610,39 +615,39 @@ Core / Nodes | AONode (extends LightingNode) | A generic class that can be used 
 Core / Nodes | AmbientLightNode (extends AnalyticLightNode) | Module for representing ambient lights as nodes.
 Core / Nodes | AnalyticLightNode (extends LightingNode) | Base class for analytic light nodes.
 Core / Nodes | ArrayElementNode (extends Node) | Base class for representing element access on an array-like node data structures.
-Core / Nodes | ArrayNode (extends TempNode) | ArrayNode represents a collection of nodes, typically created using the array function.
-Core / Nodes | AssignNode (extends TempNode) | These node represents an assign operation. Meaning a node is assigned to another node.
+Core / Nodes | ArrayNode (extends Node) | ArrayNode represents a collection of nodes, typically created using the array function.
+Core / Nodes | AssignNode (extends Node) | These node represents an assign operation. Meaning a node is assigned to another node.
 Core / Nodes | AtomicFunctionNode (extends Node) | `AtomicFunctionNode` represents any function that can operate on atomic variable types within a shader. In an atomic function, any modification to an atomic variable will occur as an indivisible step with a defined order
 Core / Nodes | AttributeNode (extends Node) | Base class for representing shader attributes as nodes.
 Core / Nodes | BarrierNode (extends Node) | Represents a GPU control barrier that synchronizes compute operations within a given scope.
 Core / Nodes | BasicEnvironmentNode (extends LightingNode) | Represents a basic model for Image-based lighting (IBL). The environment is defined via environment maps in the equirectangular or cube map format. `BasicEnvironmentNode` is intended for non-PBR materials like MeshBasicN
 Core / Nodes | BasicLightMapNode (extends LightingNode) | A specific version of IrradianceNode that is only relevant for MeshBasicNodeMaterial. Since the material is unlit, it requires a special scaling factor for the light map.
 Core / Nodes | BasicLightingModel (extends LightingModel) | Represents the lighting model for unlit materials. The only light contribution is baked indirect lighting modulated with ambient occlusion and the material's diffuse color. Environment mapping is supported. Used in MeshB
-Core / Nodes | BitcastNode (extends TempNode) | This node represents an operation that reinterprets the bit representation of a value in one type as a value in another type.
+Core / Nodes | BitcastNode (extends Node) | This node represents an operation that reinterprets the bit representation of a value in one type as a value in another type.
 Core / Nodes | BitcountNode (extends MathNode) | This node represents an operation that counts the bits of a piece of shader data.
 Core / Nodes | BufferAttributeNode (extends InputNode) | In earlier `three.js` versions it was only possible to define attribute data on geometry level. With `BufferAttributeNode`, it is also possible to do this on the node level.
 Core / Nodes | BufferNode (extends UniformNode) | A special type of uniform node which represents array-like data as uniform buffers. The access usually happens via `element()` which returns an instance of ArrayElementNode. For example:
 Core / Nodes | BuiltinNode (extends Node) | The node allows to set values for built-in shader variables. That is required for features like hardware-accelerated vertex clipping.
-Core / Nodes | BumpMapNode (extends TempNode) | This class can be used for applying bump maps to materials.
+Core / Nodes | BumpMapNode (extends Node) | This class can be used for applying bump maps to materials.
 Core / Nodes | BypassNode (extends Node) | The class generates the code of a given node but returns another node in the output. This can be used to call a method or node that does not return a value, i.e. type `void` on an input where returning a value is require
 Core / Nodes | ClippingNode (extends Node) | This node is used in NodeMaterial to setup the clipping which can happen hardware-accelerated (if supported) and optionally use alpha-to-coverage for anti-aliasing clipped edges.
 Core / Nodes | CodeNode (extends Node) | This class represents native code sections. It is the base class for modules like FunctionNode which allows to implement functions with native shader languages.
-Core / Nodes | ColorSpaceNode (extends TempNode) | This node represents a color space conversion. Meaning it converts a color value from a source to a target color space.
+Core / Nodes | ColorSpaceNode (extends Node) | This node represents a color space conversion. Meaning it converts a color value from a source to a target color space.
 Core / Nodes | ComputeBuiltinNode (extends Node) | `ComputeBuiltinNode` represents a compute-scope builtin value that expose information about the currently running dispatch and/or the device it is running on.
 Core / Nodes | ComputeNode (extends Node) | Represents a compute shader node.
 Core / Nodes | ConditionalNode (extends Node) | Represents a logical `if/else` statement. Can be used as an alternative to the `If()`/`Else()` syntax.
 Core / Nodes | ConstNode (extends InputNode) | Class for representing a constant value in the shader.
 Core / Nodes | ContextNode (extends Node) | This node can be used as a context management component for another node. NodeBuilder performs its node building process in a specific context and this node allows the modify the context. A typical use case is to overwri
 Core / Nodes | ConvertNode (extends Node) | This module is part of the TSL core and usually not used in app level code. It represents a convert operation during the shader generation process meaning it converts the data type of a node to a target data type.
-Core / Nodes | CubeMapNode (extends TempNode) | This node can be used to automatically convert environment maps in the equirectangular format into the cube map format.
+Core / Nodes | CubeMapNode (extends Node) | This node can be used to automatically convert environment maps in the equirectangular format into the cube map format.
 Core / Nodes | CubeTextureNode (extends TextureNode) | This type of uniform node represents a cube texture.
 Core / Nodes | DirectionalLightNode (extends AnalyticLightNode) | Module for representing directional lights as nodes.
-Core / Nodes | EnvironmentNode (extends LightingNode) | Represents a physical model for Image-based lighting (IBL). The environment is defined via environment maps in the equirectangular, cube map or cubeUV (PMREM) format. `EnvironmentNode` is intended for PBR materials like 
+Core / Nodes | EnvironmentNode (extends LightingNode) | Represents a physical model for Image-based lighting (IBL). The environment is defined by an equirectangular or cube texture. `EnvironmentNode` is intended for PBR materials like MeshStandardNodeMaterial.
 Core / Nodes | EventNode (extends Node) | EventNode is a node that executes a callback during specific update phases.
 Core / Nodes | ExpressionNode (extends Node) | This class can be used to implement basic expressions in shader code. Basic examples for that are `return`, `continue` or `discard` statements.
-Core / Nodes | FlipNode (extends TempNode) | This module is part of the TSL core and usually not used in app level code. It represents a flip operation during the shader generation process meaning it flips normalized values with the following formula:
+Core / Nodes | FlipNode (extends Node) | This module is part of the TSL core and usually not used in app level code. It represents a flip operation during the shader generation process meaning it flips normalized values with the following formula:
 Core / Nodes | FrontFacingNode (extends Node) | This node can be used to evaluate whether a primitive is front or back facing.
-Core / Nodes | FunctionCallNode (extends TempNode) | This module represents the call of a FunctionNode. Developers are usually not confronted with this module since they use the predefined TSL syntax `wgslFn` and `glslFn` which encapsulate this logic.
+Core / Nodes | FunctionCallNode (extends Node) | This module represents the call of a FunctionNode. Developers are usually not confronted with this module since they use the predefined TSL syntax `wgslFn` and `glslFn` which encapsulate this logic.
 Core / Nodes | FunctionNode (extends CodeNode) | This class represents a native shader function. It can be used to implement certain aspects of a node material with native shader code. There are two predefined TSL functions for easier usage.
 Core / Nodes | FunctionOverloadingNode (extends Node) | This class allows to define multiple overloaded versions of the same function. Depending on the parameters of the function call, the node picks the best-fit overloaded version.
 Core / Nodes | GLSLNodeFunction (extends NodeFunction) | This class represents a GLSL node function.
@@ -654,7 +659,7 @@ Core / Nodes | InputNode (extends Node) | Base class for representing data input
 Core / Nodes | InspectorNode (extends Node) | InspectorNode is a wrapper node that allows inspection of node values during rendering. It can be used to debug or analyze node outputs in the rendering pipeline.
 Core / Nodes | IrradianceNode (extends LightingNode) | A generic class that can be used by nodes which contribute irradiance to the scene. E.g. a light map node can be used as input for this module. Used in NodeMaterial.
 Core / Nodes | IsolateNode (extends Node) | This node can be used as a cache management component for another node. Caching is in general used by default in NodeBuilder but this node allows the usage of a shared parent cache during the build process.
-Core / Nodes | JoinNode (extends TempNode) | This module is part of the TSL core and usually not used in app level code. It represents a join operation during the shader generation process. For example in can compose/join two single floats into a `vec2` type.
+Core / Nodes | JoinNode (extends Node) | This module is part of the TSL core and usually not used in app level code. It represents a join operation during the shader generation process. For example in can compose/join two single floats into a `vec2` type.
 Core / Nodes | LightProbeNode (extends AnalyticLightNode) | Module for representing light probes as nodes.
 Core / Nodes | LightingContextNode (extends ContextNode) | `LightingContextNode` represents an extension of the ContextNode module by adding lighting specific context data. It represents the runtime context of LightsNode.
 Core / Nodes | LightingModel | Abstract class for implementing lighting models. The module defines multiple methods that concrete lighting models can implement. These methods are executed at different points during the light evaluation process.
@@ -664,7 +669,7 @@ Core / Nodes | LoopNode (extends Node) | This module offers a variety of ways to
 Core / Nodes | MRTNode (extends OutputStructNode) | This node can be used setup a MRT context for rendering. A typical MRT setup for post-processing is shown below:
 Core / Nodes | MaterialNode (extends Node) | This class should simplify the node access to material properties. It internal uses reference nodes to make sure changes to material properties are automatically reflected to predefined TSL objects like e.g. `materialCol
 Core / Nodes | MaterialReferenceNode (extends ReferenceNode) | This node is a special type of reference node which is intended for linking material properties with node values.
-Core / Nodes | MathNode (extends TempNode) | This node represents a variety of mathematical methods available in shaders. They are divided into three categories:
+Core / Nodes | MathNode (extends Node) | This node represents a variety of mathematical methods available in shaders. They are divided into three categories:
 Core / Nodes | MaxMipLevelNode (extends UniformNode) | A special type of uniform node that computes the maximum mipmap level for a given texture node.
 Core / Nodes | MemberNode (extends Node) | Base class for representing member access on an object-like node data structures.
 Core / Nodes | ModelNode (extends Object3DNode) | This type of node is a specialized version of `Object3DNode` with larger set of model related metrics. Unlike `Object3DNode`, `ModelNode` extracts the reference to the 3D object from the current node frame state.
@@ -681,17 +686,17 @@ Core / Nodes | NodeParser | Base class for node parsers. A derived parser must b
 Core / Nodes | NodeUniform | NodeBuilder is going to create instances of this class during the build process of nodes. They represent the final shader uniforms that are going to be generated by the builder. A dictionary of node uniforms is maintaine
 Core / Nodes | NodeVar | NodeBuilder is going to create instances of this class during the build process of nodes. They represent the final shader variables that are going to be generated by the builder. A dictionary of node variables is maintai
 Core / Nodes | NodeVarying (extends NodeVar) | NodeBuilder is going to create instances of this class during the build process of nodes. They represent the final shader varyings that are going to be generated by the builder. An array of node varyings is maintained in
-Core / Nodes | NormalMapNode (extends TempNode) | This class can be used for applying normals maps to materials.
+Core / Nodes | NormalMapNode (extends Node) | This class can be used for applying normals maps to materials.
 Core / Nodes | Object3DNode (extends Node) | This node can be used to access transformation related metrics of 3D objects. Depending on the selected scope, a different metric is represented as a uniform in the shader. The following scopes are supported:
-Core / Nodes | OperatorNode (extends TempNode) | This node represents basic mathematical and logical operations like addition, subtraction or comparisons (e.g. `equal()`).
+Core / Nodes | OperatorNode (extends Node) | This node represents basic mathematical and logical operations like addition, subtraction or comparisons (e.g. `equal()`).
 Core / Nodes | OutputStructNode (extends Node) | This node can be used to define multiple outputs in a shader programs.
 Core / Nodes | OverrideContextNode (extends ContextNode) | A specialized context node designed to override specific target nodes within a node sub-graph or flow. This allows replacing specific inputs (e.g., normal and position vectors) dynamically during compilation for a specif
-Core / Nodes | PMREMNode (extends TempNode) | This node represents a PMREM which is a special type of preprocessed environment map intended for PBR materials.
-Core / Nodes | PackFloatNode (extends TempNode) | This node represents an operation that packs floating-point values of a vector into an unsigned 32-bit integer
-Core / Nodes | Packed4x8IntegerNode (extends TempNode) | Represents one of the built-in functions of WGSL's `packed_4x8_integer_dot_product` language extension. If the extension is not available, the node falls back to an emulation with plain integer bit operations.
+Core / Nodes | PMREMNode (extends Node) | This node represents a PMREM which is a special type of preprocessed environment map intended for PBR materials.
+Core / Nodes | PackFloatNode (extends Node) | This node represents an operation that packs floating-point values of a vector into an unsigned 32-bit integer
+Core / Nodes | Packed4x8IntegerNode (extends Node) | Represents one of the built-in functions of WGSL's `packed_4x8_integer_dot_product` language extension. If the extension is not available, the node falls back to an emulation with plain integer bit operations.
 Core / Nodes | ParameterNode (extends PropertyNode) | Special version of PropertyNode which is used for parameters.
 Core / Nodes | PassMultipleTextureNode (extends PassTextureNode) | An extension of `PassTextureNode` which allows to manage more than one internal texture. Relevant for the `getPreviousTexture()` related API.
-Core / Nodes | PassNode (extends TempNode) | Represents a render pass (sometimes called beauty pass) in context of post processing. This pass produces a render for the given scene and camera and can provide multiple outputs via MRT for further processing.
+Core / Nodes | PassNode (extends Node) | Represents a render pass (sometimes called beauty pass) in context of post processing. This pass produces a render for the given scene and camera and can provide multiple outputs via MRT for further processing.
 Core / Nodes | PassTextureNode (extends TextureNode) | Represents the texture of a pass node.
 Core / Nodes | PhongLightingModel (extends BasicLightingModel) | Represents the lighting model for a phong material. Used in MeshPhongNodeMaterial.
 Core / Nodes | PhysicalLightingModel (extends LightingModel) | Represents the lighting model for a PBR material.
@@ -701,18 +706,19 @@ Core / Nodes | PointUVNode (extends Node) | A node for representing the uv coord
 Core / Nodes | ProjectorLightNode (extends SpotLightNode) | An implementation of a projector light node.
 Core / Nodes | PropertyNode (extends Node) | This class represents a shader property. It can be used to explicitly define a property and assign a value to it.
 Core / Nodes | RTTNode (extends TextureNode) | `RTTNode` takes another node and uses it with a `QuadMesh` to render into a texture (RTT). This module is especially relevant in context of post processing where certain nodes require texture input for their effects. Wit
-Core / Nodes | RangeNode (extends Node) | `RangeNode` generates random instanced attribute data in a defined range. An exemplary use case for this utility node is to generate random per-instance colors:
+Core / Nodes | RangeNode (extends Node) | `RangeNode` generates random per-instance values in a defined range. An exemplary use case for this utility node is to generate random per-instance colors:
 Core / Nodes | RectAreaLightNode (extends AnalyticLightNode) | Module for representing rect area lights as nodes.
+Core / Nodes | ReferenceAttributeNode (extends Node) | This node binds a buffer attribute that is a property of the rendered object, like the matrices of an instanced mesh. Unlike BufferAttributeNode, the attribute isn't part of the program: each object binds its own attribu
 Core / Nodes | ReferenceBaseNode (extends Node) | Base class for nodes which establishes a reference to a property of another object. In this way, the value of the node is automatically linked to the value of referenced object. Reference nodes internally represent the l
 Core / Nodes | ReferenceElementNode (extends ArrayElementNode) | This class is only relevant if the referenced property is array-like. In this case, `ReferenceElementNode` allows to refer to a specific element inside the data structure via an index.
 Core / Nodes | ReferenceNode (extends Node) | This type of node establishes a reference to a property of another object. In this way, the value of the node is automatically linked to the value of referenced object. Reference nodes internally represent the linked val
 Core / Nodes | ReflectorNode (extends TextureNode) | This node can be used to implement mirror-like flat reflective surfaces.
-Core / Nodes | RenderOutputNode (extends TempNode) | Normally, tone mapping and color conversion happens automatically just before outputting a pixel to the default (screen) framebuffer. In certain post processing setups this is too late because some effects such as FXAA r
+Core / Nodes | RenderOutputNode (extends Node) | Normally, tone mapping and color conversion happens automatically just before outputting a pixel to the default (screen) framebuffer. In certain post processing setups this is too late because some effects such as FXAA r
 Core / Nodes | RendererReferenceNode (extends ReferenceBaseNode) | This node is a special type of reference node which is intended for linking renderer properties with node values.
-Core / Nodes | RotateNode (extends TempNode) | Applies a rotation to the given position node.
+Core / Nodes | RotateNode (extends Node) | Applies a rotation to the given position node.
 Core / Nodes | SampleNode (extends Node) | Class representing a node that samples a value using a provided callback function.
 Core / Nodes | ScreenNode (extends Node) | This node provides a collection of screen related metrics. Depending on ScreenNode#scope, the nodes can represent resolution or viewport data as well as fragment or uv coordinates.
-Core / Nodes | SetNode (extends TempNode) | This module is part of the TSL core and usually not used in app level code. `SetNode` represents a set operation which means it is used to implement any `setXYZW()`, `setRGBA()` and `setSTPQ()` method invocations on node
+Core / Nodes | SetNode (extends Node) | This module is part of the TSL core and usually not used in app level code. `SetNode` represents a set operation which means it is used to implement any `setXYZW()`, `setRGBA()` and `setSTPQ()` method invocations on node
 Core / Nodes | ShadowBaseNode (extends Node) | Base class for all shadow nodes.
 Core / Nodes | ShadowMaskModel (extends LightingModel) | Represents lighting model for a shadow material. Used in ShadowNodeMaterial.
 Core / Nodes | ShadowNode (extends ShadowBaseNode) | Represents the default shadow implementation for lighting nodes.
@@ -727,23 +733,23 @@ Core / Nodes | StorageTextureNode (extends TextureNode) | This special version o
 Core / Nodes | StructNode (extends Node) | StructNode allows to create custom structures with multiple members. This can also be used to define structures in attribute and uniform data.
 Core / Nodes | StructTypeNode (extends Node) | Represents a struct type node in the node-based system. This class is used to define and manage the layout and types of struct members. It extends the base Node class and provides methods to get the length of the struct,
 Core / Nodes | SubBuildNode (extends Node) | This node is used to build a sub-build in the node system.
-Core / Nodes | SubgroupFunctionNode (extends TempNode) | This class represents a set of built in WGSL shader functions that sync synchronously execute an operation across a subgroup, or 'warp', of compute or fragment shader invocations within a workgroup. Typically, these func
+Core / Nodes | SubgroupFunctionNode (extends Node) | This class represents a set of built in WGSL shader functions that sync synchronously execute an operation across a subgroup, or 'warp', of compute or fragment shader invocations within a workgroup. Typically, these func
 Core / Nodes | TempNode (extends Node) | This module uses cache management to create temporary variables if the node is used more than once to prevent duplicate calculations.
 Core / Nodes | Texture3DNode (extends TextureNode) | This type of uniform node represents a 3D texture.
 Core / Nodes | TextureNode (extends UniformNode) | This type of uniform node represents a 2D texture.
 Core / Nodes | TextureSizeNode (extends Node) | A node that represents the dimensions of a texture. The texture size is retrieved in the shader via built-in shader functions like `textureDimensions()` or `textureSize()`.
-Core / Nodes | ToneMappingNode (extends TempNode) | This node represents a tone mapping operation.
+Core / Nodes | ToneMappingNode (extends Node) | This node represents a tone mapping operation.
 Core / Nodes | ToonLightingModel (extends LightingModel) | Represents the lighting model for a toon material. Used in MeshToonNodeMaterial.
 Core / Nodes | ToonOutlinePassNode (extends PassNode) | Represents a render pass for producing a toon outline effect on compatible objects. Only 3D objects with materials of type `MeshToonMaterial` and `MeshToonNodeMaterial` will receive the outline.
 Core / Nodes | UniformArrayElementNode (extends ArrayElementNode) | Represents the element access on uniform array nodes.
 Core / Nodes | UniformArrayNode (extends BufferNode) | Similar to BufferNode this module represents array-like data as uniform buffers. Unlike BufferNode, it can handle more common data types in the array (e.g `three.js` primitives) and automatically manage buffer padding. I
 Core / Nodes | UniformGroupNode (extends Node) | This node can be used to group single instances of UniformNode and manage them as a uniform buffer.
 Core / Nodes | UniformNode (extends InputNode) | Class for representing a uniform.
-Core / Nodes | UnpackFloatNode (extends TempNode) | This node represents an operation that unpacks values from a 32-bit unsigned integer, reinterpreting the results as a floating-point vector
+Core / Nodes | UnpackFloatNode (extends Node) | This node represents an operation that unpacks values from a 32-bit unsigned integer, reinterpreting the results as a floating-point vector
 Core / Nodes | UserDataNode (extends ReferenceNode) | A special type of reference node that allows to link values in `userData` fields to node objects.
 Core / Nodes | VarNode (extends Node) | Class for representing shader variables as nodes. Variables are created from existing nodes like the following:
 Core / Nodes | VaryingNode (extends Node) | Class for representing shader varyings as nodes. Varyings are create from existing nodes like the following:
-Core / Nodes | VelocityNode (extends TempNode) | A node for representing motion or velocity vectors. Foundation for advanced post processing effects like motion blur or TRAA.
+Core / Nodes | VelocityNode (extends Node) | A node for representing motion or velocity vectors. Foundation for advanced post processing effects like motion blur or TRAA.
 Core / Nodes | VertexColorNode (extends AttributeNode) | An attribute node for representing vertex colors.
 Core / Nodes | ViewportDepthNode (extends Node) | This node offers a collection of features in context of the depth logic in the fragment shader. Depending on ViewportDepthNode#scope, it can be used to define a depth value for the current fragment or for depth evaluatio
 Core / Nodes | ViewportDepthTextureNode (extends ViewportTextureNode) | Represents the depth of the current viewport as a texture. This module can be used in combination with viewport texture to achieve effects that require depth evaluation.
@@ -775,12 +781,13 @@ Core / Renderers | DirectRenderPipeline (extends RenderPipeline) | An alternativ
 Core / Renderers | GLSLNodeBuilder (extends NodeBuilder) | A node builder targeting GLSL.
 Core / Renderers | IndirectStorageBufferAttribute (extends StorageBufferAttribute) | This special type of buffer attribute is intended for compute shaders. It can be used to encode draw parameters for indirect draw calls.
 Core / Renderers | Info | This renderer module provides a series of statistical information about the GPU memory and the rendering process. Useful for debugging and monitoring.
-Core / Renderers | InspectorBase (extends EventDispatcher) | InspectorBase is the base class for all inspectors.
+Core / Renderers | InspectorBase (extends EventDispatcher) | InspectorBase is the base class for all inspectors. Can only be used with WebGPURenderer.
 Core / Renderers | PostProcessing | 
 Core / Renderers | QuadMesh (extends Mesh) | This module is a helper for passes which need to render a full screen effect which is quite common in context of post processing.
 Core / Renderers | ReadbackBuffer (extends EventDispatcher) | A readback buffer is used to transfer data from the GPU to the CPU. It is primarily used to read back compute shader results.
 Core / Renderers | RenderPipeline | This module is responsible to manage the rendering pipeline setups in apps. You usually create a single instance of this class and use it to define the output of your render pipeline and post processing effect chain.
 Core / Renderers | Renderer | Base class for renderers.
+Core / Renderers | StandardDrawingPipeline | Decides which objects of a scene are rendered and how they are submitted to the render list. The default implementation performs frustum culling and pushes every renderable object as a separate render item. Subclasses ca
 Core / Renderers | StandardNodeLibrary (extends NodeLibrary) | This version of a node library represents the standard version used in WebGPURenderer. It maps lights, tone mapping techniques and materials to node-based implementations.
 Core / Renderers | Storage3DTexture (extends Texture) | This special type of texture is intended for compute shaders. It can be used to compute the data of a texture with a compute shader.
 Core / Renderers | StorageArrayTexture (extends Texture) | This special type of texture is intended for compute shaders. It can be used to compute the data of a texture with a compute shader.

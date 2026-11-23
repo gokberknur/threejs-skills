@@ -1,4 +1,4 @@
-# Shadows and anti-aliasing (three.js r186)
+# Shadows and anti-aliasing (three.js r187)
 
 ## When to read this
 Shadows are blocky, noisy, acned, detached ("peter-panning"), too expensive, or objects float; edges crawl/shimmer; you must choose between MSAA / FXAA / SMAA / TAA / SSAA for WebGL or WebGPU, or antialiasing breaks once you add post-processing.
@@ -32,8 +32,8 @@ Constants: `BasicShadowMap=0, PCFShadowMap=1, PCFSoftShadowMap=2 (removed), VSMS
 | Type | Look | Cost | Notes |
 |---|---|---|---|
 | `BasicShadowMap` | Hard, jagged, pixelated | Cheapest | `shadow.radius` has no effect. Needed for custom shaders that read raw depth (PCSS example `webgl_shadowmap_pcss` sets it) |
-| `PCFShadowMap` (default) | Filtered hard shadow; in r186 hardware 4-tap PCF x 5 Vogel-disk taps scaled by `shadow.radius` | Low-medium | Best default. Raise `radius` 1 -> 3-5 to soften (banding above ~6 at 1024 maps) |
-| `PCFSoftShadowMap` | -- | -- | **Removed.** Setting it logs a warning and uses PCF (WebGLRenderer, WebGPURenderer). Do not use |
+| `PCFShadowMap` (default) | Filtered hard shadow; in r187 hardware 4-tap PCF x 5 Vogel-disk taps scaled by `shadow.radius` | Low-medium | Best default. Raise `radius` 1 -> 3-5 to soften (banding above ~6 at 1024 maps) |
+| `PCFSoftShadowMap` | -- | -- | **Deprecated constant, feature removed.** Setting it logs "has been removed" and uses PCF (WebGLRenderer, WebGPURenderer). Do not use |
 | `VSMShadowMap` | Softest, blurred, penumbra-like (Gaussian blur via `radius` + `blurSamples`) | Medium-high (extra blur passes, RG half-float maps) | Light bleeding, can look "floating". All receivers also render into the map (`receiveShadow` objects cast). **Not supported for PointLights** (warns; use PCF/Basic) |
 
 ```js
@@ -53,7 +53,19 @@ scene.add(new THREE.CameraHelper(s.camera)); // always visualize while tuning
 dir.target.position.set(0, 0, 0); scene.add(dir.target);
 ```
 - `near/far` as tight as possible (depth precision). SpotLight: shadow camera fov follows `angle`; set `shadow.camera.near/far`, `shadow.focus` (0-1).
-- Move the shadow camera with the player and snap its center to texel increments to avoid shimmering while panning/rotating.
+- Shadow shimmer (edges crawl while the camera moves) is its own cause, separate from geometry aliasing: the shadow camera moves by sub-texel amounts each frame. Fix it by stabilizing, not by more MSAA:
+  - `CSM` and `SunLight` already do this in r187: `CSM.js` snaps each cascade's center to the texel grid (`Math.floor(center / texelWidth) * texelWidth`) and keeps cascade size constant; `SunLightShadow` fits a rotation-stable bounding sphere per cascade and snaps it to the texel grid. Using either one is the stabilization; say so.
+  - For one hand-rolled `DirectionalLight` that follows the player, snap in light space each frame:
+```js
+const texel = (s.camera.right - s.camera.left) / s.mapSize.x;   // world units per shadow texel
+const lightView = new THREE.Matrix4().lookAt(dir.position, dir.target.position, THREE.Object3D.DEFAULT_UP);
+const p = player.position.clone().applyMatrix4(lightView.clone().invert());  // player in light space
+p.x = Math.floor(p.x / texel) * texel; p.y = Math.floor(p.y / texel) * texel; // snap to the texel grid
+const snapped = p.applyMatrix4(lightView);                                    // back to world space
+const offset = dir.position.clone().sub(dir.target.position);
+dir.target.position.copy(snapped); dir.position.copy(snapped).add(offset);
+```
+  Keep the frustum size fixed (never refit `left/right` per frame), or the texel size changes and the snap stops working.
 - Bias (`shadow.bias`, default 0): tiny negative values, -0.0001 to -0.002 (examples: directional -0.0005, spot -0.002 for VSM; SunLight uses `normalBias`). Bias shifts depth: too small = acne, too large = peter-panning (shadow detaches from the contact point).
 - `shadow.normalBias` (default 0): offsets the lookup along the surface normal. Preferred fix for acne on grazing surfaces: 0.01-0.05 for ~1 m objects, 0.02-0.1 in large scenes; scales with world units. `SunLight` demo uses `normalBias = 1` (km scale) / 0.05.
 - WebGPU: `shadow.biasNode` (a node, overrides `bias`) for slope-/distance-scaled bias.
@@ -110,7 +122,7 @@ light.shadow.shadowNode = csm;  scene.add(light);
 ```
 Example `webgpu_shadowmap_csm`.
 
-`SunLight` + `SunLightShadow` (addons `lights/SunLight.js`): lightweight 2-cascade sun with automatic fitting to the view frustum up to `shadow.camera.far`; direction from `position` (no target); `shadow.mapSize` default 1024 per cascade. WebGPU: `renderer.library.addLight(SunLightNode, SunLight)` (`SunShadowNode`, `sunShadow`). Examples `webgl_shadowmap_performance`, `webgpu_lights_sunlight`. Best zero-config outdoor option.
+`SunLight` + `SunLightShadow` (addons `lights/SunLight.js`): lightweight 2-cascade sun with automatic fitting to the view frustum up to `shadow.camera.far`; direction from `position` (no target); `shadow.mapSize` default 1024 per cascade. WebGPU: `SunLight.registerNode(SunLightNode)` (r187; was `renderer.library.addLight(SunLightNode, SunLight)`) (`SunShadowNode`, `sunShadow`). Examples `webgl_lights_sunlight`, `webgpu_lights_sunlight`. Best zero-config outdoor option.
 
 `TileShadowNode` (WebGPU, `three/addons/tsl/shadows/TileShadowNode.js`): splits one directional shadow into `tilesX x tilesY` tiles (default 2 x 2) for huge worlds; no VSM. Example `webgpu_shadowmap_array`.
 

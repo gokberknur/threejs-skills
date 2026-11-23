@@ -1,4 +1,4 @@
-# Rendering Strategies: Frame Budget, Shadows, Lights, Overdraw, Post-processing, Measuring (three.js r186)
+# Rendering Strategies: Frame Budget, Shadows, Lights, Overdraw, Post-processing, Measuring (three.js r187)
 
 ## When to read this
 
@@ -81,11 +81,29 @@ render();                            // first frame
 Details:
 
 - `OrbitControls` dispatch a `change` event whenever the camera changes. With `enableDamping`, calling `render()` directly from `change` would recurse (the render calls `controls.update()`, which emits `change` again) and the manual fixes it with the "request if not requested" pattern above: the flag coalesces multiple triggers into one frame, and the damping tail keeps requesting frames until the motion decays. `controls.update()` returns a boolean (`true` when the camera moved), which you can use to request another frame.
-- Animations in an on-demand app: drive them with a manager that reports "still running" and keeps requesting frames (the manual's `TweenManager.update()` returns `numTweensRunning > 0` and the render function calls `requestRenderIfNotRequested()` while true). When the last animation ends, rendering stops.
+- Animations in an on-demand app: drive them with a manager that reports "still running" and keeps requesting frames (the manual's `TweenManager.update()` returns `numTweensRunning > 0` and the render function calls `requestRenderIfNotRequested()` while true). When the last animation ends, rendering stops. Same pattern for an `AnimationMixer` (glTF clips):
+```js
+const timer = new THREE.Timer(); timer.connect(document);
+let playing = 0;                                   // actions currently running
+function play(action) {
+  action.reset().play(); playing++; timer.reset(); // reset: no huge first delta after idle
+  requestRenderIfNotRequested();
+}
+mixer.addEventListener('finished', () => { playing = Math.max(0, playing - 1); });  // LoopOnce clips fire this
+function render(timestamp) {
+  renderRequested = false;
+  timer.update(timestamp);
+  mixer.update(Math.min(timer.getDelta(), 1 / 30));
+  controls.update();
+  renderer.render(scene, camera);
+  if (playing > 0) requestRenderIfNotRequested(); // keep frames coming only while a clip runs
+}
+```
+Looping clips never fire `finished`: either set `action.setLoop(THREE.LoopOnce)` + `clampWhenFinished = true`, or treat a looping clip as "always animating" and stop it explicitly.
 - Every external change must request a frame: loaders (`onLoad`), WebSocket data, GUI `onChange`, video textures (a playing `VideoTexture` makes this a continuous render app), XR (XR needs `setAnimationLoop`, see section 4).
 - Static scene extras: also stop shadow updates (section 6), and `scene.matrixWorldAutoUpdate = false` (see `draw-calls-and-geometry.md`) while nothing moves.
 - `preserveDrawingBuffer: false` (default) clears the canvas after compositing. In an on-demand app, take screenshots by calling `render()` right before `canvas.toBlob` (manual: Tips), not by enabling `preserveDrawingBuffer` (it can cost performance and memory on some platforms; rule of thumb).
-- Pause when hidden: browsers throttle rAF in background tabs automatically; for `setAnimationLoop` you can also stop on `document.visibilitychange`. `Timer.connect(document)` avoids a giant delta when the tab returns (see `textures-and-memory.md`).
+- Pause when hidden: browsers throttle rAF in background tabs automatically; for `setAnimationLoop` you can also stop on `document.visibilitychange`. `Timer.connect(document)` avoids a giant delta when the tab returns (see `textures-and-memory.md`). It only reacts to Page Visibility: with render-on-demand the tab stays visible while idle, so the first delta after an idle stretch is still huge. Clamp it (`Math.min(timer.getDelta(), 1 / 30)`) or call `timer.reset()` when rendering restarts.
 
 ---
 
@@ -136,14 +154,14 @@ Caveats: each change reallocates buffers (a hitch), so step in coarse increments
 renderer.setAnimationLoop((time, frame) => { ... renderer.render(scene, camera); });
 renderer.setAnimationLoop(null);   // stop
 
-// WebGPURenderer: initialize first (render() throws before init in r186)
+// WebGPURenderer: initialize first (render() throws before init in r187)
 await renderer.init();
 renderer.setAnimationLoop(animate);
 ```
 
 - The docs advise defining the loop with `setAnimationLoop` rather than manual rAF for best compatibility: it is required for WebXR (the XR session has its own frame callback, not `window.requestAnimationFrame`) and works inside workers.
 - For on-demand rendering use plain `requestAnimationFrame` as above, or `setAnimationLoop` that you null out when idle.
-- WebGPURenderer: `render()` is synchronous but throws if called before `await renderer.init()` (`Renderer.render` in r186). `renderAsync`, `clearAsync`, `hasFeatureAsync`, `initTextureAsync`, `waitForGPU` are deprecated. `setAnimationLoop` returns a promise and handles init for you.
+- WebGPURenderer: `render()` is synchronous but throws if called before `await renderer.init()` (`Renderer.render` in r187). `renderAsync`, `clearAsync`, `hasFeatureAsync`, `initTextureAsync`, `waitForGPU` are deprecated. `setAnimationLoop` returns a promise and handles init for you.
 - Multiple `render` calls in one frame (post-processing, multi-view): `renderer.info.autoReset = false` and `renderer.info.reset()` per frame to get meaningful totals.
 - `renderer.autoClear = false` when you composite several renders (`clear` manually; `autoClearDepth` etc.), saving redundant clears.
 
@@ -308,7 +326,7 @@ renderer.lighting = new DynamicLighting({
 
 - `ClusteredLighting` (docs): "suitable for 3D scenes with many point lights and real depth complexity": partitions the view frustum into a 3D grid (XY tile size in pixels x exponential Z slices) and lights are assigned to clusters; fragment cost depends on lights per cluster, not total lights. Tune `tileSize` (smaller = finer cull, more cluster overhead), `zSlices`, and `maxLightsPerCluster` (overflow lights are dropped). Example: `webgpu_lights_clustered.html`. Only point lights are documented as clustered ("Maximum number of point lights").
 - `DynamicLighting`: trades a fixed worst-case per-fragment cost (arrays sized by `max*`) for no recompile when lights come and go; set the maxima to what you really use.
-- Both are WebGPURenderer (node-based) only. The r186 example is `webgpu_lights_clustered.html` (there is no `webgpu_lights_tiled.html`).
+- Both are WebGPURenderer (node-based) only. The r187 examples are `webgpu_lights_clustered.html` and, new in r187, `webgpu_lights_clustered_city.html` (there is no `webgpu_lights_tiled.html`).
 - Light shadows remain separate: clustering does not make shadow-casting point lights cheap.
 
 ---
@@ -390,7 +408,7 @@ Budget and techniques:
 - Pick one AA technique. MSAA + bloom chain: only the main scene target needs MSAA; effect targets must not be multisampled.
 - Float precision: `HalfFloatType` buffers for HDR; `UnsignedByteType` (`outputBufferType`) saves bandwidth when HDR is not needed (WebGPURenderer default is HalfFloat).
 - When post-processing is on, tone mapping is applied by the output transform of the pipeline; `Material.toneMapped` is ignored with post-processing (docs). Avoid double tone mapping.
-- WebGLRenderer also has `renderer.setEffects(effects)` ("sets the post-processing effects to be applied after rendering", r186 API) as a lighter path; verify its supported effect classes in the release you use.
+- WebGLRenderer also has `renderer.setEffects(effects)` ("sets the post-processing effects to be applied after rendering", r187 API) as a lighter path; verify its supported effect classes in the release you use.
 - Update expensive effects at lower frequency when the camera is static: AO and reflections can accumulate or skip frames; with on-demand rendering (section 2) post-processing stops costing power entirely while idle.
 - Dispose composer / pipeline (`dispose()`) on teardown (render targets).
 - Examples: `webgl_postprocessing_*` family, `webgpu_postprocessing_*` family (the latter show node-based chains).
@@ -557,7 +575,7 @@ await renderer.init();
 const gui = renderer.inspector.createParameters('Settings');   // tweak parameters live while watching the Performance tab
 ```
 
-Tabs in r186 (`examples/jsm/inspector/tabs`): Performance (frame, CPU/GPU times via the timestamp pools), Memory (GPU resource usage), Timeline, Console (captures three.js warnings), Settings, Viewer (inspect render targets / textures), Parameters; extensions `tsl-graph`, `color-grading`. It resolves timestamps for compute and render each frame itself (`RendererInspector.resolveTimestamp`). `InspectorBase` is the base class for custom inspectors (hooks: `begin`, `finish`, `beginRender`, `finishRender`, `beginCompute`, `finishCompute`, `inspect(node)`); use it to forward metrics to your own telemetry. Examples: `webgpu_performance.html`, `webgpu_instance_mesh.html`, `webgpu_compute_particles.html`.
+Tabs in r187 (`examples/jsm/inspector/tabs`): Performance (frame, CPU/GPU times via the timestamp pools), Memory (GPU resource usage), Timeline, Console (captures three.js warnings), Settings, Viewer (inspect render targets / textures), Parameters; extensions `tsl-graph`, `color-grading`. It resolves timestamps for compute and render each frame itself (`RendererInspector.resolveTimestamp`). `InspectorBase` is the base class for custom inspectors (hooks: `begin`, `finish`, `beginRender`, `finishRender`, `beginCompute`, `finishCompute`, `inspect(node)`); use it to forward metrics to your own telemetry. Examples: `webgpu_performance.html`, `webgpu_instance_mesh.html`, `webgpu_compute_particles.html`.
 
 ### 13.5 Browser tools
 
