@@ -233,7 +233,7 @@ Example `webgpu_postprocessing_3dlut`. Keep intensity 0.5-1.0; strong LUTs on to
 |---|---|---|
 | Everything dark, high contrast, colors too saturated | Output stage missing (composer without `OutputPass`, or ShaderMaterial without `colorspace_fragment`) | Add `OutputPass` / include chunk |
 | Everything pale, low contrast | sRGB applied twice (OutputPass + GammaCorrectionShader, or `renderOutput` + default transform) | Remove one; set `rp.outputColorTransform = false` when using `renderOutput` manually |
-| One object too dark | albedo texture missing `SRGBColorSpace` | set `colorSpace` before first render |
+| One object washed out / too bright | albedo texture missing `SRGBColorSpace` (sRGB values read as linear, encoded again on output) | set `colorSpace` before first render |
 | One object too bright/pale | normal/roughness map tagged sRGB, or albedo double-decoded | `NoColorSpace` for data maps |
 | Hex color looks different from CSS | Passed through `setRGB` without space, or `ColorManagement.enabled=false` | `new Color(hex)` / `setRGB(...,SRGBColorSpace)` |
 | Highlights clip to flat white | no tone mapping, lights too strong | `NeutralToneMapping`/`AgX` + lower exposure |

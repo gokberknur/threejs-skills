@@ -17,12 +17,26 @@
     {
       "id": 2,
       "prompt": "Memory in my three.js SPA keeps growing every time the user switches between product pages (each page builds a new scene with GLB models and textures). After ~20 switches the tab crashes. What am I missing?",
-      "expected_output": "Explains dispose() for geometry, material (and each texture map on it), render targets, PMREM/env textures, controls.dispose(), removing event listeners, traverse helper that disposes everything in the old scene, verifying with renderer.info.memory, reusing renderer instead of recreating, cache (THREE.Cache) consideration, and avoiding retained references/closures."
+      "expected_output": "Explains dispose() for geometry, material (and each texture map on it), render targets, PMREM/env textures, controls.dispose(), removing event listeners, traverse helper that disposes everything in the old scene, verifying with renderer.info.memory, reusing renderer instead of recreating, cache (THREE.Cache) consideration, and avoiding retained references/closures.",
+      "assertions": [
+        "Disposes geometries, materials and every texture slot when leaving a page (traverse + dispose)",
+        "Stops the render loop (setAnimationLoop(null)) and removes event listeners / controls.dispose() on unmount",
+        "Reuses one renderer or calls renderer.dispose() (plus forceContextLoss only if discarding it)",
+        "Mentions renderer.info.memory (geometries/textures counts) to verify the leak is fixed",
+        "No deprecated APIs (outputEncoding, Clock without note, PCFSoftShadowMap)"
+      ]
     },
     {
       "id": 3,
       "prompt": "Our three.js product configurator renders constantly at 60fps even when nothing moves, draining laptop batteries. Give me a pattern to only render when needed, and also cap the resolution on high-DPI screens.",
-      "expected_output": "Render-on-demand pattern with a requestRenderIfNotRequested function, controls 'change' event, resize triggers, animation-driven renders only while animating; setPixelRatio(Math.min(devicePixelRatio, 2)); note about setAnimationLoop vs rAF and about post-processing needing composer.render; mentions shadowMap.autoUpdate=false for static scenes."
+      "expected_output": "Render-on-demand pattern with a requestRenderIfNotRequested function, controls 'change' event, resize triggers, animation-driven renders only while animating; setPixelRatio(Math.min(devicePixelRatio, 2)); note about setAnimationLoop vs rAF and about post-processing needing composer.render; mentions shadowMap.autoUpdate=false for static scenes.",
+      "assertions": [
+        "Renders on demand: render only on a 'change' event / invalidate flag instead of a constant loop",
+        "Handles OrbitControls damping by keeping rendering while controls are still settling",
+        "Caps pixel ratio, e.g. setPixelRatio(Math.min(devicePixelRatio, 2))",
+        "Resize handler updates camera and renderer size and requests a render",
+        "No deprecated APIs (Clock without note, renderAsync)"
+      ]
     }
   ]
 }

@@ -17,12 +17,28 @@
     {
       "id": 2,
       "prompt": "Add a cinematic post-processing stack to my three.js WebGLRenderer scene: bloom only on emissive neon signs, ambient occlusion, slight film grain and vignette, and depth of field focused on the character. Keep tone mapping correct.",
-      "expected_output": "EffectComposer with RenderPass, GTAOPass, UnrealBloomPass (selective via layers/emissive strategy with threshold near 1 or material trick), BokehPass, FilmPass, vignette via ShaderPass or VignetteShader, OutputPass last (tone mapping + sRGB), HalfFloatType render target, composer.setSize on resize and MSAA samples; correct ordering and no GammaCorrectionShader."
+      "expected_output": "EffectComposer with RenderPass, GTAOPass, UnrealBloomPass (selective via layers/emissive strategy with threshold near 1 or material trick), BokehPass, FilmPass, vignette via ShaderPass or VignetteShader, OutputPass last (tone mapping + sRGB), HalfFloatType render target, composer.setSize on resize and MSAA samples; correct ordering and no GammaCorrectionShader.",
+      "assertions": [
+        "Uses EffectComposer with RenderPass first and OutputPass last (or renderer.setEffects with no OutputPass), so tone mapping is applied once",
+        "Bloom limited to the neon signs (selective bloom via layers/MRT/emissive threshold), not global bloom",
+        "Adds ambient occlusion (GTAOPass, SAOPass or SSAOPass)",
+        "Adds depth of field (BokehPass or equivalent) focused on the character distance",
+        "Adds film grain and vignette (FilmPass plus a vignette pass/shader)",
+        "Uses an HDR (HalfFloatType) render target or explains why it matters for bloom"
+      ]
     },
     {
       "id": 3,
       "prompt": "My outdoor three.js scene (terrain 2km wide, trees, a house) has shadows that are blurry blobs near the camera and disappear far away, and the edges of everything shimmer when the camera moves. How do I get crisp stable shadows and clean edges?",
-      "expected_output": "Cascaded shadow maps (CSM from three/addons/csm/CSM.js or CSMShadowNode on WebGPU) with cascades/maxFar, tight shadow camera, normalBias, mapSize, shadow map type choice; for shimmering: anti-aliasing options (MSAA antialias:true, TAA/TRAA, SMAA/FXAA), texture anisotropy and mipmaps for terrain, specular aliasing mitigation; mentions the cost tradeoffs."
+      "expected_output": "Cascaded shadow maps (CSM from three/addons/csm/CSM.js or CSMShadowNode on WebGPU) with cascades/maxFar, tight shadow camera, normalBias, mapSize, shadow map type choice; for shimmering: anti-aliasing options (MSAA antialias:true, TAA/TRAA, SMAA/FXAA), texture anisotropy and mipmaps for terrain, specular aliasing mitigation; mentions the cost tradeoffs.",
+      "assertions": [
+        "Uses cascaded shadow maps (CSM addon) or SunLight for a 2km terrain instead of one huge shadow camera",
+        "Tunes shadow.bias / normalBias and mapSize with concrete values",
+        "Addresses shimmering from shadow texels (stabilized cascades / texel snapping) separately from geometry aliasing",
+        "Enables anti-aliasing (antialias: true MSAA, or SMAA/TAA/FXAA pass) for edge shimmer",
+        "No PCFSoftShadowMap; uses PCFShadowMap/VSMShadowMap",
+        "If WebGPU SunLight is shown, registers it with SunLight.registerNode(SunLightNode), not renderer.library.addLight"
+      ]
     }
   ]
 }

@@ -17,12 +17,29 @@
     {
       "id": 2,
       "prompt": "I want 200k particles simulated on the GPU with three.js: each has a position and velocity, gravity pulls them down, and they respawn at the top when they fall below y=-5. Render them as points. Please use compute shaders.",
-      "expected_output": "WebGPURenderer, instancedArray/storage buffers for position and velocity, Fn(...)().compute(COUNT) kernels for init and update using instanceIndex, deltaTime, If() for respawn, renderer.compute/computeAsync in the loop, Points/Sprite with SpriteNodeMaterial or PointsNodeMaterial and positionNode = buffer.element(instanceIndex), count set; mentions workgroup size and no CPU readback per frame."
+      "expected_output": "WebGPURenderer, instancedArray/storage buffers for position and velocity, Fn(...)().compute(COUNT) kernels for init and update using instanceIndex, deltaTime, If() for respawn, renderer.compute/computeAsync in the loop, Points/Sprite with SpriteNodeMaterial or PointsNodeMaterial and positionNode = buffer.element(instanceIndex), count set; mentions workgroup size and no CPU readback per frame.",
+      "assertions": [
+        "Imports from three/webgpu and three/tsl only (no ShaderMaterial / GLSL)",
+        "Stores position and velocity in GPU storage buffers (instancedArray or storage) with one element per particle",
+        "Compute kernel written with Fn and instanceIndex, applying gravity and respawning below y=-5 with If/select",
+        "r187 dispatch rule: a .compute(count) node is dispatched with renderer.compute(node) and no size (a size is passed only to computeKernel nodes)",
+        "No integer-node times fractional literal (e.g. instanceIndex.mul(0.5)) without converting to float first",
+        "Renders the particles as points reading the storage buffer in positionNode (or toAttribute)",
+        "Initializes the renderer before compute (await renderer.init() or setAnimationLoop)"
+      ]
     },
     {
       "id": 3,
       "prompt": "Port this GLSL fragment shader to TSL so it works on WebGPURenderer: uniform float uTime; varying vec2 vUv; void main(){ float d = distance(vUv, vec2(0.5)); float ring = smoothstep(0.02, 0.0, abs(sin(d*20.0 - uTime*3.0))); gl_FragColor = vec4(vec3(ring)*vec3(0.2,0.6,1.0), 1.0); }",
-      "expected_output": "A NodeMaterial (MeshBasicNodeMaterial) with colorNode or fragmentNode built from uv(), distance, smoothstep, abs, sin, uniform(time) or time; correct TSL method/function names (smoothstep(edge0, edge1, x) argument order preserved), no GLSL strings, imports from three/tsl."
+      "expected_output": "A NodeMaterial (MeshBasicNodeMaterial) with colorNode or fragmentNode built from uv(), distance, smoothstep, abs, sin, uniform(time) or time; correct TSL method/function names (smoothstep(edge0, edge1, x) argument order preserved), no GLSL strings, imports from three/tsl.",
+      "assertions": [
+        "Uses a NodeMaterial (e.g. MeshBasicNodeMaterial) with colorNode, not ShaderMaterial",
+        "Replaces vUv with uv() and uTime with time or a uniform()",
+        "Computes distance(uv(), vec2(0.5)) and the sin(d*20 - t*3) ring",
+        "Handles smoothstep with edge0 > edge1 (undefined in WGSL), e.g. via oneMinus(smoothstep(0, 0.02, x)) or swapped edges with a note",
+        "Outputs the color vec3(ring) * vec3(0.2, 0.6, 1.0) with alpha 1",
+        "Imports from three/webgpu and three/tsl"
+      ]
     }
   ]
 }

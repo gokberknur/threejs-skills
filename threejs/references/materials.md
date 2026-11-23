@@ -276,7 +276,7 @@ line.computeLineDistances();           // required for dashes
 | `normalMap, roughnessMap, metalnessMap, aoMap, bumpMap, displacementMap, alphaMap, transmissionMap, thicknessMap, clearcoat*Map, gradientMap, anisotropyMap` | `THREE.NoColorSpace` (default) |
 | HDR/EXR env, lightMap, float data | `THREE.LinearSRGBColorSpace` (HDRLoader/EXRLoader set it) |
 
-- `Texture.colorSpace` defaults to `NoColorSpace`: a color map loaded without setting `SRGBColorSpace` renders too dark/contrasty. `TextureLoader` does NOT set it for you. GLTFLoader sets it per slot.
+- `Texture.colorSpace` defaults to `NoColorSpace`: a color map loaded without setting `SRGBColorSpace` renders washed out and too bright: its sRGB values are treated as linear, then sRGB-encoded again on output. `TextureLoader` does NOT set it for you. GLTFLoader sets it per slot.
 - Working space is linear (`LinearSRGBColorSpace`); `WebGLRenderer.outputColorSpace` defaults to `SRGBColorSpace`. `THREE.ColorManagement.enabled = true` by default: hex / CSS strings are converted from sRGB to linear automatically on set; `color.getHex()` converts back.
 - Material colors, light colors, vertex color attributes are linear working space. Use `color.setRGB(r,g,b)` for raw linear, `.setHex(0x808080, LinearSRGBColorSpace)` to override.
 - Post-processing: output conversion happens in `OutputPass`; missing it = dark, double = washed out.

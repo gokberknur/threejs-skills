@@ -20,12 +20,27 @@
     {
       "id": 2,
       "prompt": "My three.js scene: I load a texture with TextureLoader and put it on a MeshStandardMaterial but it looks washed out and way too bright compared to the PNG. Also when I later change `mesh.material.map = otherTexture` nothing updates. What's wrong and how do I fix it? I'm on the latest three.",
-      "expected_output": "Explains texture.colorSpace = THREE.SRGBColorSpace for color maps (ColorManagement on by default, outputColorSpace default sRGB), mentions tone mapping/exposure as second suspect, and explains material.needsUpdate = true is required when adding a map after first compile (define change), not texture.needsUpdate. No mention of the removed `encoding` API as a fix."
+      "expected_output": "Explains texture.colorSpace = THREE.SRGBColorSpace for color maps (ColorManagement on by default, outputColorSpace default sRGB), mentions tone mapping/exposure as second suspect, and explains material.needsUpdate = true is required when adding a map after first compile (define change), not texture.needsUpdate. No mention of the removed `encoding` API as a fix.",
+      "assertions": [
+        "Sets texture.colorSpace = THREE.SRGBColorSpace for the color map",
+        "Explains ColorManagement / outputColorSpace defaults (sRGB output) as the reason",
+        "Mentions tone mapping / exposure as a secondary cause of brightness",
+        "Explains material.needsUpdate = true is needed when a map is added after the first render (shader define changes)",
+        "Does not suggest the removed texture.encoding / sRGBEncoding API"
+      ]
     },
     {
       "id": 3,
       "prompt": "I have a three.js app where the user can click on any of ~50 boxes to select it (highlight it) and drag it around on the ground plane. Show me how to implement picking and dragging with the current three.js API, including touch.",
-      "expected_output": "Raycaster.setFromCamera with NDC from pointer events (pointerdown/move/up, works for touch), intersectObjects, highlighting via material/emissive change, dragging by intersecting a ground Plane (THREE.Plane or ray.intersectPlane) or using DragControls from three/addons, disabling OrbitControls while dragging; uses current API names only."
+      "expected_output": "Raycaster.setFromCamera with NDC from pointer events (pointerdown/move/up, works for touch), intersectObjects, highlighting via material/emissive change, dragging by intersecting a ground Plane (THREE.Plane or ray.intersectPlane) or using DragControls from three/addons, disabling OrbitControls while dragging; uses current API names only.",
+      "assertions": [
+        "Uses Raycaster.setFromCamera with normalized device coordinates computed from the canvas rect",
+        "Uses pointer events (pointerdown/move/up) so mouse and touch share one path, with touch-action: none on the canvas",
+        "Highlights the selected box (emissive or material change) and restores it on deselect",
+        "Drags on the ground plane via ray.intersectPlane(THREE.Plane) or DragControls",
+        "Disables OrbitControls during the drag (or explains the conflict)",
+        "Uses setPointerCapture or equivalent so drags continue outside the box"
+      ]
     }
   ]
 }
