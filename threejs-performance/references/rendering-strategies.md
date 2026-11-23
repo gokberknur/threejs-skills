@@ -81,7 +81,25 @@ render();                            // first frame
 Details:
 
 - `OrbitControls` dispatch a `change` event whenever the camera changes. With `enableDamping`, calling `render()` directly from `change` would recurse (the render calls `controls.update()`, which emits `change` again) and the manual fixes it with the "request if not requested" pattern above: the flag coalesces multiple triggers into one frame, and the damping tail keeps requesting frames until the motion decays. `controls.update()` returns a boolean (`true` when the camera moved), which you can use to request another frame.
-- Animations in an on-demand app: drive them with a manager that reports "still running" and keeps requesting frames (the manual's `TweenManager.update()` returns `numTweensRunning > 0` and the render function calls `requestRenderIfNotRequested()` while true). When the last animation ends, rendering stops.
+- Animations in an on-demand app: drive them with a manager that reports "still running" and keeps requesting frames (the manual's `TweenManager.update()` returns `numTweensRunning > 0` and the render function calls `requestRenderIfNotRequested()` while true). When the last animation ends, rendering stops. Same pattern for an `AnimationMixer` (glTF clips):
+```js
+const timer = new THREE.Timer(); timer.connect(document);
+let playing = 0;                                   // actions currently running
+function play(action) {
+  action.reset().play(); playing++; timer.reset(); // reset: no huge first delta after idle
+  requestRenderIfNotRequested();
+}
+mixer.addEventListener('finished', () => { playing = Math.max(0, playing - 1); });  // LoopOnce clips fire this
+function render(timestamp) {
+  renderRequested = false;
+  timer.update(timestamp);
+  mixer.update(Math.min(timer.getDelta(), 1 / 30));
+  controls.update();
+  renderer.render(scene, camera);
+  if (playing > 0) requestRenderIfNotRequested(); // keep frames coming only while a clip runs
+}
+```
+Looping clips never fire `finished`: either set `action.setLoop(THREE.LoopOnce)` + `clampWhenFinished = true`, or treat a looping clip as "always animating" and stop it explicitly.
 - Every external change must request a frame: loaders (`onLoad`), WebSocket data, GUI `onChange`, video textures (a playing `VideoTexture` makes this a continuous render app), XR (XR needs `setAnimationLoop`, see section 4).
 - Static scene extras: also stop shadow updates (section 6), and `scene.matrixWorldAutoUpdate = false` (see `draw-calls-and-geometry.md`) while nothing moves.
 - `preserveDrawingBuffer: false` (default) clears the canvas after compositing. In an on-demand app, take screenshots by calling `render()` right before `canvas.toBlob` (manual: Tips), not by enabling `preserveDrawingBuffer` (it can cost performance and memory on some platforms; rule of thumb).

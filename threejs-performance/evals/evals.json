@@ -9,7 +9,7 @@
         "Identifies draw calls (8012 calls) as the bottleneck with reasoning",
         "Recommends BatchedMesh as the primary fix (shared material, many different geometries) with working addGeometry/addInstance/setMatrixAt code",
         "Mentions merging geometries as an alternative for fully static content and InstancedMesh only where geometry is shared",
-        "Names BatchedMesh's perObjectFrustumCulled and sortObjects flags and when to turn them off",
+        "Names BatchedMesh's perObjectFrustumCulled and sortObjects flags and gives a scene-specific on/off decision for each, with the reason",
         "Covers other secondary wins: matrixAutoUpdate = false for static buildings, shadow budget, pixel ratio cap",
         "Tells the user to re-measure with renderer.info.render.calls / fps after the change",
         "No invented API names (checks against r187: addGeometry, addInstance, setMatrixAt, perObjectFrustumCulled, sortObjects, optimize)",

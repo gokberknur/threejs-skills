@@ -63,7 +63,8 @@ const velocities = instancedArray(COUNT, 'vec3');
 
 const init = Fn(() => {
   const p = positions.element(instanceIndex);
-  p.assign(vec3(hash(instanceIndex), hash(instanceIndex.add(1)), hash(instanceIndex.add(2))).sub(0.5).mul(10));
+  const i = instanceIndex.toFloat();   // hash() takes a float seed; convert the uint index first
+  p.assign(vec3(hash(i), hash(i.add(1)), hash(i.add(2))).sub(0.5).mul(10));
   velocities.element(instanceIndex).assign(vec3(0));
 })().compute(COUNT);
 

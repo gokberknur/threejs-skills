@@ -627,8 +627,8 @@ Environment-related: `reflectView` / `refractView` (for matcap-like or fake refr
 **Random / hash:** `hash(seed)` (PCG, input converted to uint, output [0,1)); `rand(uv)` (fract-sin, vec2 -> float); `interleavedGradientNoise(pos)`; `range(min, max)` per-instance random attribute; `vogelDiskSample(i, n, phi)`.
 
 ```js
-hash(instanceIndex)                               // per-instance randomness (stable)
-hash(instanceIndex.add(7))                        // decorrelated second value
+hash(instanceIndex.toFloat())                               // per-instance randomness (stable); hash() takes a float seed
+hash(instanceIndex.toFloat().add(7))                        // decorrelated second value
 range(vec3(-1), vec3(1))                          // per-instance vec3, e.g. on InstancedMesh/Mesh.count
 ```
 

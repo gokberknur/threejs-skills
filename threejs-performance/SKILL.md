@@ -43,7 +43,7 @@ console.log(renderer.info.memory);   // { geometries, textures }  (WebGL also: p
 6. **Transparency = overdraw + sorting.** Prefer `alphaTest` / `alphaHash` cutouts, `depthWrite: false` for additive particles, keep transparent object count small, limit `transmission` (it renders the scene to a texture first).
 7. **Post-processing at the right resolution.** Bloom/AO/DOF at half resolution; one AA method (MSAA via `antialias: true` or TRAA/FXAA, not both); `HalfFloatType` targets only when HDR is needed.
 8. **Never allocate per frame.** Module-level `_v = new THREE.Vector3()` temps, `getWorldPosition(_v)`, reuse `Raycaster`, avoid `array.map` in the loop, avoid `traverse` per frame (cache lists).
-9. **Dispose what you remove.** `geometry.dispose()`, `material.dispose()` (and every texture on it), `renderTarget.dispose()`, `controls.dispose()`, `renderer.dispose()` on teardown. Use the traverse helper in `references/textures-and-memory.md`.
+9. **Dispose what you remove.** `geometry.dispose()`, `material.dispose()` (and every texture on it), `renderTarget.dispose()`, `controls.dispose()`, `renderer.dispose()` on teardown. Use the traverse helper in `references/textures-and-memory.md`. GLTFLoader textures are often `ImageBitmap`s: `texture.dispose()` does not free them, `texture.source.data.close?.()` does, but only close a bitmap no other page or cache still uses; a closed bitmap cannot be uploaded again, so a shared texture would break.
 10. **Load smart.** Draco or meshopt compressed glTF, KTX2 textures, `ImageBitmapLoader` / `createImageBitmap` for off-thread decode, `compileAsync` before the first frame, progressive loading with `LoadingManager`; heavy sim or whole renderer in a Worker via `OffscreenCanvas`.
 
 ## Quick wins snippet

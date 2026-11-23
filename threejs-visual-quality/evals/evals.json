@@ -9,7 +9,7 @@
         "Adds environment lighting: PMREMGenerator + RoomEnvironment or HDRI via HDRLoader with EquirectangularReflectionMapping set as scene.environment",
         "Sets tone mapping (ACES/AgX/Neutral) with exposure and keeps outputColorSpace sRGB",
         "Glass via MeshPhysicalMaterial transmission/ior/thickness; metal via metalness 1 + roughness, not opacity hacks",
-        "Replaces the black background with a studio look: blurred environment (backgroundBlurriness), a gradient or a lit backdrop; a flat solid color alone does not count",
+        "Replaces the black background with a studio look (a light neutral seamless backdrop, a gradient or a blurred environment) and grounds the watch with a soft or contact shadow",
         "Soft shadow or contact shadow on a ground catcher (ShadowMaterial / VSM / radius)",
         "Anti-aliasing that survives the pipeline: antialias: true without a composer, or with EffectComposer a multisampled render target (samples > 0) or an SMAA/FXAA pass",
         "No pre-r187 names (RGBELoader, outputEncoding, GammaCorrectionShader)",

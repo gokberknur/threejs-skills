@@ -284,7 +284,7 @@ mesh.setColorAt(i, new THREE.Color());                  // instanceColor is mult
 mesh.count = 500;                                       // draw fewer instances at runtime (no recompile)
 ```
 
-- Per-instance random data: `range(min, max)` (attribute), `hash(instanceIndex)`; per-instance value from JS: `instancedBufferAttribute(attr)` or a custom `Node` with `updateType = NodeUpdateType.OBJECT` (see `webgpu_instance_uniform`: `update(frame){ this.uniformNode.value.copy(frame.object.color) }`, `setup(){ return this.uniformNode }`).
+- Per-instance random data: `range(min, max)` (attribute), `hash(instanceIndex.toFloat())` (hash takes a float seed); per-instance value from JS: `instancedBufferAttribute(attr)` or a custom `Node` with `updateType = NodeUpdateType.OBJECT` (see `webgpu_instance_uniform`: `update(frame){ this.uniformNode.value.copy(frame.object.color) }`, `setup(){ return this.uniformNode }`).
 - GPU-driven matrices: `Instance.js` reads the matrix from a storage buffer when `mesh.instanceMatrix.isStorageInstancedBufferAttribute`; otherwise from a UBO (`buffer(...)`, when the matrices fit the uniform limit) or an `InstancedInterleavedBuffer` attribute.
 - Manual: `instance(matricesAttr, colorsAttr?)` (r187 signature; the old `instance(count, matrix, color)` no longer exists) and `instancedMesh(mesh)` are the building blocks; the material calls `instancedMesh(object)` itself.
 - `BatchedMesh`: handled by `batch(object)`; per-geometry colors via `batchColor`, multiplied into `colorNode`; `batchIndirectIndex` available. Example: `webgpu_mesh_batch`.
