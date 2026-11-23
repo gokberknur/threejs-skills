@@ -140,7 +140,7 @@ Used in `webgpu_performance.html`, `webgpu_instance_mesh.html`. It is a dev tool
 
 | | InstancedMesh | BatchedMesh |
 |---|---|---|
-| Geometry | exactly one | many (same attribute set), added with `addGeometry` |
+| Geometry | exactly one | many (the first one sets the attribute layout; later ones must provide it, extras ignored), added with `addGeometry` |
 | Per-instance matrix | `instanceMatrix` attribute (`setMatrixAt`, then `instanceMatrix.needsUpdate`) | float `DataTexture` (`setMatrixAt` flags the texture itself) |
 | Per-instance color | `instanceColor` (`setColorAt`) | colors `DataTexture` (`setColorAt`, `Vector4` for alpha) |
 | Per-instance visibility | none (shrink to zero scale, or lower `count`) | `setVisibleAt` |
@@ -331,7 +331,7 @@ Culling and ordering:
 
 ### 5.2 Constraints
 
-- All geometries must share the same attribute set: same names, `itemSize`, `normalized`, and all indexed or all non-indexed (`_validateGeometry` throws otherwise). Normalize attributes up front (add missing `uv`, or delete extras).
+- The first geometry added defines the batch layout. Every later geometry must provide each of those attributes with the same `itemSize` and `normalized`, and match its index usage (all indexed or all non-indexed); `_validateGeometry` throws otherwise. Extra attributes on later geometries are ignored, not an error. So add the geometry with the fewest attributes first, or add missing ones (e.g. `uv`) to the rest; deleting extras is only a memory saving.
 - One material for the whole batch. Per-instance variation: color, plus whatever you derive from the instance id in a custom node/shader.
 - Needs float vertex textures (WebGL2 always has them) and multi-draw. In WebGLRenderer it uses the multi-draw path (`renderer.renderMultiDraw`); in WebGPURenderer it is handled in `RenderObject`. The first `setColorAt` creates the colors texture, and calling it after the first render triggers a program change like `InstancedMesh.instanceColor`: set colors before first render.
 - No morph targets or skinning in the public API.
